@@ -15,6 +15,7 @@ class Auth extends Component
      */
     public function __construct($title = null)
     {
+        // Title untuk judul tab website
         $this->title = $title;
     }
 
@@ -23,6 +24,6 @@ class Auth extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('layouts.auth.app');
+        return view('components.layouts.auth.app');
     }
 }

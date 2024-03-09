@@ -21,6 +21,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                toast('Selamat Datang '.Auth()->user()->name,'success');
                 return redirect(RouteServiceProvider::HOME);
             }
         }
