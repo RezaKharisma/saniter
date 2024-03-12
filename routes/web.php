@@ -20,9 +20,8 @@ use Laravel\Fortify\Fortify;
 */
 
 // Login
-Fortify::loginView(function () {
-    return view('auth.login');
-});
+Route::get('/', function(){ return view('auth.login'); });
+Fortify::loginView(function () {return view('auth.login');});
 
 // Reset Password
 Fortify::requestPasswordResetLinkView(function () {
