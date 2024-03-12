@@ -12,8 +12,8 @@
                     </div>
 
                     {{-- Header text --}}
-                    <h4 class="mb-2 d-flex justify-content-center">Halaman Login</h4>
-                    <p class="mb-4 d-flex justify-content-center">Silahkan masukkan email aktif anda.</p>
+                    <h4 class="mb-2 d-flex justify-content-center">Login</h4>
+                    <p class="mb-4 d-flex justify-content-center">Silahkan masukkan akun anda.</p>
 
                     {{-- Form --}}
                     <form class="mb-3" action="{{ route('login') }}" method="POST">

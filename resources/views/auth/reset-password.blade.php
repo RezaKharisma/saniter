@@ -5,8 +5,6 @@
             <div class="card">
                 <div class="card-body">
 
-                    {{ $errors }}
-
                     {{-- Logo --}}
                     <div class="app-brand justify-content-center">
                         <img src="{{ asset('assets/img/logo/logo-qinar.png') }}" alt="Logo Qinar" width="100px">
@@ -14,21 +12,21 @@
                     </div>
 
                     {{-- Header text --}}
-                    <h4 class="mb-2 mt-0 d-flex justify-content-center">Halaman Reset Password</h4>
-                    <p class="mb-4 d-flex justify-content-center">Silahkan masukkan email aktif anda.</p>
+                    <h4 class="mb-2 mt-0 d-flex justify-content-center">Reset Password</h4>
+                    <p class="mb-4 d-flex justify-content-center">Masukkan email akun dan password baru.</p>
 
                     {{-- Form --}}
-                    <form id="formAuthentication" class="mb-3" action="{{ route('password.email') }}" method="POST">
+                    <form class="mb-3" action="{{ route('password.update') }}" method="POST">
                         @csrf
 
-                        {{-- Input Email --}}
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" autofocus />
-                        </div>
+                        <x-input-text title="Email" name="email" placeholder="Masukkan email" margin="mb-3" />
+
+                        <x-input-password title="Password Baru" name="password" placeholder="Masukkan password baru" margin="mb-3" />
+
+                        <x-input-password title="Konfirmasi Password Baru" name="confirmation_password" placeholder="Ketik ulang password" margin="mb-3" />
 
                         {{-- Submit Button --}}
-                        <button class="btn btn-primary d-grid w-100">Kirim Link Reset Password</button>
+                        <button class="btn btn-primary d-grid w-100">Reset Password</button>
                     </form>
 
                     {{-- Back To Login --}}

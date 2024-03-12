@@ -25,9 +25,8 @@ Route::get('/', function(){ return view('auth.login'); });
 Fortify::loginView(function () {return view('auth.login');});
 
 // Reset Password
-Fortify::requestPasswordResetLinkView(function () {
-    return view('auth.forgot-password');
-});
+Fortify::requestPasswordResetLinkView(function () { return view('auth.forgot-password'); });
+Fortify::resetPasswordView(function () { return view('auth.reset-password'); });
 
 // Verified Account
 Route::group(['middleware' => ['auth']], function () {

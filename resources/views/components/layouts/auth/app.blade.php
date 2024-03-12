@@ -45,6 +45,8 @@
         {{-- Sweet Alert --}}
         @include('sweetalert::alert')
 
+        <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}
     </body>

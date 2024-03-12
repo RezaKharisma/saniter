@@ -5,8 +5,6 @@
             <div class="card">
                 <div class="card-body">
 
-                    {{ $errors }}
-
                     {{-- Logo --}}
                     <div class="app-brand justify-content-center">
                         <img src="{{ asset('assets/img/logo/logo-qinar.png') }}" alt="Logo Qinar" width="100px">
@@ -14,7 +12,7 @@
                     </div>
 
                     {{-- Header text --}}
-                    <h4 class="mb-2 mt-0 d-flex justify-content-center">Halaman Reset Password</h4>
+                    <h4 class="mb-2 mt-0 d-flex justify-content-center">Lupa Password</h4>
                     <p class="mb-4 d-flex justify-content-center">Silahkan masukkan email aktif anda.</p>
 
                     {{-- Form --}}
@@ -22,13 +20,13 @@
                         @csrf
 
                         {{-- Input Email --}}
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" autofocus />
-                        </div>
+                        <x-input-text title="Email" name="email" placeholder="Masukkan email" margin="mb-3" />
 
                         {{-- Submit Button --}}
-                        <button class="btn btn-primary d-grid w-100">Kirim Link Reset Password</button>
+                        <button class="btn btn-primary d-grid w-100" onclick="btnSubmit()">Kirim Link Reset Password</button>
+                        <div class="spinner-border text-light" style="display: none" id="divMsg" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
                     </form>
 
                     {{-- Back To Login --}}

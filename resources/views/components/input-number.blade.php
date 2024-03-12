@@ -1,6 +1,6 @@
-@props(['title' => 'Title', 'name' => 'Name'])
+@props(['title' => 'Title', 'name' => 'Name', 'margin' => false])
 
-<div class="mb-3">
+<div @if ($margin) class="{{ $margin }}" @endif>
 <x-partials.label :title="$title" />
 <x-partials.input-number :name="$name" {{ $attributes->merge() }}/>
 <x-partials.error-message :name="$name" />
