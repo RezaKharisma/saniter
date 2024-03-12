@@ -41,6 +41,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/pengaturan/menu/{id}/edit', [MenuController::class, 'edit'])->name('pengaturan.menu.edit');
         Route::post('/pengaturan/menu', [MenuController::class, 'store'])->name('pengaturan.menu.store');
         Route::delete('/pengaturan/menu/{id}', [MenuController::class, 'delete'])->name('pengaturan.menu.delete');
+
+        // User
+        Route::controller(UserController::class)->group(function()
+        {
+            Route::get('User', 'index')->name('user.index');
+            Route::get('Form-User', 'form_add')->name('user.form-add');
+        });
     });
 
     // Ajax Request

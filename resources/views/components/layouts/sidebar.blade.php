@@ -23,7 +23,14 @@
             </a>
         </li>
 
-        <!-- Layouts -->
+        <li class="menu-item">
+            <a href="{{ route('user.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div data-i18n="Analytics">User</div>
+            </a>
+        </li>
+
+        {{-- <!-- Layouts -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -312,11 +319,6 @@
                 <i class="menu-icon tf-icons bx bx-table"></i>
                 <div data-i18n="Tables">Tables</div>
             </a>
-        </li>
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> 288359c248c2a47f2ada78f395281690659bb0d8
+        </li> --}}
     </ul>
 </aside>

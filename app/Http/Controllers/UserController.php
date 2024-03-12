@@ -11,6 +11,11 @@ class UserController extends Controller
         return view('user.index');
     }
 
+    public function form_add()
+    {
+        return view('user.form-create');
+    }
+
     // Fungsi Simpan Data
     public function store(Request $request)
     {
