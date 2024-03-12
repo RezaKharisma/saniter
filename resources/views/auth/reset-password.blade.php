@@ -1,4 +1,4 @@
-<x-layouts.auth.app title="Lupa Password">
+<x-layouts.auth.app title="Reset Password">
 
     <div class="authentication-wrapper authentication-basic container-p-y">
         <div class="authentication-inner py-4">

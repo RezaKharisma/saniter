@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
 
@@ -54,4 +55,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/profil/{id}', [ProfilController::class, 'updateProfil'])->name('profile.updateProfil');
     Route::put('/profil/{id}/password', [ProfilController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::put('/profil/{id}/image', [ProfilController::class, 'updateImage'])->name('profile.updateImage');
+
+    // User
+    Route::get('/user', [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::post('/user', [UserController::class, 'store'])->name('user.store');
+    Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/user/{id}', [UserController::class, 'delete'])->name('user.delete');
 });
