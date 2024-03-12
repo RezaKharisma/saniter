@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -20,9 +21,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'id_role',
+        'id_regional',
         'name',
         'email',
         'password',
+        'nik',
+        'telp',
+        'active',
+        'path',
     ];
 
     /**
@@ -44,14 +50,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    public function user_role()
-    {
-        return $this->belongsTo(UserRole::class, 'id_role');
-    }
-
-    public function regional()
-    {
-        return $this->belongsTo(Regional::class, 'id_regional');
-    }
 }

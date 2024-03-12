@@ -19,8 +19,15 @@
         <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
+
+        <style>
+            .swal2-container {
+                z-index: 10000;
+            }
+        </style>
 
         {{-- Custom style (jika ada) --}}
         {{ $style ?? null }}
@@ -70,11 +77,14 @@
         <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
         <script src="{{ asset('assets/js/main.js') }}"></script>
+        <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 
         {{-- Sweet Alert --}}
         @include('sweetalert::alert')
+
+        <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

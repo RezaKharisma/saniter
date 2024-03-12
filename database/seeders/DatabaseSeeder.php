@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Menu;
+use App\Models\MenuKategori;
 use App\Models\Regional;
 use App\Models\User;
 use App\Models\UserRole;
@@ -17,30 +19,63 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $role = ['Administrator', 'Staff', 'Teknisi'];
-        $regional = ['Timur', 'Tengah', 'Barat'];
-
-        for ($i=0; $i < count($role); $i++) {
-            UserRole::create([
-                'role' => $role[$i]
-            ]);
-
+        $regional = ['Timur', 'Tengah', 'Barat', 'Pusat'];
+        $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Data'];
+        for ($i=0; $i < count($regional); $i++) {
             Regional::create([
                 'nama' => $regional[$i]
+            ]);
+
+            MenuKategori::create([
+                'nama_kategori' => $kategori[$i]
             ]);
         }
 
         User::create([
-            'id_role' => 1,
-            'id_regional' => 1,
+            'id_regional' => 4,
             'name' => 'Admin Saniter',
             'email' => 'admin@gmail.com',
             'nik' => '5171012103010002',
             'telp' => '081903407890',
-            'active' => 1,
             'password' => Hash::make('admin')
         ]);
 
+        User::create([
+            'id_regional' => 3,
+            'name' => 'Staff Saniter',
+            'email' => 'staff@gmail.com',
+            'nik' => '5171012103010002',
+            'telp' => '081903407890',
+            'password' => Hash::make('staff')
+        ]);
 
+        User::create([
+            'id_regional' => 2,
+            'name' => 'Teknisi Saniter',
+            'email' => 'teknisi@gmail.com',
+            'nik' => '5171012103010002',
+            'telp' => '081903407890',
+            'password' => Hash::make('teknisi')
+        ]);
+
+        for ($i=1; $i <= 100; $i++) {
+            Menu::create([
+                'id_kategori' => rand(1,4),
+                'judul' => fake()->sentence(6),
+                'order' => $i,
+                'url' => 'administrasi\user'
+            ]);
+        }
+
+        $this->call(PermissionSeeder::class);
+
+        $user = User::find(1);
+        $user->assignRole(['Admin','Regional Pusat']);
+
+        $user = User::find(2);
+        $user->assignRole(['Staff','Regional Timur']);
+
+        $user = User::find(3);
+        $user->assignRole(['Teknisi','Regional Barat']);
     }
 }

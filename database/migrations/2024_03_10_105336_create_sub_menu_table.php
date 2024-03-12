@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_role', function (Blueprint $table) {
+        Schema::create('sub_menu', function (Blueprint $table) {
             $table->id();
-            $table->string('role');
+            $table->unsignedBigInteger('id_menu');
+            $table->string('judul');
+            $table->string('url');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_role');
+        Schema::dropIfExists('sub_menu');
     }
 };

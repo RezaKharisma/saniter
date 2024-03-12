@@ -9,7 +9,7 @@
 
 <div class="input-group">
     {{-- Jika ada grup di depan --}}
-    @if ($front ?? false)
+    @if (($front ?? false))
         <span class="input-group-text">{{ $front }}</span>
     @endif
 

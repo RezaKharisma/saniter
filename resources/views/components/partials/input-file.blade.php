@@ -6,5 +6,5 @@
         $class = 'form-control is-invalid';
     }
 ?>
-<input type="number" {{ $attributes->merge(['class' => $class]) }} onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57">
+<input type="file" {{ $attributes->merge(['class' => $class]) }}>
 

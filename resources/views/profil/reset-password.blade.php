@@ -22,7 +22,7 @@
 
                     {{-- Alert Password --}}
                     <div class="alert alert-warning">
-                        <h6 class="alert-heading fw-bold mb-1">Petunjuk keamanan password!</h6>
+                        <h6 class="alert-heading fw-bold mb-1">Petunjuk Keamanan Password!</h6>
                         <p class="mb-0">Pastikan password mudah diingat dan update secara berkala.</p>
                     </div>
 
