@@ -45,8 +45,8 @@ Route::group(['middleware' => ['auth']], function () {
         // User
         Route::controller(UserController::class)->group(function()
         {
-            Route::get('User', 'index')->name('user.index');
-            Route::get('Form-User', 'form_add')->name('user.form-add');
+            Route::get('user', 'index')->name('user.index');
+            Route::get('user/create', 'create')->name('user.create');
         });
     });
 

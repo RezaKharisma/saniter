@@ -5,7 +5,7 @@
 <div class="card">
     <h5 class="card-header">Data Akun Saniter</h5>
     <div class="card-body">
-        <a href="{{ route('user.form-add') }}" class="mb-4 btn btn-primary">Tambah User</a>
+        <a href="{{ route('user.create') }}" class="mb-4 btn btn-primary">Tambah User</a>
         <div class="table-responsive text-nowrap">
             <table class="table table-striped" id="tabel-user">
                 <thead>

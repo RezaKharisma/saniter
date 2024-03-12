@@ -11,9 +11,9 @@ class UserController extends Controller
         return view('user.index');
     }
 
-    public function form_add()
+    public function create()
     {
-        return view('user.form-create');
+        return view('user.create');
     }
 
     // Fungsi Simpan Data
