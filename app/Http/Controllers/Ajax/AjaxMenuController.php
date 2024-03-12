@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ajax;
 use App\DataTables\MenuDataTable;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use App\Models\MenuKategori;
 use App\Models\SubMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class AjaxMenuController extends Controller
             return DataTables::of($menu)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalMenu' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditMenu' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.menu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Delete</button></form>";
                     return $btn;
                 })
@@ -38,9 +39,11 @@ class AjaxMenuController extends Controller
     // Ambil data menu untuk datatable
     public function getMenuEdit(Request $request){
         if ($request->ajax()) {
-
             $menu = Menu::find($request->id);
-            return response()->json($menu);
+            return response()->json([
+                'status' => 'success',
+                'data' => $menu
+            ]);
         }
     }
 

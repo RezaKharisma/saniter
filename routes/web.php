@@ -40,8 +40,8 @@ Route::group(['middleware' => ['auth']], function () {
         // Menu
         Route::controller(MenuController::class)->group(function(){
             Route::get('/pengaturan/menu','index')->name('pengaturan.menu.index');
-            Route::get('/pengaturan/menu/{id}/edit', 'edit')->name('pengaturan.menu.edit');
             Route::post('/pengaturan/menu','store')->name('pengaturan.menu.store');
+            Route::put('/pengaturan/menu/{id}', 'update')->name('pengaturan.menu.update');
             Route::delete('/pengaturan/menu/{id}', 'delete')->name('pengaturan.menu.delete');
         });
 

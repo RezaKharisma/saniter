@@ -7,6 +7,7 @@ use App\Models\MenuKategori;
 use App\Models\SubMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class MenuController extends Controller
@@ -26,6 +27,7 @@ class MenuController extends Controller
 
 
         if ($validator->fails()) { // Jika validasi gagal
+            Session::flash('modalAdd', 'error');
             toast('Mohon periksa form kembali!', 'error'); // Toast
             return Redirect::back()
                 ->withErrors($validator)
@@ -43,8 +45,27 @@ class MenuController extends Controller
         return Redirect::back();
     }
 
-    public function edit($id){
-        return "Edit";
+    public function update(Request $request, $id){
+        $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
+            'id_kategori' => 'required',
+            'judul' => 'required|unique:menu,judul,'.$id,
+            'order' => 'required',
+            'url' => 'required'
+        ], ['id_kategori.required' => 'kategori wajib diisi.']);
+
+        if ($validator->fails()) { // Jika validasi gagal
+            Session::flash('modalEdit', 'error');
+            toast('Mohon periksa form kembali!', 'error'); // Toast
+            return Redirect::back(); // Return kembali
+        }
+
+        // $menu = Menu::find($id);
+        // $menu->update([
+        //     'id_kategori' => $request->id_kategori,
+        //     'judul' => $request->judul,
+        //     'order' => $request->order,
+        //     'url' => $request->url
+        // ]);
     }
 
     public function delete($id){ // Id pada parameter url
