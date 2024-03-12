@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\SubMenuController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
@@ -32,28 +33,38 @@ Fortify::resetPasswordView(function () { return view('auth.reset-password'); });
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['role:Admin']], function () {
+
         // Pengaturan
         Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
 
         // Menu
-        Route::get('/pengaturan/menu', [MenuController::class, 'index'])->name('pengaturan.menu.index');
-        Route::get('/pengaturan/menu/{id}/edit', [MenuController::class, 'edit'])->name('pengaturan.menu.edit');
-        Route::post('/pengaturan/menu', [MenuController::class, 'store'])->name('pengaturan.menu.store');
-        Route::delete('/pengaturan/menu/{id}', [MenuController::class, 'delete'])->name('pengaturan.menu.delete');
+        Route::controller(MenuController::class)->group(function(){
+            Route::get('/pengaturan/menu','index')->name('pengaturan.menu.index');
+            Route::get('/pengaturan/menu/{id}/edit', 'edit')->name('pengaturan.menu.edit');
+            Route::post('/pengaturan/menu','store')->name('pengaturan.menu.store');
+            Route::delete('/pengaturan/menu/{id}', 'delete')->name('pengaturan.menu.delete');
+        });
+
+        Route::get('/pengaturan/sub-menu', [SubMenuController::class, 'index'])->name('pengaturan.submenu.index');
+        Route::post('/pengaturan/sub-menu', [SubMenuController::class, 'store'])->name('pengaturan.submenu.store');
     });
 
     // Ajax Request
     Route::get('/ajax/menu', [AjaxMenuController::class, 'getMenu'])->name('ajax.getMenu');
+    Route::post('/ajax/menu/edit', [AjaxMenuController::class, 'getMenuEdit'])->name('ajax.getMenuEdit');
+    Route::get('/ajax/sub-menu', [AjaxMenuController::class, 'getSubMenu'])->name('ajax.getSubMenu');
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profile
-    Route::get('/profil', [ProfilController::class, 'index'])->name('profile.index');
-    Route::get('/profil/reset-password', [ProfilController::class, 'indexResetPassword'])->name('profile.indexResetPassword');
-    Route::put('/profil/{id}', [ProfilController::class, 'updateProfil'])->name('profile.updateProfil');
-    Route::put('/profil/{id}/password', [ProfilController::class, 'updatePassword'])->name('profile.updatePassword');
-    Route::put('/profil/{id}/image', [ProfilController::class, 'updateImage'])->name('profile.updateImage');
+    Route::controller(ProfilController::class)->group(function(){
+        Route::get('/profil', 'index')->name('profile.index');
+        Route::get('/profil/reset-password', 'indexResetPassword')->name('profile.indexResetPassword');
+        Route::put('/profil/{id}', 'updateProfil')->name('profile.updateProfil');
+        Route::put('/profil/{id}/password', 'updatePassword')->name('profile.updatePassword');
+        Route::put('/profil/{id}/image', 'updateImage')->name('profile.updateImage');
+    });
 
     // User
     Route::get('/user', [UserController::class, 'index'])->name('user.index');

@@ -13,6 +13,12 @@
                             <i class="bx bx-user me-1"></i> Menu
                         </a>
                     </li>
+                    <li class="nav-item me-3">
+                        {{-- Jika request url adalah url yg di tentukan, set class active --}}
+                        <a class="btn btn-primary" href="{{ route('pengaturan.submenu.index') }}">
+                            <i class="bx bx-user me-1"></i> Sub Menu
+                        </a>
+                    </li>
                 </ul>
 
             </div>

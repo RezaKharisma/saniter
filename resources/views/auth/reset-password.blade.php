@@ -19,11 +19,13 @@
                     <form class="mb-3" action="{{ route('password.update') }}" method="POST">
                         @csrf
 
+                        <input type="hidden" name="token" value="{{ request()->route('token') }}">
+
                         <x-input-text title="Email" name="email" placeholder="Masukkan email" margin="mb-3" />
 
                         <x-input-password title="Password Baru" name="password" placeholder="Masukkan password baru" margin="mb-3" />
 
-                        <x-input-password title="Konfirmasi Password Baru" name="confirmation_password" placeholder="Ketik ulang password" margin="mb-3" />
+                        <x-input-password title="Konfirmasi Password Baru" name="password_confirmation" placeholder="Ketik ulang password" margin="mb-3" />
 
                         {{-- Submit Button --}}
                         <button class="btn btn-primary d-grid w-100">Reset Password</button>
