@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriMenu;
 use App\Models\Menu;
 use App\Models\MenuKategori;
 use App\Models\SubMenu;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class MenuController extends Controller
 {
     public function index(){
-        $kategori = MenuKategori::select('id','nama_kategori')->get(); // Select menu kategori
+        $kategori = KategoriMenu::select('id','nama_kategori')->get(); // Select menu kategori
         return view('pengaturan.menu.index', compact('kategori')); // Passing data ke view
     }
 
@@ -22,7 +23,8 @@ class MenuController extends Controller
             'id_kategori' => 'required',
             'judul' => 'required|unique:menu,judul',
             'order' => 'required',
-            'url' => 'required'
+            'url' => 'required',
+            'icon' => 'required'
         ], ['id_kategori.required' => 'kategori wajib diisi.']);
 
 
@@ -38,7 +40,8 @@ class MenuController extends Controller
             'id_kategori' => $request->id_kategori, // Ambil request sesuai name input
             'judul' => $request->judul,
             'order' => $request->order,
-            'url' => trim($request->url)
+            'url' => trim($request->url),
+            'icon' => trim($request->icon)
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -50,22 +53,29 @@ class MenuController extends Controller
             'id_kategori' => 'required',
             'judul' => 'required|unique:menu,judul,'.$id,
             'order' => 'required',
-            'url' => 'required'
+            'url' => 'required',
+            'icon' => 'required'
         ], ['id_kategori.required' => 'kategori wajib diisi.']);
 
         if ($validator->fails()) { // Jika validasi gagal
             Session::flash('modalEdit', 'error');
             toast('Mohon periksa form kembali!', 'error'); // Toast
-            return Redirect::back(); // Return kembali
+            return Redirect::back()
+                ->withErrors($validator)
+                ->withInput(); // Return kembali
         }
 
-        // $menu = Menu::find($id);
-        // $menu->update([
-        //     'id_kategori' => $request->id_kategori,
-        //     'judul' => $request->judul,
-        //     'order' => $request->order,
-        //     'url' => $request->url
-        // ]);
+        $menu = Menu::find($id);
+        $menu->update([
+            'id_kategori' => $request->id_kategori,
+            'judul' => $request->judul,
+            'order' => $request->order,
+            'url' => trim($request->url),
+            'icon' => trim($request->icon)
+        ]);
+
+        toast('Data berhasil tersimpan!', 'success'); // Toast
+        return Redirect::back(); // Return kembali
     }
 
     public function delete($id){ // Id pada parameter url

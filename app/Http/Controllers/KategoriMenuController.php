@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriMenu;
 use App\Models\Menu;
 use App\Models\SubMenu;
 use Illuminate\Http\Request;
@@ -9,21 +10,17 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
-class SubMenuController extends Controller
+class KategoriMenuController extends Controller
 {
     public function index(){
-        $menu = Menu::select('menu.id', 'menu.judul')->orderBy('id', 'DESC')->get();
-        return view('pengaturan.sub-menu.index', compact('menu'));
+        return view('pengaturan.kategori-menu.index');
     }
 
     public function store(Request $request){
         $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
-            'id_menu' => 'required',
-            'judul' => 'required',
-            'order' => 'required',
-            'url' => 'required'
-        ], ['id_menu.required' => 'menu wajib diisi.']);
-
+            'nama_kategori' => 'required',
+            'order' => 'required'
+        ], ['nama_kategori.required' => 'nama kategori wajib diisi.']);
 
         if ($validator->fails()) { // Jika validasi gagal
             toast('Mohon periksa form kembali!', 'error'); // Toast
@@ -33,11 +30,9 @@ class SubMenuController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
-        SubMenu::create([ // Insert data baru pada database
-            'id_menu' => $request->id_menu, // Ambil request sesuai name input
-            'judul' => $request->judul,
-            'order' => $request->order,
-            'url' => trim($request->url)
+        KategoriMenu::create([ // Insert data baru pada database
+            'nama_kategori' => $request->nama_kategori,
+            'order' => $request->order, // Ambil request sesuai name input
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -46,11 +41,9 @@ class SubMenuController extends Controller
 
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
-            'id_menu' => 'required',
-            'judul' => 'required',
-            'order' => 'required',
-            'url' => 'required'
-        ], ['id_menu.required' => 'menu wajib diisi.']);
+            'nama_kategori' => 'required',
+            'order' => 'required'
+        ], ['nama_kategori.required' => 'nama kategori wajib diisi.']);
 
         if ($validator->fails()) { // Jika validasi gagal
             Session::flash('modalEdit', 'error');
@@ -60,12 +53,10 @@ class SubMenuController extends Controller
                 ->withInput(); // Return kembali
         }
 
-        $menu = SubMenu::find($id); // Cari sub menu berdasarkan ID
+        $menu = KategoriMenu::find($id); // Cari sub menu berdasarkan ID
         $menu->update([
-            'id_menu' => $request->id_menu,
-            'judul' => $request->judul,
+            'nama_kategori' => $request->nama_kategori,
             'order' => $request->order,
-            'url' => trim($request->url),
         ]);
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
@@ -74,10 +65,17 @@ class SubMenuController extends Controller
 
     public function delete($id){ // ID parameter url
 
-        $subMenu = SubMenu::where('id', $id); // Cari sub menu berdasarkan id
+        $kategori = KategoriMenu::find($id); // Cari sub menu berdasarkan id
+
+        if(Menu::where('id_kategori', $id)->get()->count() > 0)
+        {
+            // Redirect kembali
+            toast('Gagal, terdapat relasi data pada menu!', 'error');
+            return Redirect::back();
+        }
 
         // Delete sub menu
-        $subMenu->delete();
+        $kategori->delete();
 
         // Redirect kembali
         toast('Data berhasil terhapus!', 'success');

@@ -10,8 +10,6 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Menu</h4>
 
-    {{ getMenu() }}
-
     <div class="row">
         <div class="col-md-12">
 
@@ -30,8 +28,8 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-2">
                         <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu"><i class="bx bx-plus"></i>Tambah Menu</button>
-                        <a class="btn btn-primary" href="{{ route('pengaturan.submenu.index') }}"><i class="bx bx-plus"></i>Tambah Sub Menu</a>
                     </div>
+
                 </div>
 
                 <div class="card-body">
@@ -43,6 +41,7 @@
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
+                                <th>Icon</th>
                                 <th>Kategori</th>
                                 <th>Aksi</th>
                             </tr>
@@ -50,6 +49,18 @@
                         <tbody>
 
                         </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <th>#</th>
+                                <th>Menu</th>
+                                <th>Judul</th>
+                                <th>Order</th>
+                                <th>Url</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </tfoot>
                     </table>
 
                 </div>
@@ -72,7 +83,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this)"/>
+                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')"/>
 
                         <div class="row">
                             <div class="col">
@@ -80,7 +91,7 @@
                                 {{-- Input Kategori --}}
                                 <div class="mb-3">
                                     <x-partials.label title="Kategori"/>
-                                    <select id="id_kategori" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori()">
+                                    <select id="id_kategori" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'url')">
                                         <option value="" selected disabled>Pilih Kategori...</option>
                                         @foreach ($kategori as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
@@ -94,13 +105,27 @@
 
                                 {{-- Input URL --}}
                                 <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" />
-                                <x-partials.input-desc text="Harap gunakan url sesuai nama kategori." />
+                                <x-partials.input-desc text="Harap gunakan url sesuai nama kategori."/>
 
                             </div>
                         </div>
 
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" style="width: 30%" placeholder="Masukkan order" />
+                        <div class="row mt-3">
+                            <div class="col">
+
+                                {{-- Input Order --}}
+                                <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" />
+
+                            </div>
+                            <div class="col">
+
+                                {{-- Input Icon --}}
+                                <x-input-text title="Icon" name="icon" placeholder="Masukkan icon dari box-icon" />
+                                <div class="form-text mt-0">Icon bisa dilihat disini <a href="https://boxicons.com/" target="_blank">BoxIcon</a></div>
+
+                            </div>
+                        </div>
+
 
                     </div>
                     <div class="modal-footer">
@@ -125,10 +150,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     @csrf
+                    @method('PUT')
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" id="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this)"/>
+                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')"/>
 
                         <div class="row">
                             <div class="col">
@@ -136,7 +162,7 @@
                                 {{-- Input Kategori --}}
                                 <div class="mb-3">
                                     <x-partials.label title="Kategori"/>
-                                    <select id="id_kategoriEdit" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori()">
+                                    <select id="id_kategoriEdit" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'urlEdit')">
                                         <option value="" selected disabled>Pilih Kategori...</option>
                                         @foreach ($kategori as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
@@ -155,8 +181,21 @@
                             </div>
                         </div>
 
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" id="order" style="width: 30%" placeholder="Masukkan order" />
+                        <div class="row mt-3">
+                            <div class="col">
+
+                                {{-- Input Order --}}
+                                <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" />
+
+                            </div>
+                            <div class="col">
+
+                                {{-- Input Icon --}}
+                                <x-input-text title="Icon" name="icon" id="iconEdit" placeholder="Masukkan icon dari box-icon" />
+                                <div class="form-text mt-0">Icon bisa dilihat disini <a href="https://boxicons.com/" target="_blank">BoxIcon</a></div>
+
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -180,29 +219,34 @@
                     serverSide: true,
                     responsive: true,
                     columns: [
-                        { data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul', name: 'judul'},
                         {data: 'order', name: 'order'},
-                        {data: 'url', name: 'url'},
-                        {data: 'nama_kategori', name: 'kategori'},
+                        {data: 'url', name: 'url', orderable: false},
+                        {data: 'icon', name: 'icon', searchable: false, orderable: false},
+                        {data: 'nama_kategori', name: 'nama_kategori'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
+                    ],
+                    rowGroup: {
+                        dataSrc: 'nama_kategori'
+                    },
+                    order : [[5,'asc']]
                 })
 
                 // Jika tombol delete diklik
                 $(document).on("click", "button.confirm-delete", function () {
                     var form = $(this).closest("form");
                     event.preventDefault();
-                    Swal.fire({
+                    Swal.fire({ // SweetAlert
                         title: "Apa kamu yakin?",
-                        text: "Data akan terhapus!",
+                        text: "Data submenu akan ikut terhapus!",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",
                         confirmButtonText: "Yakin",
                         cancelButtonText: "Batal",
                     }).then((result) => {
-                        if (result.isConfirmed) {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
                             form.submit();
                         }
                     });
@@ -213,16 +257,16 @@
             var judul_menu = "";
 
             // Jika kategori di pilih maka otomatis mengisi input field url
-            function selectKategori(){
-                kategori = $('#id_kategori').find(":selected").text().toLowerCase()+'/';
-                $('#url').val(kategori+judul_menu);
+            function selectKategori(e, target){
+                kategori = $(e).find(":selected").text().toLowerCase()+'/';
+                $('#'+target).val(kategori+judul_menu);
             }
 
             // Mengubah inputan judul menjadi bentuk slug (onkeyup)
-            function convertToSlug(e) {
+            function convertToSlug(e, target) {
                 judul_menu = $(e).val();
-                judul_menu = judul_menu.toLowerCase().replace(/ /g, "_").replace(/[^\w-]+/g, "");
-                $("#url").val(kategori+judul_menu)
+                judul_menu = judul_menu.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+                $("#"+target).val(kategori+judul_menu)
             }
 
             // Ketika tombol edit diklik
@@ -244,11 +288,13 @@
                     success: function (response) { // Jika ajax sukses dan memberikan respon
                         var menu = response.data;
                         var url = "{{ route('pengaturan.menu.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', menu.id_kategori );
+                        url = url.replace(':id', menu.id );
+                        $("#formEdit")[0].reset();
                         $('#formEdit').attr('action', url);
-                        $('#judul').val(menu.judul);
+                        $('#judulEdit').val(menu.judul);
                         $('#urlEdit').val(menu.url);
-                        $('#order').val(menu.order);
+                        $('#orderEdit').val(menu.order);
+                        $('#iconEdit').val(menu.icon);
                         $('#id_kategoriEdit option[value='+menu.id_kategori+']').attr('selected','selected');
                     }
                 });

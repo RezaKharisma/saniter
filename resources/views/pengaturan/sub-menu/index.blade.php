@@ -47,6 +47,17 @@
                         <tbody>
 
                         </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <th>#</th>
+                                <th>Menu</th>
+                                <th>Judul</th>
+                                <th>Order</th>
+                                <th>Url</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </tfoot>
                     </table>
 
                 </div>
@@ -55,7 +66,7 @@
         </div>
     </div>
 
-    {{-- Modal Tambah Menu --}}
+    {{-- Modal Tambah SubMenu --}}
     <div class="modal fade" id="modalSubMenu" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
@@ -69,7 +80,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this)" />
+                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" />
 
                         <div class="row">
                             <div class="col">
@@ -110,6 +121,62 @@
         </div>
     </div>
 
+    {{-- Modal Edit SubMenu --}}
+    <div class="modal fade" id="modalSubMenuEdit" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                {{-- Form Tambah Menu --}}
+                <form method="POST" id="formEdit">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCenterTitle">Tambah Sub Menu</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-body">
+                        {{-- Input Judul --}}
+                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" />
+
+                        <div class="row">
+                            <div class="col">
+
+                                {{-- Input Kategori --}}
+                                <div class="mb-3">
+                                    <x-partials.label title="Menu"/>
+                                    <select id="id_menuEdit" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
+                                        <option value="" selected disabled>Pilih Menu...</option>
+                                        @foreach ($menu as $item)
+                                            <option value="{{ $item->id }}">{{ $item->judul }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-partials.error-message class="d-block" name="id_kategori" />
+                                </div>
+
+                            </div>
+                            <div class="col">
+
+                                {{-- Input URL --}}
+                                <x-input-text title="Url" name="url" id="urlEdit" placeholder="Masukkan url menu" :value="old('url')"/>
+
+                            </div>
+                        </div>
+
+                        {{-- Input Order --}}
+                        <x-input-number title="Urutan Order" name="order" id="orderEdit" style="width: 30%" placeholder="Masukkan order" :value="old('order')" />
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+
+                        {{-- Button Submit --}}
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <x-slot name="script">
         <script>
             $(document).ready(function () {
@@ -123,9 +190,13 @@
                         {data: 'judul_menu', name: 'judul_menu'},
                         {data: 'judul', name: 'judul'},
                         {data: 'order', name: 'order'},
-                        {data: 'url', name: 'url'},
+                        {data: 'url', name: 'url', orderable: false,},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
+                    ],
+                    rowGroup: {
+                        dataSrc: 'judul_menu'
+                    },
+                    order : [[1,'asc']]
                 })
 
                 $(document).on("click", "button.confirm-delete", function () {
@@ -147,16 +218,56 @@
                 });
             });
 
-            function convertToSlug(e) {
-                var key = $(e).val().toLowerCase().replace(/ /g, "_").replace(/[^\w-]+/g, "");
-                $("#url").val(key)
+            // Mengubah input ke bentuk slug
+            function convertToSlug(e, targetID) {
+                var key = $(e).val().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+                $("#"+targetID+"").val(key)
             }
+
+            // Ketika tombol edit diklik
+            function editData(e){
+                // Mengatur ajax csrf
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('ajax.getSubMenuEdit') }}",
+                    data: {
+                        id: e.dataset.id // Mengambil id pada event
+                    },
+                    dataType: "json",
+                    success: function (response) { // Jika ajax sukses dan memberikan respon
+                        var menu = response.data;
+                        var url = "{{ route('pengaturan.submenu.update', ':id') }}"; // Action pada form edit
+                        url = url.replace(':id', menu.id );
+                        $("#formEdit")[0].reset();
+                        $('#formEdit').attr('action', url);
+                        $('#judulEdit').val(menu.judul);
+                        $('#urlEdit').val(menu.url);
+                        $('#orderEdit').val(menu.order);
+                        $('#id_menuEdit option[value='+menu.id_menu+']').attr('selected','selected');
+                    }
+                });
+            }
+
         </script>
 
-        @if ($errors->count() > 0)
+        @if (Session::has('modalAdd'))
             <script>
                 $(document).ready(function () {
                     $('#modalSubMenu').modal('show');
+                });
+            </script>
+        @endif
+
+        @if (Session::has('modalEdit'))
+            <script>
+                $(document).ready(function () {
+                    $('#modalSubMenuEdit').modal('show');
                 });
             </script>
         @endif

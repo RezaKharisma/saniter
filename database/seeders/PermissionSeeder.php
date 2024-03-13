@@ -18,9 +18,6 @@ class PermissionSeeder extends Seeder
         $roleAdmin = Role::create(['name' => 'Admin']);
         $roleTeknisi = Role::create(['name' => 'Teknisi']);
         $roleStaff = Role::create(['name' => 'Staff']);
-        $roleRegionalPusat = Role::create(['name' => 'Regional Pusat']);
-        $roleRegionalTimur = Role::create(['name' => 'Regional Timur']);
-        $roleRegionalBarat = Role::create(['name' => 'Regional Barat']);
 
         $view = Permission::create(['name' => 'view']);
         $create = Permission::create(['name' => 'create']);
@@ -30,11 +27,8 @@ class PermissionSeeder extends Seeder
         $roleAdmin->givePermissionTo($view, $create, $update, $delete);
         $roleTeknisi->givePermissionTo($view, $update);
         $roleStaff->givePermissionTo($view, $create, $update);
-        $roleRegionalPusat->givePermissionTo($view, $create, $update);
-        $roleRegionalTimur->givePermissionTo($view, $create, $update);
-        $roleRegionalBarat->givePermissionTo($view, $create, $update);
 
         $user = User::find(1);
-        $user->assignRole(['Admin','Regional Pusat']);
+        $user->assignRole(['Admin']);
     }
 }

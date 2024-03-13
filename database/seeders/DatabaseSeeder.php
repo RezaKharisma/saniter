@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\KategoriMenu;
 use App\Models\Menu;
 use App\Models\MenuKategori;
 use App\Models\Regional;
@@ -26,8 +27,9 @@ class DatabaseSeeder extends Seeder
                 'nama' => $regional[$i]
             ]);
 
-            MenuKategori::create([
-                'nama_kategori' => $kategori[$i]
+            KategoriMenu::create([
+                'nama_kategori' => $kategori[$i],
+                'order' => $i
             ]);
         }
 
@@ -58,24 +60,25 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('teknisi')
         ]);
 
-        for ($i=1; $i <= 100; $i++) {
+        for ($i=1; $i <= 5; $i++) {
             Menu::create([
                 'id_kategori' => rand(1,4),
-                'judul' => fake()->sentence(6),
+                'judul' => fake()->sentence(1),
                 'order' => $i,
-                'url' => 'administrasi\user'
+                'url' => 'administrasi\user',
+                'icon' => 'menu'
             ]);
         }
 
         $this->call(PermissionSeeder::class);
 
         $user = User::find(1);
-        $user->assignRole(['Admin','Regional Pusat']);
+        $user->assignRole(['Admin']);
 
         $user = User::find(2);
-        $user->assignRole(['Staff','Regional Timur']);
+        $user->assignRole(['Staff']);
 
         $user = User::find(3);
-        $user->assignRole(['Teknisi','Regional Barat']);
+        $user->assignRole(['Teknisi']);
     }
 }

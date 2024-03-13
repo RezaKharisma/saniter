@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('menu_kategori', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kategori');
+            $table->integer('order');
             $table->timestamps();
         });
     }
