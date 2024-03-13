@@ -3,29 +3,27 @@
 
 <!-- Striped Rows -->
 <div class="card">
-    <h5 class="card-header">Data Akun Saniter</h5>
+    <h5 class="card-header">Data Regional</h5>
     <div class="card-body">
-        <a href="{{ route('user.create') }}" class="mb-4 btn btn-primary">Tambah User</a>
+        <a href="#" class="mb-4 btn btn-primary">Tambah Regional</a>
         <div class="table-responsive text-nowrap">
             <table class="table table-striped" id="tabel-user">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Regional</th>
-                        <th>Email</th>
-                        {{-- <th>Role</th> --}}
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                    <?php $no = 1; ?>
+                    {{-- <?php $no = 1; ?>
                     @foreach ($users as $key => $u)
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $u->name }}</td>
                         <td>{{ $u->regional_name }}</td>
                         <td>{{ $u->email }}</td>
+                        <td>{{ $u->role_name }}</td>
                         <td>
                             <button
                             type="button"
@@ -35,23 +33,13 @@
                             Detail
                             </button>
 
-                            <a href="{{ route('user.edit', $u->id) }}">
-                                <button
-                                type="button"
-                                class="btn btn-warning btn-sm">
-                                Update
-                                </button>
-                            </a>
-                            
-                            <form method="POST" action="{{ route('user.delete', $u->id) }}" class="d-inline">
-                            @csrf
-                            @method('DELETE')
                             <button
-                            type="submit"
-                            class="btn btn-danger btn-sm">
-                            Hapus
+                            type="button"
+                            class="btn btn-warning btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#">
+                            Update
                             </button>
-                            </form>
                         </td>
 
                         <div class="modal fade" id="detail{{ $key }}" tabindex="-1" aria-hidden="true">
@@ -110,7 +98,7 @@
 
 
                     </tr>
-                    @endforeach
+                    @endforeach --}}
                 </tbody>
             </table>
         </div>

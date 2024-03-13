@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
@@ -47,6 +48,16 @@ Route::group(['middleware' => ['auth']], function () {
         {
             Route::get('user', 'index')->name('user.index');
             Route::get('user/create', 'create')->name('user.create');
+            Route::get('user/{id}/edit', 'edit')->name('user.edit');
+            Route::put('user/{id}', 'update')->name('user.update');
+            Route::post('user/add', 'user_add')->name('user.add');
+            Route::delete('user/delete/{id}','delete')->name('user.delete');
+        });
+
+        // Regional
+        Route::controller(RegionalController::class)->group(function()
+        {
+            Route::get('regional', 'index')->name('regional.index');
         });
     });
 

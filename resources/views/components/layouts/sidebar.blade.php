@@ -30,6 +30,13 @@
             </a>
         </li>
 
+        <li class="menu-item">
+            <a href="{{ route('regional.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                <div data-i18n="Analytics">Regional</div>
+            </a>
+        </li>
+
         {{-- <!-- Layouts -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
