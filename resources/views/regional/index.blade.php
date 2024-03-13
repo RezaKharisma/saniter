@@ -16,14 +16,11 @@
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                    {{-- <?php $no = 1; ?>
-                    @foreach ($users as $key => $u)
+                    <?php $no = 1; ?>
+                    @foreach ($regional as $key => $u)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $u->name }}</td>
-                        <td>{{ $u->regional_name }}</td>
-                        <td>{{ $u->email }}</td>
-                        <td>{{ $u->role_name }}</td>
+                        <td>{{ $u->nama }}</td>
                         <td>
                             <button
                             type="button"
@@ -98,7 +95,7 @@
 
 
                     </tr>
-                    @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
         </div>

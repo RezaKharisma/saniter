@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Regional;
 use Illuminate\Http\Request;
 
 class RegionalController extends Controller
@@ -11,7 +12,10 @@ class RegionalController extends Controller
      */
     public function index()
     {
-        return view('regional/index');
+        $regional = Regional::Select('*')
+            ->get();
+
+        return view('regional/index', compact('regional'));
     }
 
     /**
