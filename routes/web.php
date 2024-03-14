@@ -3,12 +3,13 @@
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\KategoriMenuController;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\Settings\KategoriMenuController;
+use App\Http\Controllers\Settings\MenuController;
+use App\Http\Controllers\Settings\PengaturanController;
 use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SubMenuController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\RoleController;
+use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
@@ -79,14 +80,24 @@ Route::group(['middleware' => ['auth']], function () {
         Route::controller(RoleController::class)->group(function(){
             Route::get('/pengaturan/role', 'index')->name('pengaturan.role.index');
             Route::post('/pengaturan/role','store')->name('pengaturan.role.store');
+            Route::get('/pengaturan/{id}/edit','edit')->name('pengaturan.role.edit');
             Route::put('/pengaturan/role/{id}','update')->name('pengaturan.role.update');
             Route::delete('/pengaturan/role/{id}','delete')->name('pengaturan.role.delete');
+        });
+
+        // Role
+        Route::controller(PermissionController::class)->group(function(){
+            Route::get('/pengaturan/permission', 'index')->name('pengaturan.permission.index');
+            Route::post('/pengaturan/permission','store')->name('pengaturan.permission.store');
+            Route::put('/pengaturan/permission/{id}','update')->name('pengaturan.permission.update');
+            Route::delete('/pengaturan/permission/{id}','delete')->name('pengaturan.permission.delete');
         });
 
         // Ajax Role Request
         Route::controller(AjaxRoleController::class)->group(function(){
             Route::get('/ajax/role','getRole')->name('ajax.getRole');
             Route::post('/ajax/role/edit','getRoleEdit')->name('ajax.getRoleEdit');
+            Route::get('/ajax/permission','getPermission')->name('ajax.getPermission');
         });
     });
 

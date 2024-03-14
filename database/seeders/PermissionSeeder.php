@@ -19,6 +19,10 @@ class PermissionSeeder extends Seeder
         $roleTeknisi = Role::create(['name' => 'Teknisi']);
         $roleStaff = Role::create(['name' => 'Staff']);
 
+        for ($i=0; $i < 100; $i++) {
+            Permission::create(['name' => 'permission'.$i]);
+        }
+
         $view = Permission::create(['name' => 'view']);
         $create = Permission::create(['name' => 'create']);
         $update = Permission::create(['name' => 'update']);

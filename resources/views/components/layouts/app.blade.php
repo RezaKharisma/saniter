@@ -23,6 +23,7 @@
         <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
 
         <style>
             .swal2-container {
@@ -86,6 +87,8 @@
         @include('sweetalert::alert')
 
         <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+
+        <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

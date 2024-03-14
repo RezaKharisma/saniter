@@ -27,7 +27,7 @@
                 <h5 class="card-header">Manajemen Sub Menu</h5>
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalSubMenu"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
+                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalSubMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" />
+                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" value="{{ old('judul') }}"/>
 
                         <div class="row">
                             <div class="col">
@@ -91,7 +91,7 @@
                                     <select id="id_menu" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
                                         <option value="" selected disabled>Pilih Menu...</option>
                                         @foreach ($menu as $item)
-                                            <option value="{{ $item->id }}">{{ $item->judul }}</option>
+                                            <option @if(old('id_menu') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->judul }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message class="d-block" name="id_kategori" />
@@ -101,7 +101,7 @@
                             <div class="col">
 
                                 {{-- Input URL --}}
-                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" :value="old('url')"/>
+                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" :value="old('url')" value="{{ old('url') }}"/>
 
                             </div>
                         </div>
@@ -136,7 +136,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" />
+                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
                         <div class="row">
                             <div class="col">
@@ -147,7 +147,7 @@
                                     <select id="id_menuEdit" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
                                         <option value="" selected disabled>Pilih Menu...</option>
                                         @foreach ($menu as $item)
-                                            <option value="{{ $item->id }}">{{ $item->judul }}</option>
+                                            <option @if(old('id_menu') == $item->id) @endif value="{{ $item->id }}">{{ $item->judul }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message class="d-block" name="id_kategori" />
@@ -226,6 +226,9 @@
 
             // Ketika tombol edit diklik
             function editData(e){
+
+                resetFormValidation()
+
                 // Mengatur ajax csrf
                 $.ajaxSetup({
                     headers: {
@@ -252,6 +255,12 @@
                         $('#id_menuEdit option[value='+menu.id_menu+']').attr('selected','selected');
                     }
                 });
+            }
+
+            // Reset is-invalid form validation
+            function resetFormValidation(){
+                $(".is-invalid").removeClass("is-invalid")
+                $(".invalid-feedback").addClass("d-none")
             }
 
         </script>

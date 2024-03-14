@@ -27,7 +27,7 @@
                 <h5 class="card-header">Manajemen Menu</h5>
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu"><i class="bx bx-plus"></i>Tambah Menu</button>
+                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Menu</button>
                     </div>
 
                 </div>
@@ -83,7 +83,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')"/>
+                        <x-input-text title="Judul" name="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" value="{{ old('judul') }}"/>
 
                         <div class="row">
                             <div class="col">
@@ -94,7 +94,7 @@
                                     <select id="id_kategori" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'url')">
                                         <option value="" selected disabled>Pilih Kategori...</option>
                                         @foreach ($kategori as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                                            <option @if(old('id_kategori') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message class="d-block" name="id_kategori" />
@@ -104,7 +104,7 @@
                             <div class="col">
 
                                 {{-- Input URL --}}
-                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" />
+                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" value="{{ old('url') }}" />
                                 <x-partials.input-desc text="Harap gunakan url sesuai nama kategori."/>
 
                             </div>
@@ -114,13 +114,13 @@
                             <div class="col">
 
                                 {{-- Input Order --}}
-                                <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" />
+                                <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" value="{{ old('order') }}" />
 
                             </div>
                             <div class="col">
 
                                 {{-- Input Icon --}}
-                                <x-input-text title="Icon" name="icon" placeholder="Masukkan icon dari box-icon" />
+                                <x-input-text title="Icon" name="icon" placeholder="Masukkan icon dari box-icon" value="{{ old('icon') }}" />
                                 <div class="form-text mt-0">Icon bisa dilihat disini <a href="https://boxicons.com/" target="_blank">BoxIcon</a></div>
 
                             </div>
@@ -154,7 +154,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')"/>
+                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
                         <div class="row">
                             <div class="col">
@@ -165,7 +165,7 @@
                                     <select id="id_kategoriEdit" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'urlEdit')">
                                         <option value="" selected disabled>Pilih Kategori...</option>
                                         @foreach ($kategori as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                                            <option @if(old('id_kategori') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message class="d-block" name="id_kategori" />
@@ -175,7 +175,7 @@
                             <div class="col">
 
                                 {{-- Input URL --}}
-                                <x-input-text title="Url" name="url" id="urlEdit" placeholder="Masukkan url menu" />
+                                <x-input-text title="Url" name="url" id="urlEdit" placeholder="Masukkan url menu" value="{{ old('url') }}" />
                                 <x-partials.input-desc text="Harap gunakan url sesuai nama kategori." />
 
                             </div>
@@ -185,13 +185,13 @@
                             <div class="col">
 
                                 {{-- Input Order --}}
-                                <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" />
+                                <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" value="{{ old('order') }}"/>
 
                             </div>
                             <div class="col">
 
                                 {{-- Input Icon --}}
-                                <x-input-text title="Icon" name="icon" id="iconEdit" placeholder="Masukkan icon dari box-icon" />
+                                <x-input-text title="Icon" name="icon" id="iconEdit" placeholder="Masukkan icon dari box-icon" value="{{ old('icon') }}" />
                                 <div class="form-text mt-0">Icon bisa dilihat disini <a href="https://boxicons.com/" target="_blank">BoxIcon</a></div>
 
                             </div>
@@ -271,6 +271,9 @@
 
             // Ketika tombol edit diklik
             function editData(e){
+
+                resetFormValidation();
+
                 // Mengatur ajax csrf
                 $.ajaxSetup({
                     headers: {
@@ -298,6 +301,12 @@
                         $('#id_kategoriEdit option[value='+menu.id_kategori+']').attr('selected','selected');
                     }
                 });
+            }
+
+            // Reset is-invalid form validation
+            function resetFormValidation(){
+                $(".is-invalid").removeClass("is-invalid")
+                $(".invalid-feedback").addClass("d-none")
             }
         </script>
 

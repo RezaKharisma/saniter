@@ -1,4 +1,4 @@
-<x-layouts.app title=" Kategori Menu">
+<x-layouts.app title="Permission">
 
     <x-slot name="style">
         <style>
@@ -8,7 +8,7 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Kategori Menu</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Role</h4>
 
     <div class="row">
         <div class="col-md-12">
@@ -24,22 +24,21 @@
             <div class="card mb-4">
 
                 {{-- Update Profile --}}
-                <h5 class="card-header">Manajemen Menu</h5>
+                <h5 class="card-header">Manajemen Permission</h5>
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
                     </div>
 
                 </div>
 
                 <div class="card-body">
 
-                    <table id="kategori-menu-table" class="table table-hover table-sm" width="100%">
+                    <table id="role-table" class="table table-hover table-sm" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nama Kategori</th>
-                                <th>Order</th>
+                                <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -50,8 +49,7 @@
                         <tfoot>
                             <tr>
                                 <th>#</th>
-                                <th>Nama Kategori</th>
-                                <th>Order</th>
+                                <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -63,14 +61,14 @@
         </div>
     </div>
 
-    {{-- Modal Tambah Menu --}}
-    <div class="modal fade" id="modalKategoriMenu" tabindex="-1" aria-modal="true" role="dialog">
+    {{-- Modal Tambah Permission --}}
+    <div class="modal fade" id="modalPermission" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 {{-- Form Tambah Menu --}}
-                <form action="{{ route('pengaturan.kategorimenu.store') }}" method="POST">
+                <form action="{{ route('pengaturan.permission.store') }}" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Tambah Kategori Menu</h5>
+                        <h5 class="modal-title" id="modalCenterTitle">Tambah Permission</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     @csrf
@@ -78,10 +76,17 @@
                     <div class="modal-body">
 
                         {{-- Input Judul --}}
-                        <x-input-text title="Kategori Menu" name="nama_kategori" placeholder="Masukkan kategori menu" margin="mb-3" value="{{ old('nama_kategori') }}"/>
+                        <x-input-text title="Permission" name="name" placeholder="Masukkan permission"/>
+                        <x-partials.input-desc text="Contoh user_index atau user_delete."/>
 
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" value="{{ old('order') }}" />
+                        {{-- Input Permisson --}}
+                        <x-partials.label title="Role" class="mt-3"/>
+                        <select id="choices-multiple-remove-button" name="role[]" placeholder="Pilih role." multiple>
+                            @foreach ($roles as $item)
+                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+
 
                     </div>
                     <div class="modal-footer">
@@ -95,14 +100,14 @@
         </div>
     </div>
 
-    {{-- Modal Edit Menu --}}
-    <div class="modal fade" id="modalKategoriMenuEdit" tabindex="-1" aria-modal="true" role="dialog">
+    {{-- Modal Edit Role --}}
+    <div class="modal fade" id="modalEditRole" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 {{-- Form Tambah Menu --}}
                 <form id="formEdit" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Edit Kategori Menu</h5>
+                        <h5 class="modal-title" id="modalCenterTitle">Edit Role</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     @csrf
@@ -111,10 +116,7 @@
                     <div class="modal-body">
 
                         {{-- Input Judul --}}
-                        <x-input-text title="Kategori" name="nama_kategori" id="nama_kategoriEdit" placeholder="Masukkan kategori menu" margin="mb-3" value="{{ old('nama_kategori') }}"/>
-
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" value="{{ old('order') }}" />
+                        <x-input-text title="Role" name="name" id="nameEdit" placeholder="Masukkan role" margin="mb-3"/>
 
                     </div>
                     <div class="modal-footer">
@@ -132,18 +134,21 @@
         <script>
             $(document).ready(function () {
                 // Datatables
-                $('#kategori-menu-table').DataTable({
-                    ajax: "{{ route('ajax.getKategoriMenu') }}",
+                $('#role-table').DataTable({
+                    ajax: "{{ route('ajax.getPermission') }}",
                     processing: true,
                     serverSide: true,
                     responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
-                        {data: 'nama_kategori', name: 'nama_kategori'},
-                        {data: 'order', name: 'order'},
+                        {data: 'name', name: 'name'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
                     ]
                 })
+
+                var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+                    removeItemButton: true,
+                });
 
                 // Jika tombol delete diklik
                 $(document).on("click", "button.confirm-delete", function () {
@@ -179,19 +184,18 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('ajax.getKategoriMenuEdit') }}",
+                    url: "{{ route('ajax.getRoleEdit') }}",
                     data: {
                         id: e.dataset.id // Mengambil id pada event
                     },
                     dataType: "json",
                     success: function (response) { // Jika ajax sukses dan memberikan respon
-                        var menu = response.data;
-                        var url = "{{ route('pengaturan.kategorimenu.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', menu.id );
+                        var data = response.data;
+                        var url = "{{ route('pengaturan.role.update', ':id') }}"; // Action pada form edit
+                        url = url.replace(':id', data.id );
                         $("#formEdit")[0].reset();
                         $('#formEdit').attr('action', url);
-                        $('#nama_kategoriEdit').val(menu.nama_kategori);
-                        $('#orderEdit').val(menu.order);
+                        $('#nameEdit').val(data.name);
                     }
                 });
             }
@@ -207,7 +211,7 @@
         @if (Session::has('modalAdd'))
         <script>
             $(document).ready(function () {
-                $('#modalKategoriMenu').modal('show');
+                $('#modalPermission').modal('show');
             });
             </script>
         @endif
@@ -216,7 +220,7 @@
         @if (Session::has('modalEdit'))
             <script>
                 $(document).ready(function () {
-                    $('#modalEditKategoriMenu').modal('show')
+                    $('#modalEditRole').modal('show')
                 });
             </script>
         @endif

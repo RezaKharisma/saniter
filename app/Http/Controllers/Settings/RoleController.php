@@ -1,27 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Settings;
 
-use App\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
     public function index(){
-        return view('pengaturan.role.index');
+        $permissions = Permission::select('name')->get();
+        return view('pengaturan.role.index', compact('permissions'));
     }
 
     public function store(Request $request){
-
-        if ($request->IncludeCRUD) {
-            dd("On");
-        }else{
-            dd("Off");
-        }
-
         $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
             'name' => 'required|unique:roles,name',
         ], ['name.required' => 'role wajib diisi.']);
@@ -34,12 +30,21 @@ class RoleController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
-        Role::create([ // Insert data baru pada database
-            'name' => $request->name,
-        ]);
+        $role = Role::create(['name' => $request->name]);
+
+        foreach ($request->permissions as $item) {
+            $permission = Permission::findByName($item);
+            $role->givePermissionTo($permission);
+        }
 
         toast('Data berhasil tersimpan!', 'success');
         return Redirect::back();
+    }
+
+    public function edit($id){
+        $role = Role::with('permissions')->findOrFail($id);
+        $permissions = Permission::select('name')->get();
+        return view('pengaturan.role.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, $id){
@@ -61,6 +66,14 @@ class RoleController extends Controller
         ]);
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
+        return Redirect::back(); // Return kembali
+    }
+
+    public function delete($id){
+        $role = Role::findOrFail($id);
+        $role->delete();
+
+        toast('Data berhasil terhapus!', 'success'); // Toast
         return Redirect::back(); // Return kembali
     }
 }

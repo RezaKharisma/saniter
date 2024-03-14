@@ -27,7 +27,7 @@
                 <h5 class="card-header">Manajemen Role</h5>
                 <div class="card-body">
                     <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalRole"><i class="bx bx-plus"></i>Tambah Role</button>
+                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalRole" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Role</button>
                     </div>
 
                 </div>
@@ -39,6 +39,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Permissions</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -50,6 +51,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
+                                <th>Permissions</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -63,12 +65,12 @@
 
     {{-- Modal Tambah Role --}}
     <div class="modal fade" id="modalRole" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 {{-- Form Tambah Menu --}}
                 <form action="{{ route('pengaturan.role.store') }}" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Tambah Menu</h5>
+                        <h5 class="modal-title" id="modalCenterTitle">Tambah Role</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     @csrf
@@ -78,12 +80,14 @@
                         {{-- Input Judul --}}
                         <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3"/>
 
-                        <div class="form-check mt-3">
-                            <input class="form-check-input" type="checkbox" name="IncludeCRUD">
-                            <label class="form-check-label" for="defaultCheck1">
-                                Otomatis membuat permission (CRUD)
-                            </label>
-                        </div>
+                        {{-- Input Permisson --}}
+                        <x-partials.label title="Permission"/>
+                        <select id="choices-multiple-remove-button" name="permissions[]" placeholder="Pilih hak akses." multiple>
+                            @foreach ($permissions as $item)
+                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+
 
                     </div>
                     <div class="modal-footer">
@@ -99,7 +103,7 @@
 
     {{-- Modal Edit Role --}}
     <div class="modal fade" id="modalEditRole" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 {{-- Form Tambah Menu --}}
                 <form id="formEdit" method="POST">
@@ -114,6 +118,15 @@
 
                         {{-- Input Judul --}}
                         <x-input-text title="Role" name="name" id="nameEdit" placeholder="Masukkan role" margin="mb-3"/>
+
+
+                        {{-- Input Permisson --}}
+                        <x-partials.label title="Permission"/>
+                        <select id="choices-multiple-remove-button" name="permissions[]" placeholder="Pilih hak akses." multiple>
+                            @foreach ($permissions as $item)
+                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
 
                     </div>
                     <div class="modal-footer">
@@ -137,9 +150,16 @@
                     serverSide: true,
                     responsive: true,
                     columns: [
-                        {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
-                        {data: 'name', name: 'name'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
+                        {data: 'DT_RowIndex', searchable: false },
+                        {data: 'name'},
+                        {data: 'permissions', render: function (data, type, row) {
+                            var result = '';
+                            for (let index = 0; index < data.length; index++) {
+                                result = result + data[index].name + ', ';
+                            }
+                            return result;
+                        }},
+                        {data: 'action', orderable: false, searchable: false},
                     ]
                 })
 
@@ -161,10 +181,17 @@
                         }
                     });
                 });
+
+                var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+                    removeItemButton: true,
+                });
             });
 
             // Ketika tombol edit diklik
             function editData(e){
+
+                resetFormValidation()
+
                 // Mengatur ajax csrf
                 $.ajaxSetup({
                     headers: {
@@ -186,8 +213,20 @@
                         $("#formEdit")[0].reset();
                         $('#formEdit').attr('action', url);
                         $('#nameEdit').val(data.name);
+
+                        $('#choices-multiple-remove-button').append('Ayam')
+                        for (let index = 0; index < data.permissions.length; index++) {
+                            $('#choices-multiple-remove-button option[value='+data.permissions[index].name+']').attr('selected','selected');
+                            console.log(data.permissions[index].name);
+                        }
                     }
                 });
+            }
+
+            // Reset is-invalid form validation
+            function resetFormValidation(){
+                $(".is-invalid").removeClass("is-invalid")
+                $(".invalid-feedback").addClass("d-none")
             }
         </script>
 

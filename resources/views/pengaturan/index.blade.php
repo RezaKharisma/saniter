@@ -20,8 +20,20 @@
                         </li>
                         <li class="nav-item me-2">
                             {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                            <a class="btn btn-primary" href="#" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Izin hak akses.</span>">
+                            <a class="btn btn-primary" href="{{ route('pengaturan.permission.index') }}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Tambahkan izin hak akses.</span>">
                                 <i class="bx bx-lock-alt me-1"></i> Permission
+                            </a>
+                        </li>
+                        <li class="nav-item me-2">
+                            {{-- Jika request url adalah url yg di tentukan, set class active --}}
+                            <a class="btn btn-primary" href="#" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Izin hak akses.</span>">
+                                <i class="bx bx-key me-1"></i> Tetapkan Role
+                            </a>
+                        </li>
+                        <li class="nav-item me-2">
+                            {{-- Jika request url adalah url yg di tentukan, set class active --}}
+                            <a class="btn btn-primary" href="#" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Izin hak akses.</span>">
+                                <i class="bx bx-key me-1"></i> Tetapkan Permission Role
                             </a>
                         </li>
                     </ul>
