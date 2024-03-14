@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -13,13 +14,15 @@ use Spatie\Permission\Models\Role;
 class PermissionController extends Controller
 {
     public function index(){
+        $menu = Menu::select('id','judul')->get();
         $roles = Role::select('name')->get();
-        return view('pengaturan.permission.index', compact('roles'));
+        return view('pengaturan.permission.index', compact('roles', 'menu'));
     }
 
     public function store(Request $request){
         $validator = Validator::make($request->all(),[
-            'name' => 'required|unique:permissions,name'
+            'id_menu' => 'required|unique:menu,id_role',
+            'role' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -30,14 +33,34 @@ class PermissionController extends Controller
                 ->withInput();
         }
 
-        $permission = Permission::create(['name' => $request->name]);
+        $menu = Menu::find($request->id_menu);
+        $permission = Permission::create(['name' => $menu->judul]);
 
+        $menu->update([
+            'id_role' => $permission->id
+        ]);
+
+        $newPermission = array();
         foreach ($request->role as $item) {
             $role = Role::findByName($item);
-            $role->givePermissionTo($permission);
+            array_push($newPermission, $role);
         }
+        $permission->syncRoles($newPermission);
 
         toast('Data berhasil tersimpan!', 'success');
         return Redirect::back();
+    }
+
+    public function delete($id){
+        $menu = Menu::where('id_role', $id);
+        $menu->update([
+            'id_role' => null
+        ]);
+
+        $permission = Permission::findOrFail($id);
+        $permission->delete();
+
+        toast('Data berhasil terhapus!', 'success'); // Toast
+        return Redirect::back(); // Return kembali
     }
 }

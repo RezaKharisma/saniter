@@ -51,7 +51,7 @@ class AjaxRoleController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
                     $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditRole' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
-                    $btn = $btn."<form action=".route('pengaturan.menu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                    $btn = $btn."<form action=".route('pengaturan.permission.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
                 ->rawColumns(['action'])

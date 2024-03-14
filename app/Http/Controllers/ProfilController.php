@@ -137,7 +137,7 @@ class ProfilController extends Controller
             Storage::disk('public')->delete($user->path);
         }
         // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-        $image = Storage::disk('public')->put('user-images/', $image);
+        $image = Storage::disk('public')->put('user-images', $image);
         return $image;
     }
 }

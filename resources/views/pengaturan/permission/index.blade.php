@@ -8,7 +8,7 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Role</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Permission</h4>
 
     <div class="row">
         <div class="col-md-12">
@@ -75,48 +75,30 @@
 
                     <div class="modal-body">
 
+                        {{-- Input Menu --}}
+                        <div class="mb-3">
+                            <x-partials.label title="Menu"/>
+                            <select name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
+                                <option value="" selected disabled>Pilih Menu...</option>
+                                @foreach ($menu as $item)
+                                    <option @if(old('id_menu') == $item->id) @endif value="{{ $item->id }}">{{ $item->judul }}</option>
+                                @endforeach
+                            </select>
+                            <x-partials.error-message class="d-block" name="id_menu" />
+                        </div>
+
                         {{-- Input Judul --}}
-                        <x-input-text title="Permission" name="name" placeholder="Masukkan permission"/>
-                        <x-partials.input-desc text="Contoh user_index atau user_delete."/>
+                        {{-- <x-input-text title="Permission" name="name" placeholder="Masukkan permission"/>
+                        <x-partials.input-desc text="Izin pada menu."/> --}}
 
                         {{-- Input Permisson --}}
-                        <x-partials.label title="Role" class="mt-3"/>
+                        <x-partials.label title="Role" />
                         <select id="choices-multiple-remove-button" name="role[]" placeholder="Pilih role." multiple>
                             @foreach ($roles as $item)
                                 <option value="{{ $item->name }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
-
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-
-                        {{-- Button Submit --}}
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Edit Role --}}
-    <div class="modal fade" id="modalEditRole" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                {{-- Form Tambah Menu --}}
-                <form id="formEdit" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Edit Role</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    @csrf
-                    @method('PUT')
-
-                    <div class="modal-body">
-
-                        {{-- Input Judul --}}
-                        <x-input-text title="Role" name="name" id="nameEdit" placeholder="Masukkan role" margin="mb-3"/>
+                        <x-partials.error-message class="d-block" name="role" style="margin-top: -24px" />
 
                     </div>
                     <div class="modal-footer">

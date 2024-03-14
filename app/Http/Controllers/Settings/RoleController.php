@@ -53,20 +53,28 @@ class RoleController extends Controller
         ], ['name.required' => 'role wajib diisi.']);
 
         if ($validator->fails()) { // Jika validasi gagal
-            Session::flash('modalEdit', 'error');
             toast('Mohon periksa form kembali!', 'error'); // Toast
             return Redirect::back()
                 ->withErrors($validator)
                 ->withInput(); // Return kembali
         }
 
-        $menu = Role::find($id); // Cari sub menu berdasarkan ID
-        $menu->update([
+        $role = Role::find($id); // Cari sub menu berdasarkan ID
+        $role->update([
             'name' => $request->name,
         ]);
 
+        $newPermission = array();
+
+        foreach ($request->permissions as $item) {
+            $permission = Permission::findByName($item);
+            array_push($newPermission, $permission);
+        }
+
+        $role->syncPermissions($newPermission);
+
         toast('Data berhasil tersimpan!', 'success'); // Toast
-        return Redirect::back(); // Return kembali
+        return Redirect::route('pengaturan.role.index'); // Return kembali
     }
 
     public function delete($id){
