@@ -72,6 +72,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::controller(RegionalController::class)->group(function()
         {
             Route::get('regional', 'index')->name('regional.index');
+            Route::get('regional/create', 'create')->name('regional.create');
+            Route::post('regional/add', 'regional_add')->name('regional.add');
+            Route::delete('regional/delete/{id}','delete')->name('regional.delete');
+            Route::put('regional/{id}', 'update')->name('regional.update');
         });
 
         // Menu

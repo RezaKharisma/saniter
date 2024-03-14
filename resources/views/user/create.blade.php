@@ -30,16 +30,16 @@
             </div>
           </div>
 
-          {{-- <div class="mb-3">
-            <label for="exampleFormControlSelect1" class="form-label">Kantor Regional</label>
-            <select class="form-select" name="regional_id" id="exampleFormControlSelect1" aria-label="Default select example">
-              <option disabled selected="">Pilih Regional</option>
+          <div class="mb-3">
+            <label for="exampleFormControlSelect1" class="form-label">Regional Kerja</label>
+            <select class="form-select" name="id_regional" id="exampleFormControlSelect1" aria-label="Default select example">
+              <option disabled selected="">Pilih Regional Kerja</option>
               @foreach ($regional as $r)
-                <option value="{{ $r->id }}"> {{ $r->name }}</option>
+                <option value="{{ $r->id }}"> {{ $r->nama }}</option>
               @endforeach
             </select>
           </div>
-
+          {{--
           <div class="mb-3">
             <label for="exampleFormControlSelect1" class="form-label">Jabatan</label>
             <select class="form-select" name="roles_id" id="exampleFormControlSelect1" aria-label="Default select example">
@@ -67,7 +67,6 @@
               {{-- Foto Profile --}}
               <img src="{{ asset('storage/user-images/default.png') }}" alt="user-avatar" class="d-block rounded mt-3 img-fluid" width="120" id="imagePreview" />
             </div>
-            
           </div>
         </div>
 
