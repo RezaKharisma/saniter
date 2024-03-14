@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
+use App\Http\Controllers\RegionalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
@@ -48,6 +49,29 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/pengaturan/kategori-menu','store')->name('pengaturan.kategorimenu.store');
             Route::put('/pengaturan/kategori-menu/{id}','update')->name('pengaturan.kategorimenu.update');
             Route::delete('/pengaturan/kategori-menu/{id}','delete')->name('pengaturan.kategorimenu.delete');
+        });
+
+        // Menu
+        Route::get('/pengaturan/menu', [MenuController::class, 'index'])->name('pengaturan.menu.index');
+        Route::get('/pengaturan/menu/{id}/edit', [MenuController::class, 'edit'])->name('pengaturan.menu.edit');
+        Route::post('/pengaturan/menu', [MenuController::class, 'store'])->name('pengaturan.menu.store');
+        Route::delete('/pengaturan/menu/{id}', [MenuController::class, 'delete'])->name('pengaturan.menu.delete');
+
+        // User
+        Route::controller(UserController::class)->group(function()
+        {
+            Route::get('user', 'index')->name('user.index');
+            Route::get('user/create', 'create')->name('user.create');
+            Route::get('user/{id}/edit', 'edit')->name('user.edit');
+            Route::put('user/{id}', 'update')->name('user.update');
+            Route::post('user/add', 'user_add')->name('user.add');
+            Route::delete('user/delete/{id}','delete')->name('user.delete');
+        });
+
+        // Regional
+        Route::controller(RegionalController::class)->group(function()
+        {
+            Route::get('regional', 'index')->name('regional.index');
         });
 
         // Menu
