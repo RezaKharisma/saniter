@@ -1,5 +1,5 @@
-<x-layouts.app title="Pengaturan">
 {{ $errors }}
+<x-layouts.app title="Pengaturan">
 <h5 class="fw-bold py-3 mb-4">Selamat Datang</h5>
 
 <!-- Striped Rows -->

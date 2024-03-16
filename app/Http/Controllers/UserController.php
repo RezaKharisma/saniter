@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -27,7 +28,10 @@ class UserController extends Controller
     {   
         $regional = Regional::select('*')
             ->get();
-        return view('user.create', compact('regional'));
+
+        $roles = Role::select('*')
+            ->get();
+        return view('user.create', compact('regional','roles'));
     }
 
     public function user_add(Request $request)
@@ -35,8 +39,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'nik' => 'required',
-                'email' => 'required|unique:user,email',
-                'telp' => 'required|unique:user,no_telp',
+                'email' => 'required|unique:users,email',
+                'telp' => 'required|unique:users,telp',
                 'password' => 'required|same:confirm-password',
         ]);
 
@@ -49,15 +53,19 @@ class UserController extends Controller
         }
         
         // dd($request->all());
-        $data = new User;
-        $data->id_regional = $request->id_regional;
-        $data->name = $request->name;
-        $data->email = $request->email;
-        $data->nik = $request->nik;
-        $data->telp = $request->telp;
-        $data->path = $this->imageStore($request->file('path'));
-        $data->password = bcrypt(($request->password));
-        $data->save();
+        $user = User::create([
+            'id_regional' => $request->id_regional,
+            'name' => $request->name,
+            'email' => $request->email,
+            'nik' => $request->nik,
+            'telp' => $request->telp,
+            'path' => $this->imageStore($request->file('path')),
+            'password' => bcrypt(($request->password)),
+        ]);
+
+        $role = Role::findById(($request->id_roles));
+
+        $user->assignRole($role);
 
         toast('Data berhasil tersimpan!', 'success');
         return Redirect()->to('/user'); // Redirect kembali
