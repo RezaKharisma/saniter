@@ -7,6 +7,7 @@ use App\Models\SubMenu;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 if (! function_exists('getRegional')) {
     function getRegional($id)
@@ -38,6 +39,38 @@ if (! function_exists('getSubMenu')) {
             ->orderBy('order', 'ASC')
             ->get();
         return $query;
+    }
+}
+
+if (! function_exists('getCheckedMenu')) {
+    function getCheckedMenu($rolePermission, $judulMenu)
+    {
+        $group = 0;
+        foreach ($rolePermission as $value) {
+            $menu = Menu::select('judul')->find($value->id_menu);
+
+            if ($menu->judul == $judulMenu) {
+                $group += 1;
+            }
+        }
+        return $group;
+    }
+}
+
+if (! function_exists('getCheckedUserMenu')) {
+    function getCheckedUserMenu($userPermissions, $judulMenu = null)
+    {
+        $group = 0;
+        foreach ($userPermissions as $value) {
+            // return $value;
+            $permission = Permission::findByName($value);
+            $menu = Menu::select('judul')->find($permission->id_menu);
+
+            if ($menu->judul == $judulMenu) {
+                $group += 1;
+            }
+        }
+        return $group;
     }
 }
 

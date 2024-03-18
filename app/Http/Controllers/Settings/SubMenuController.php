@@ -22,8 +22,9 @@ class SubMenuController extends Controller
             'id_menu' => 'required',
             'judul' => 'required',
             'order' => 'required',
-            'url' => 'required'
-        ], ['id_menu.required' => 'menu wajib diisi.']);
+            'url' => 'required',
+            'route_name' => 'required|unique:sub_menu,route_name'
+        ], ['id_menu.required' => 'menu wajib diisi.','route_name.required' => 'nama route wajib diisi.','route_name.unique' => 'nama route tidak boleh sama.']);
 
 
         if ($validator->fails()) { // Jika validasi gagal
@@ -38,7 +39,8 @@ class SubMenuController extends Controller
             'id_menu' => $request->id_menu, // Ambil request sesuai name input
             'judul' => $request->judul,
             'order' => $request->order,
-            'url' => trim($request->url)
+            'url' => trim($request->url),
+            'route_name' => $request->route_name
         ]);
 
         toast('Data berhasil tersimpan!', 'success');

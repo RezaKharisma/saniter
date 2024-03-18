@@ -25,14 +25,14 @@
 
                 {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Menu</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Menu</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Menu</button>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="menu-table" class="table table-hover table-sm" width="100%">
                         <thead>
@@ -154,7 +154,7 @@
 
                     <div class="modal-body">
                         {{-- Input Judul --}}
-                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" value="{{ old('judul') }}"/>
+                        <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug2(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
                         <div class="row">
                             <div class="col">
@@ -163,7 +163,7 @@
                                 <div class="mb-3">
                                     <x-partials.label title="Kategori"/>
                                     <select id="id_kategoriEdit" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'urlEdit')">
-                                        <option value="" selected disabled>Pilih Kategori...</option>
+                                        <option value="" disabled>Pilih Kategori...</option>
                                         @foreach ($kategori as $item)
                                             <option @if(old('id_kategori') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
                                         @endforeach
@@ -230,7 +230,13 @@
                     rowGroup: {
                         dataSrc: 'nama_kategori'
                     },
-                    order : [[5,'asc']]
+                    order : [[5,'asc']],
+                    columnDefs: [
+                    {
+                        target: 5,
+                        visible: false,
+                        searchable: false
+                    }]
                 })
 
                 // Jika tombol delete diklik
@@ -266,6 +272,22 @@
             function convertToSlug(e, target) {
                 judul_menu = $(e).val();
                 judul_menu = judul_menu.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+                if ($("#id_kategori").find(":selected").val() == "") {
+                    kategori = "";
+                }else{
+                    kategori = $("#id_kategori").find(":selected").text().toLowerCase()+'/';
+                }
+                $("#"+target).val(kategori+judul_menu)
+            }
+
+            function convertToSlug2(e, target) {
+                judul_menu = $(e).val();
+                judul_menu = judul_menu.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+                if ($("#id_kategoriEdit").find(":selected").val() == "") {
+                    kategori = "";
+                }else{
+                    kategori = $("#id_kategoriEdit").find(":selected").text().toLowerCase()+'/';
+                }
                 $("#"+target).val(kategori+judul_menu)
             }
 

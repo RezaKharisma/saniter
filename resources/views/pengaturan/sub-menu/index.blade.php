@@ -23,15 +23,15 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Sub Menu</h5>
-                <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalSubMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
-                    </div>
-                </div>
 
                 <div class="card-body">
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalSubMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
+                        </div>
+                    </div>
 
                     <table id="sub-menu-table" class="table table-hover table-sm" width="100%">
                         <thead>
@@ -41,6 +41,7 @@
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
+                                <th>Nama Route</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -55,6 +56,7 @@
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
+                                <th>Nama Route</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -85,29 +87,38 @@
                         <div class="row">
                             <div class="col">
 
-                                {{-- Input Kategori --}}
+                                {{-- Input Menu --}}
                                 <div class="mb-3">
                                     <x-partials.label title="Menu"/>
-                                    <select id="id_menu" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
+                                    <select id="id_menu" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror" onchange="setRouteNameVal(this)">
                                         <option value="" selected disabled>Pilih Menu...</option>
                                         @foreach ($menu as $item)
                                             <option @if(old('id_menu') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->judul }}</option>
                                         @endforeach
                                     </select>
-                                    <x-partials.error-message class="d-block" name="id_kategori" />
+                                    <x-partials.error-message class="d-block" name="id_menu" />
                                 </div>
 
                             </div>
                             <div class="col">
 
                                 {{-- Input URL --}}
-                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" :value="old('url')" value="{{ old('url') }}"/>
+                                <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" :value="old('url')" value="{{ old('url') }}" onkeyup="setRouteNameVal2(this)"/>
+                                <x-partials.input-desc text="Pisahkan dengan ( - ). Contoh sub-menu." class="mb-3"/>
 
                             </div>
                         </div>
 
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" style="width: 30%" placeholder="Masukkan order" :value="old('order')" />
+                        <div class="row">
+                            <div class="col">
+                                {{-- Input Order --}}
+                                <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" :value="old('order')" />
+                            </div>
+                            <div class="col">
+                                {{-- Input Route Name --}}
+                                <x-input-text title="Nama Route" id="route_name" name="route_name" placeholder="Masukkan nama route" :value="old('route_name')" readonly/>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -150,7 +161,7 @@
                                             <option @if(old('id_menu') == $item->id) @endif value="{{ $item->id }}">{{ $item->judul }}</option>
                                         @endforeach
                                     </select>
-                                    <x-partials.error-message class="d-block" name="id_kategori" />
+                                    <x-partials.error-message class="d-block" name="id_menuEdit" />
                                 </div>
 
                             </div>
@@ -191,12 +202,19 @@
                         {data: 'judul', name: 'judul'},
                         {data: 'order', name: 'order'},
                         {data: 'url', name: 'url', orderable: false,},
+                        {data: 'route_name', name: 'route_name', orderable: false,},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
                     ],
                     rowGroup: {
                         dataSrc: 'judul_menu'
                     },
-                    order : [[1,'asc']]
+                    order : [[1,'asc']],
+                    columnDefs: [
+                    {
+                        target: 1,
+                        visible: false,
+                        searchable: false
+                    }]
                 })
 
                 $(document).on("click", "button.confirm-delete", function () {
@@ -218,10 +236,25 @@
                 });
             });
 
+            var menuName = "";
+            var urlName = "";
+
             // Mengubah input ke bentuk slug
             function convertToSlug(e, targetID) {
-                var key = $(e).val().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-                $("#"+targetID+"").val(key)
+                urlName = $(e).val().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+                $("#"+targetID+"").val(urlName)
+                $('#route_name').val(menuName+'.'+urlName);
+            }
+
+            // Otomatis route name
+            function setRouteNameVal(e){
+                menuName = $(e).find("option:selected").text().toLowerCase();
+                $('#route_name').val(menuName+'.'+urlName);
+            }
+
+            function setRouteNameVal2(e){
+                urlName = $(e).val();
+                $('#route_name').val(menuName+'.'+urlName);
             }
 
             // Ketika tombol edit diklik

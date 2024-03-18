@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $regional = ['Timur', 'Tengah', 'Barat', 'Pusat'];
-        $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Data'];
+        $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Pengaturan'];
+        $menu = ['User', 'Absen', 'Laporan', 'Dokumen'];
         for ($i=0; $i < count($regional); $i++) {
             Regional::create([
                 'nama' => $regional[$i]
@@ -31,10 +32,18 @@ class DatabaseSeeder extends Seeder
                 'nama_kategori' => $kategori[$i],
                 'order' => $i
             ]);
+
+            Menu::create([
+                'id_kategori' => $i+1,
+                'judul' => $menu[$i],
+                'order' => $i,
+                'url' => strtolower($kategori[$i]."/".$menu[$i]),
+                'icon' => 'menu'
+            ]);
         }
 
         User::create([
-            'id_regional' => 4,
+            'id_regional' => 1,
             'name' => 'Admin Saniter',
             'email' => 'admin@gmail.com',
             'nik' => '5171012103010002',
@@ -43,7 +52,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'id_regional' => 3,
+            'id_regional' => 2,
             'name' => 'Staff Saniter',
             'email' => 'staff@gmail.com',
             'nik' => '5171012103010002',
@@ -52,7 +61,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'id_regional' => 2,
+            'id_regional' => 3,
             'name' => 'Teknisi Saniter',
             'email' => 'teknisi@gmail.com',
             'nik' => '5171012103010002',
@@ -61,13 +70,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         for ($i=1; $i <= 5; $i++) {
-            Menu::create([
-                'id_kategori' => rand(1,4),
-                'judul' => fake()->sentence(1),
-                'order' => $i,
-                'url' => 'administrasi\user',
-                'icon' => 'menu'
-            ]);
+
         }
 
         $this->call(PermissionSeeder::class);

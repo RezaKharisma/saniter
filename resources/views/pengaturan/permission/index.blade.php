@@ -23,21 +23,21 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Permission</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="role-table" class="table table-hover table-sm" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Menu</th>
                                 <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
@@ -49,6 +49,7 @@
                         <tfoot>
                             <tr>
                                 <th>#</th>
+                                <th>Menu</th>
                                 <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
@@ -78,18 +79,24 @@
                         {{-- Input Menu --}}
                         <div class="mb-3">
                             <x-partials.label title="Menu"/>
-                            <select name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
+                            <select name="id_menu" class="form-select @error('id_menu')is-invalid @enderror" id="id_menu">
                                 <option value="" selected disabled>Pilih Menu...</option>
                                 @foreach ($menu as $item)
-                                    <option @if(old('id_menu') == $item->id) @endif value="{{ $item->id }}">{{ $item->judul }}</option>
+                                    <option @if(old('id_menu') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->judul }}</option>
                                 @endforeach
                             </select>
                             <x-partials.error-message class="d-block" name="id_menu" />
                         </div>
 
                         {{-- Input Judul --}}
-                        {{-- <x-input-text title="Permission" name="name" placeholder="Masukkan permission"/>
-                        <x-partials.input-desc text="Izin pada menu."/> --}}
+                        <x-input-text title="Permission" name="name" placeholder="Masukkan permission" id="name"/>
+                        <x-partials.input-desc text="Contoh user_create, user_read, user_update, user_delete." class="mb-3"/>
+
+                        {{-- Input Otomatis CRUD --}}
+                        <div class="form-check mt-3 mb-3">
+                            <input class="form-check-input" type="checkbox" name="otomatis" id="otomatis">
+                            <label class="form-check-label" for="defaultCheck1"> Otomatis permission CRUD. </label>
+                        </div>
 
                         {{-- Input Permisson --}}
                         <x-partials.label title="Role" />
@@ -98,6 +105,7 @@
                                 <option value="{{ $item->name }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
+                        <x-partials.input-desc text="Biarkan kosong jika tidak ingin menambah role." style="margin-top: -20px !important" />
                         <x-partials.error-message class="d-block" name="role" style="margin-top: -24px" />
 
                     </div>
@@ -123,9 +131,20 @@
                     responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'judul', name: 'judul'},
                         {data: 'name', name: 'name'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
+                    ],
+                    rowGroup: {
+                        dataSrc: 'judul'
+                    },
+                    columnDefs: [
+                    {
+                        target: 1,
+                        visible: false,
+                        searchable: false
+                    }
+                ]
                 })
 
                 var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
@@ -152,35 +171,26 @@
                 });
             });
 
-            // Ketika tombol edit diklik
-            function editData(e){
+            var namaPermission = "";
 
-                resetFormValidation()
+            // Jika menu dipilih
+            $('#id_menu').on('change', function(){
+                namaPermission = $(this).find(":selected").text().toLowerCase()+"_";
+                if ($('#otomatis').is(':not(:checked)')) {
+                    $('#name').val($(this).find(":selected").text().toLowerCase()+"_");
+                }
+            })
 
-                // Mengatur ajax csrf
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ajax.getRoleEdit') }}",
-                    data: {
-                        id: e.dataset.id // Mengambil id pada event
-                    },
-                    dataType: "json",
-                    success: function (response) { // Jika ajax sukses dan memberikan respon
-                        var data = response.data;
-                        var url = "{{ route('pengaturan.role.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', data.id );
-                        $("#formEdit")[0].reset();
-                        $('#formEdit').attr('action', url);
-                        $('#nameEdit').val(data.name);
-                    }
-                });
-            }
+            // Jika checkbox berubah
+            $('#otomatis').on('change', function (e) {
+                if (this.checked) { // Apakah ter check
+                    $('#name').attr('readonly', 'readonly'); // Set id name ke readonly
+                    $('#name').val('CRUD');
+                }else{
+                    $('#name').removeAttr('readonly'); // Hapus readonly
+                    $('#name').val(namaPermission);
+                }
+            })
 
             // Reset is-invalid form validation
             function resetFormValidation(){

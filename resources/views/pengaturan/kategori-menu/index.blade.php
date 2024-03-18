@@ -23,16 +23,15 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Menu</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="kategori-menu-table" class="table table-hover table-sm" width="100%">
                         <thead>

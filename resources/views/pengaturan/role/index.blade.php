@@ -23,16 +23,16 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
+                {{-- Update Role --}}
                 <h5 class="card-header">Manajemen Role</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalRole" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Role</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <a href="{{ route('pengaturan.role.create') }}" class="btn btn-secondary me-0"><i class="bx bx-plus"></i>Tambah Role</a>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="role-table" class="table table-hover table-sm" width="100%">
                         <thead>
@@ -80,14 +80,27 @@
                         {{-- Input Judul --}}
                         <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3"/>
 
-                        {{-- Input Permisson --}}
-                        <x-partials.label title="Permission"/>
-                        <select id="choices-multiple-remove-button" name="permissions[]" placeholder="Pilih permission." multiple>
-                            @foreach ($permissions as $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-
+                        <table class="table">
+                            <thead>
+                                <th>Menu</th>
+                                <th>Permissions</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($permissions as $key => $items)
+                                <tr>
+                                    <td>{{ $key }}</td>
+                                    <td>
+                                        @foreach ($items as $item)
+                                        <div class="form-check form-check-inline mt-3">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                                            <label class="form-check-label" for="inlineCheckbox1">{{ $item->name }}</label>
+                                        </div>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
 
                     </div>
                     <div class="modal-footer">
@@ -119,9 +132,9 @@
                                 result = result + ' <span class="badge bg-label-dark">'+ data[index].name +'</span>';
                             }
                             return result;
-                        }},
+                        }, orderable: false, searchable: false},
                         {data: 'action', orderable: false, searchable: false},
-                    ]
+                    ],columnDefs: [{ width: '70%', targets: 2 }]
                 })
 
                 // Jika tombol delete diklik
@@ -141,10 +154,6 @@
                             form.submit();
                         }
                     });
-                });
-
-                var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
-                    removeItemButton: true,
                 });
             });
 

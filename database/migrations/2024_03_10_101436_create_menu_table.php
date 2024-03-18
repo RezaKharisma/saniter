@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('menu', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_kategori');
-            $table->unsignedBigInteger('id_role')->nullable();
             $table->string('judul');
             $table->integer('order');
             $table->string('url');
