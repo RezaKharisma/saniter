@@ -36,6 +36,13 @@
     </head>
 
     <body>
+        @php
+            if (Auth()->user()->is_active != 1) {
+                Auth::logout();
+                Redirect::route('login');
+            }
+        @endphp
+
         <div class="layout-wrapper layout-content-navbar">
             <div class="layout-container">
                 {{-- Sidebar --}}

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\KategoriMenu;
+use App\Models\Lokasi;
 use App\Models\Menu;
 use App\Models\MenuKategori;
 use App\Models\Regional;
@@ -44,36 +45,46 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'regional_id' => 1,
+            'role_id' => 1,
             'name' => 'Admin Saniter',
             'email' => 'admin@gmail.com',
             'nik' => '5171012103010002',
-            'telp' => '081903407890',
+            'telp' => '0819034078903',
             'password' => Hash::make('admin'),
             'is_active' => 1
         ]);
 
         User::create([
             'regional_id' => 2,
+            'role_id' => 2,
             'name' => 'Staff Saniter',
             'email' => 'staff@gmail.com',
             'nik' => '5171012103010002',
-            'telp' => '081903407890',
+            'telp' => '0819034078902',
             'password' => Hash::make('staff'),
             'is_active' => 1
         ]);
 
         User::create([
             'regional_id' => 3,
+            'role_id' => 3,
             'name' => 'Teknisi Saniter',
             'email' => 'teknisi@gmail.com',
             'nik' => '5171012103010002',
-            'telp' => '081903407890',
+            'telp' => '0819034078901',
             'password' => Hash::make('teknisi'),
             'is_active' => 1
         ]);
 
         for ($i=1; $i <= 5; $i++) {
-
+            Lokasi::create([
+                'regional_id' => $i,
+                'nama_bandara' => fake()->country(),
+                'lokasi_proyek' => fake()->address(),
+                'latitude' => rand(100000,500000),
+                'longtitude' => rand(100000,500000),
+                'radius' => rand(10,200)
+            ]);
         }
 
         $this->call(PermissionSeeder::class);

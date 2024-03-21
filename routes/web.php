@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
+use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Settings\KategoriMenuController;
 use App\Http\Controllers\Settings\MenuController;
@@ -63,10 +64,11 @@ Route::group(['middleware' => ['auth']], function () {
         {
             Route::get('user', 'index')->name('user.index');
             Route::get('user/create', 'create')->name('user.create');
+            Route::post('user', 'store')->name('user.store');
             Route::get('user/{id}/edit', 'edit')->name('user.edit');
             Route::put('user/{id}', 'update')->name('user.update');
-            Route::post('user/add', 'user_add')->name('user.add');
-            Route::delete('user/delete/{id}','delete')->name('user.delete');
+            Route::put('user/{id}', 'updateIsActive')->name('user.updateIsActive');
+            Route::delete('user/{id}','delete')->name('user.delete');
         });
 
         // Regional
@@ -136,6 +138,12 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/assign-role','getUser')->name('ajax.getUser');
             Route::post('/ajax/tabel-add-role-user','getTabelRoleUser')->name('ajax.getTabelRoleUser');
         });
+
+        // Ajax User Request
+        Route::controller(AjaxUserController::class)->group(function(){
+            Route::get('/ajax/user','getUser')->name('ajax.getUser');
+            Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail');
+        });
     });
 
     // Dashboard
@@ -149,11 +157,4 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/profil/{id}/password', 'updatePassword')->name('profile.updatePassword');
         Route::put('/profil/{id}/image', 'updateImage')->name('profile.updateImage');
     });
-
-    // User
-    Route::get('/user', [UserController::class, 'index'])->name('user.index');
-    Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
-    Route::post('/user', [UserController::class, 'store'])->name('user.store');
-    Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
-    Route::delete('/user/{id}', [UserController::class, 'delete'])->name('user.delete');
 });

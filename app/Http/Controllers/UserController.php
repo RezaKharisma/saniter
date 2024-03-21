@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lokasi;
 use App\Models\User;
 use App\Models\Regional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
@@ -16,33 +18,52 @@ class UserController extends Controller
     public function index()
     {
         $users = User::select('*', 'users.name','users.id','users.email','regional.nama as regional_name')
-            ->leftjoin('regional', 'regional.id', '=', 'users.id_regional')
+            ->leftjoin('regional', 'regional.id', '=', 'users.regional_id')
             ->get();
 
-        $regional = Regional::select('*')
-            ->get();
-        return view('user.index', compact('users', 'regional'));
+        return view('user.index', compact('users'));
     }
 
     public function create()
     {
-        $regional = Regional::select('*')
+        $lokasi = Lokasi::select('lokasi.id','regional.nama','nama_bandara','lokasi_proyek')
+            ->join('regional','lokasi.regional_id','=','regional.id')
             ->get();
 
-        $roles = Role::select('*')
+        $regional = Regional::select('id','nama')
             ->get();
-        return view('user.create', compact('regional','roles'));
+
+        $roles = Role::select('id','name')
+            ->get();
+
+        return view('user.create', compact('regional','roles','lokasi'));
     }
 
-    public function user_add(Request $request)
+    // Fungsi Simpan Data
+    public function store(Request $request)
     {
+        $messages = [
+            'regional_id.required' => 'regional wajib diisi.',
+            'lokasi_id.required' => 'lokasi wajib diisi.',
+            'role_id.required' => 'role wajib diisi.',
+            'alamat_ktp.required' => 'alamat ktp wajib diisi.',
+            'alamat_dom.required' => 'alamat domisili wajib diisi.',
+            'telp.required' => 'nomor telepon wajib diisi.',
+            'telp.unique' => 'nomor telepon sudah ada sebelumnya.'
+        ];
+
         $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'nik' => 'required',
-                'email' => 'required|unique:users,email',
-                'telp' => 'required|unique:users,telp',
-                'password' => 'required|same:confirm-password',
-        ]);
+            'regional_id' => 'required',
+            'lokasi_id' => 'required',
+            'role_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'nik' => 'required',
+            'alamat_ktp' => 'required',
+            'alamat_dom' => 'required',
+            'telp' => 'required|unique:users,telp',
+            'foto' => 'mimes:png,jpg,jpeg|max:2000',
+        ],$messages);
 
         // Jika validasi gagal
         if ($validator->fails()) {
@@ -54,39 +75,52 @@ class UserController extends Controller
 
         // dd($request->all());
         $user = User::create([
-            'id_regional' => $request->id_regional,
+            'regional_id' => $request->regional_id,
+            'lokasi_id' => $request->lokasi_id,
+            'role_id' => $request->role_id,
             'name' => $request->name,
             'email' => $request->email,
             'nik' => $request->nik,
+            'alamat_ktp' => $request->alamat_ktp,
+            'alamat_dom' => $request->alamat_dom,
             'telp' => $request->telp,
-            'path' => $this->imageStore($request->file('path')),
-            'password' => bcrypt(($request->password)),
+            'foto' => $this->imageStore($request->file('foto')) ?? 'user-images/default.jpg',
+            'password' => bcrypt('qrm123'),
         ]);
 
-        $role = Role::findById(($request->id_roles));
-
+        $role = Role::findById(($request->role_id));
         $user->assignRole($role);
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect()->to('/user'); // Redirect kembali
+        return Redirect::route('user.index'); // Redirect kembali
     }
 
     // Fungsi Update Data
     public function update(Request $request, $id)
     {
         // Mengambil request dari submit form
-        $validator = Validator::make(
-            $request->all(),
-            [
-                // Validasi & ambil semua request
-                'name' => 'required',
-                'nik' => 'required',
-                'email' => 'required|unique:users,email,'.$id,
-                'telp' => 'required|unique:users,telp,'.$id,
-                'path' => 'required',
-                'id_regional' => 'required',
-            ]
-        );
+        $messages = [
+            'regional_id.required' => 'regional wajib diisi.',
+            'lokasi_id.required' => 'lokasi wajib diisi.',
+            'role_id.required' => 'role wajib diisi.',
+            'alamat_ktp.required' => 'alamat ktp wajib diisi.',
+            'alamat_dom.required' => 'alamat domisili wajib diisi.',
+            'telp.required' => 'nomor telepon wajib diisi.',
+            'telp.unique' => 'nomor telepon sudah ada sebelumnya.',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'regional_id' => 'required',
+            'lokasi_id' => 'required',
+            'role_id' => 'required',
+            'name' => 'required',
+            'email' => 'required|unique:users,email,'.$id,
+            'nik' => 'required',
+            'alamat_ktp' => 'required',
+            'alamat_dom' => 'required',
+            'telp' => 'required|unique:users,telp,'.$id,
+            'foto' => 'mimes:png,jpg,jpeg|max:2000',
+        ],$messages);
 
         // Jika validasi gagal
         if ($validator->fails()) {
@@ -96,26 +130,44 @@ class UserController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
-        $users = User::find($id); // Where user = $id
+        $user = User::find($id); // Where user = $id
         $data = [
-            'id_regional' => $request->id_regional,
+            'regional_id' => $request->regional_id,
+            'lokasi_id' => $request->lokasi_id,
+            'role_id' => $request->role_id,
             'name' => $request->name,
             'email' => $request->email,
             'nik' => $request->nik,
+            'alamat_ktp' => $request->alamat_ktp,
+            'alamat_dom' => $request->alamat_dom,
             'telp' => $request->telp,
-            'path' => $this->imageStore($request->file('path')),
+            'foto' => $this->imageStore($request->file('foto'), $user) ?? 'user-images/default.jpg',
         ];
-        // dd($users);
-        $users->update($data); // Update data
+
+        $role = Role::findById(($request->role_id));
+        $user->syncRoles($role);
+        $user->update($data);
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect::back(); // Redirect kembali
+        return Redirect::route('user.index'); // Redirect kembali
     }
 
-    // Fungsi Simpan Data
-    public function store(Request $request)
+    public function updateIsActive(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $data = [
+            'is_active' => $user->is_active == 1 ? 0 : 1 // Jika value 1 maka ubah ke 0, dan sebaliknya
+        ];
+
+        if ($user->update($data)) {
+            if (Auth()->user()->is_active != 1) {
+                Auth::logout();
+                return Redirect::route('login');
+            }else{
+                toast('Data berhasil tersimpan!', 'success');
+                return Redirect::route('user.index');
+            }
+        }
     }
 
     // Fungsi View Edit Data
@@ -123,7 +175,17 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        return view('user.edit', compact('user'));
+        $lokasi = Lokasi::select('lokasi.id','regional.nama','nama_bandara','lokasi_proyek')
+            ->join('regional','lokasi.regional_id','=','regional.id')
+            ->get();
+
+        $regional = Regional::select('id','nama')
+            ->get();
+
+        $roles = Role::select('id','name')
+            ->get();
+
+        return view('user.edit', compact('user','lokasi','regional','roles'));
     }
 
     // Fungsi Delete Data
@@ -138,10 +200,19 @@ class UserController extends Controller
     }
 
     // Fungsi simpan data ke folder
-    private function imageStore($image)
+    private function imageStore($image, $user = null)
     {
-        // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-        $image = Storage::disk('public')->put('user-images', $image);
-        return $image;
+        // Delete jika foto bukan default.jpg
+        if (!empty($user)) {
+            if ($user->foto != 'user-images/default.jpg') {
+                Storage::disk('public')->delete($user->foto);
+            }
+        }
+
+        if (!empty($image)) {
+            // Masukkan ke folder user-images dengan nama random dan extensi saat upload
+            $image = Storage::disk('public')->put('user-images', $image);
+            return $image;
+        }
     }
 }

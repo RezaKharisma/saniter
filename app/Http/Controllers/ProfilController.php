@@ -133,8 +133,8 @@ class ProfilController extends Controller
     private function imageStore($image, $user)
     {
         // Delete jika foto bukan default.jpg
-        if ($user->path != 'user-images/default.jpg') {
-            Storage::disk('public')->delete($user->path);
+        if ($user->foto != 'user-images/default.jpg') {
+            Storage::disk('public')->delete($user->foto);
         }
         // Masukkan ke folder user-images dengan nama random dan extensi saat upload
         $image = Storage::disk('public')->put('user-images', $image);
