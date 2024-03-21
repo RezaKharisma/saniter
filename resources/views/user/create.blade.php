@@ -1,4 +1,6 @@
+
 <x-layouts.app title="Pengaturan">
+{{ $errors }}
 <div class="card mb-12">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Form User Baru</h5>
@@ -30,25 +32,25 @@
             </div>
           </div>
 
-          {{-- <div class="mb-3">
-            <label for="exampleFormControlSelect1" class="form-label">Kantor Regional</label>
-            <select class="form-select" name="regional_id" id="exampleFormControlSelect1" aria-label="Default select example">
-              <option disabled selected="">Pilih Regional</option>
+          <div class="mb-3">
+            <label for="exampleFormControlSelect1" class="form-label">Regional Kerja</label>
+            <select class="form-select" name="id_regional" id="exampleFormControlSelect1" aria-label="Default select example">
+              <option disabled selected="">Pilih Regional Kerja</option>
               @foreach ($regional as $r)
-                <option value="{{ $r->id }}"> {{ $r->name }}</option>
+                <option value="{{ $r->id }}"> {{ $r->nama }}</option>
               @endforeach
             </select>
           </div>
-
+          
           <div class="mb-3">
             <label for="exampleFormControlSelect1" class="form-label">Jabatan</label>
-            <select class="form-select" name="roles_id" id="exampleFormControlSelect1" aria-label="Default select example">
+            <select class="form-select" name="id_roles" id="exampleFormControlSelect1" aria-label="Default select example">
               <option disabled selected="">Pilih Jabatan</option>
-              @foreach ($role as $rl)
+              @foreach ($roles as $rl)
                 <option value="{{ $rl->id }}"> {{ $rl->name }}</option>
               @endforeach
             </select>
-          </div> --}}
+          </div>
 
         <div class="mb-3">
           <label class="form-label" for="basic-icon-default-phone">Phone No</label>
@@ -67,7 +69,6 @@
               {{-- Foto Profile --}}
               <img src="{{ asset('storage/user-images/default.png') }}" alt="user-avatar" class="d-block rounded mt-3 img-fluid" width="120" id="imagePreview" />
             </div>
-            
           </div>
         </div>
 
@@ -84,7 +85,7 @@
             <label class="form-label" for="basic-icon-default-phone">Confirm Password</label>
             <div class="input-group input-group-merge">
               <span id="basic-icon-default-phone2" class="input-group-text"><i class="bx bx-key"></i></span>
-              <input type="password" name="confirmpassword" id="basic-icon-default-confirm-password" class="form-control confirm-password">
+              <input type="password" name="confirm-password" id="basic-icon-default-confirm-password" class="form-control confirm-password">
             </div>
           </div>
         <button type="submit" class="btn btn-primary">Submit</button>

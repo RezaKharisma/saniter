@@ -5,7 +5,7 @@
 <div class="card">
     <h5 class="card-header">Data Regional</h5>
     <div class="card-body">
-        <a href="#" class="mb-4 btn btn-primary">Tambah Regional</a>
+        <a href="{{ route('regional.create') }}" class="mb-4 btn btn-primary">Tambah Regional</a>
         <div class="table-responsive text-nowrap">
             <table class="table table-striped" id="tabel-user">
                 <thead>
@@ -22,76 +22,57 @@
                         <td>{{ $no++ }}</td>
                         <td>{{ $u->nama }}</td>
                         <td>
-                            <button
-                            type="button"
-                            class="btn btn-info btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#detail{{ $key }}">
-                            Detail
-                            </button>
 
                             <button
                             type="button"
                             class="btn btn-warning btn-sm"
                             data-bs-toggle="modal"
-                            data-bs-target="#">
+                            data-bs-target="#update{{ $key }}">
                             Update
                             </button>
+
+                            <form method="POST" action="{{ route('regional.delete', $u->id) }}" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button
+                            type="submit"
+                            class="btn btn-danger btn-sm">
+                            Hapus
+                            </button>
+                            </form>
                         </td>
 
-                        <div class="modal fade" id="detail{{ $key }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel1">Modal title</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">Name</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->name }}" readonly/>
-                                            </div>
+                        
+                            <div class="modal fade" id="update{{ $key }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                    <form method="POST" action="{{ route('regional.update', $u->id) }}" class="d-inline">
+                                    @csrf
+                                    @method('PUT')
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel1">Detail Nama Regional</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">E-mail</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->email }}" readonly/>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col mb-3">
+                                                    <label for="nameBasic" class="form-label">Nama Regional</label>
+                                                    <input type="text" name="nama" class="form-control" value="{{ $u->nama }}" />
+                                                </div>
                                             </div>
+                                            
                                         </div>
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">NIK</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->nik }}" readonly/>
-                                            </div>
+                                        <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
                                         </div>
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">Telepon</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->telp }}" readonly/>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">Regional</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->regional_name }}" readonly/>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mb-3">
-                                                <label for="nameBasic" class="form-label">Jabatan</label>
-                                                <input type="text" id="nameBasic" class="form-control" value="{{ $u->role_name }}" readonly/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                            Close
-                                        </button>
+                                    </form>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        
 
 
                     </tr>
