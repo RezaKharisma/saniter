@@ -50,7 +50,7 @@ class FortifyServiceProvider extends ServiceProvider
             $user = User::where('email', $request->email)->first();
 
             if ($user && Hash::check($request->password, $user->password)) {
-                if ($user->active == false) {
+                if ($user->is_active == false) {
                     throw ValidationException::withMessages(['email' => 'Saat ini akun anda tidak aktif. Hubungi administrator situs untuk mengaktifkannya.']);
                 }
                 return $user;

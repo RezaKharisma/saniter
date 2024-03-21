@@ -93,7 +93,7 @@
                             {{-- Input Jabatan --}}
                             <div class="mb-3 col-md-6">
                                 <x-partials.label title="Jabatan" />
-                                <x-partials.input-text name="role" :value="$user->getRoleNames()" readonly />
+                                <x-partials.input-text name="role" :value="$user->getRoleNames()[0]" readonly />
                             </div>
                         </div>
 

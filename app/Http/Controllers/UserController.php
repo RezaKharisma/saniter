@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::select('users.name','users.id','users.email','regional.nama as regional_name')
-            ->leftjoin('regional', 'regional.id', '=', 'users.id_regional')
+            ->join('regional', 'regional.id', '=', 'users.regional_id')
             ->get();
         return view('user.index', compact('users'));
     }
@@ -32,7 +32,7 @@ class UserController extends Controller
                 'telp' => 'required|unique:user,no_telp',
                 'password' => 'required|same:confirm-password',
         ]);
-        
+
         // dd($request->all());
         $data = new User;
         $data->id_regional = '1';

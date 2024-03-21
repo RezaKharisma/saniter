@@ -13,16 +13,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_regional');
+            $table->unsignedBigInteger('regional_id');
+            $table->unsignedBigInteger('lokasi_id');
+            $table->unsignedBigInteger('role_id');
             $table->string('name');
-            $table->string('nik');
-            $table->string('telp');
-            $table->boolean('active')->default(true);
-            $table->string('path')->default('user-images/default.jpg');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('nik');
+            $table->text('alamat_ktp');
+            $table->text('alamat_dom');
+            $table->string('telp');
+            $table->string('foto')->default('user-images/default.jpg');
             $table->string('password');
-            $table->rememberToken();
+            $table->string('ttd')->default('user-ttd/default.jpg');
+            $table->boolean('is_active')->default(true);
+            $table->enum('status', ['?','??']);
             $table->timestamps();
             $table->softDeletes();
         });

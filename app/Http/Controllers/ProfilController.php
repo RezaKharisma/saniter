@@ -15,7 +15,7 @@ class ProfilController extends Controller
 {
     public function index()
     {
-        $user = User::join('regional', 'users.id_regional', '=', 'regional.id')
+        $user = User::join('regional', 'users.regional_id', '=', 'regional.id')
             ->where('users.id', auth()->user()->id)
             ->select('users.*', 'regional.nama AS namaRegional')
             ->first(); // Select row table user, join (regional)

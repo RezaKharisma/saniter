@@ -43,30 +43,33 @@ class DatabaseSeeder extends Seeder
         }
 
         User::create([
-            'id_regional' => 1,
+            'regional_id' => 1,
             'name' => 'Admin Saniter',
             'email' => 'admin@gmail.com',
             'nik' => '5171012103010002',
             'telp' => '081903407890',
-            'password' => Hash::make('admin')
+            'password' => Hash::make('admin'),
+            'is_active' => 1
         ]);
 
         User::create([
-            'id_regional' => 2,
+            'regional_id' => 2,
             'name' => 'Staff Saniter',
             'email' => 'staff@gmail.com',
             'nik' => '5171012103010002',
             'telp' => '081903407890',
-            'password' => Hash::make('staff')
+            'password' => Hash::make('staff'),
+            'is_active' => 1
         ]);
 
         User::create([
-            'id_regional' => 3,
+            'regional_id' => 3,
             'name' => 'Teknisi Saniter',
             'email' => 'teknisi@gmail.com',
             'nik' => '5171012103010002',
             'telp' => '081903407890',
-            'password' => Hash::make('teknisi')
+            'password' => Hash::make('teknisi'),
+            'is_active' => 1
         ]);
 
         for ($i=1; $i <= 5; $i++) {

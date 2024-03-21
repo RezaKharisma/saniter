@@ -15,7 +15,7 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <li class="nav-item lh-1 me-3">
-                <span class="badge bg-secondary">Regional {{ getRegional(auth()->user()->id_regional) }}</span> {{-- Get regional dari helper --}}
+                <span class="badge bg-secondary">Regional {{ getRegional(auth()->user()->regional_id) }}</span> {{-- Get regional dari helper --}}
             </li>
 
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
