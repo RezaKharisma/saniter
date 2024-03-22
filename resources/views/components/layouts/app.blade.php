@@ -38,6 +38,7 @@
     <body>
         @php
             if (Auth()->user()->is_active != 1) {
+                toast('Terjadi kesalahan!','error');
                 Auth::logout();
                 Redirect::route('login');
             }

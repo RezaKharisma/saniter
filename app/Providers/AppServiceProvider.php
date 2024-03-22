@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // if (auth()->user()->is_active != 1 ) {
+        //     toast('Terjadi kesalahan!','error');
+        //     auth()->logout();
+        //     redirect()->route('login');
+        // }
     }
 }

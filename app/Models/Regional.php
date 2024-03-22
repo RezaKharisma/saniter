@@ -11,9 +11,4 @@ class Regional extends Model
 
     protected $table = 'regional';
     protected $guarded = ['id'];
-
-    public function user()
-    {
-        return $this->hasMany(User::class);
-    }
 }

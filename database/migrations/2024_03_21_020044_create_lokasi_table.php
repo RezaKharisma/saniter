@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nama_bandara');
             $table->string('lokasi_proyek');
             $table->string('latitude');
-            $table->string('longtitude');
+            $table->string('longitude');
             $table->integer('radius');
             $table->timestamps();
         });

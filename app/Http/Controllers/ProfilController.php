@@ -15,9 +15,11 @@ class ProfilController extends Controller
 {
     public function index()
     {
-        $user = User::join('regional', 'users.regional_id', '=', 'regional.id')
+        $user = User::select('users.*', 'regional.nama AS namaRegional','lokasi.nama_bandara as bandara','lokasi.lokasi_proyek as lokasi','roles.name as role_name')
+            ->join('regional', 'users.regional_id', '=', 'regional.id')
+            ->join('lokasi', 'users.lokasi_id', '=', 'lokasi.id')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
             ->where('users.id', auth()->user()->id)
-            ->select('users.*', 'regional.nama AS namaRegional')
             ->first(); // Select row table user, join (regional)
         return view('profil.index', compact('user')); // Kirim data compact sesuai variable
     }
@@ -38,10 +40,12 @@ class ProfilController extends Controller
                 // Validasi & ambil semua request
                 'name' => 'required', // Required == diperlukan
                 'email' => 'required|unique:users,email,' . $id, // Unique email selain id sendiri
-                'telp' => 'required',
                 'nik' => 'required',
+                'alamat_ktp' => 'required',
+                'alamat_dom' => 'required',
+                'telp' => 'required|unique:users,telp,'.$id,
             ],
-            ['telp.required' => 'Nomor Telepon wajib diisi.']
+            ['telp.required' => 'nomor telepon wajib diisi.']
         ); // Custom error message
 
         // Jika validasi gagal
@@ -58,6 +62,8 @@ class ProfilController extends Controller
             'email' => $request->email,
             'telp' => $request->telp,
             'nik' => $request->nik,
+            'alamat_ktp' => $request->alamat_ktp,
+            'alamat_dom' => $request->alamat_dom,
         ];
         $user->update($data); // Update data
         toast('Data berhasil tersimpan!', 'success');
@@ -121,7 +127,36 @@ class ProfilController extends Controller
             $user = User::find($id); // Cari tabel user berdasarkan id
             $user->update([
                 // Update data
-                'path' => $this->imageStore($request->file('foto'), $user), // Pemanggilan fungsi imageStore
+                'foto' => $this->imageStore($request->file('foto'), $user), // Pemanggilan fungsi imageStore
+            ]);
+            toast('Foto berhasil diperbarui!', 'success');
+            return Redirect::back();
+        }
+        return Redirect::back();
+    }
+
+    // Update Image
+    public function updateTtd(Request $request, $id)
+    {
+        if ($request->file('ttd')) {
+            // Jika ada file
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'ttd' => 'required|mimes:png,jpg,jpeg|max:2000',
+                ],
+                ['ttd.max' => 'tanda tangan maksimal berukuran 2 MB.']
+            );
+
+            if ($validator->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()->withErrors($validator);
+            }
+
+            $user = User::find($id); // Cari tabel user berdasarkan id
+            $user->update([
+                // Update data
+                'ttd' => $this->ttdStore($request->file('ttd'), $user), // Pemanggilan fungsi imageStore
             ]);
             toast('Foto berhasil diperbarui!', 'success');
             return Redirect::back();
@@ -139,5 +174,22 @@ class ProfilController extends Controller
         // Masukkan ke folder user-images dengan nama random dan extensi saat upload
         $image = Storage::disk('public')->put('user-images', $image);
         return $image;
+    }
+
+    // Fungsi simpan data ke folder
+    private function ttdStore($image, $user = null)
+    {
+        // Delete jika foto bukan default.jpg
+        if (!empty($user)) {
+            if ($user->ttd != 'user-ttd/default.jpg') {
+                Storage::disk('public')->delete($user->ttd);
+            }
+        }
+
+        if (!empty($image)) {
+            // Masukkan ke folder user-images dengan nama random dan extensi saat upload
+            $image = Storage::disk('public')->put('user-ttd', $image);
+            return $image;
+        }
     }
 }

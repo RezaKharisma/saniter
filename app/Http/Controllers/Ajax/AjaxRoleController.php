@@ -48,14 +48,14 @@ class AjaxRoleController extends Controller
         if ($request->ajax()) {
 
             // Query permissions join menu
-            $permissions = Permission::select('name','menu.judul','menu.id')->join('menu','permissions.id_menu','=','menu.id')->orderBy('id', 'DESC')->get();
+            $permissions = Permission::select('permissions.id as permissions_id','name','menu.judul','menu.id')->join('menu','permissions.id_menu','=','menu.id')->orderBy('permissions_id', 'DESC')->get();
 
             // Return datatables
             return DataTables::of($permissions)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.permission.edit', $row->id)."'>Info</a>";
-                    $btn = $btn."<form action=".route('pengaturan.permission.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.permission.edit', $row->permissions_id)."'>Info</a>";
+                    $btn = $btn."<form action=".route('pengaturan.permission.delete', $row->permissions_id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
                 ->rawColumns(['action'])

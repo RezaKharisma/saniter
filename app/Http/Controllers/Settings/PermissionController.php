@@ -92,7 +92,11 @@ class PermissionController extends Controller
         $menu = Menu::find($request->id_menu); // Cari menu dengan id
 
         // Simpan array dengan nama dari menu dicombine string _create, _read, dan seterusnya
-        $permissionName = [strtolower($menu->judul).'_create',strtolower($menu->judul).'_read',strtolower($menu->judul).'_update',strtolower($menu->judul).'_delete'];
+        if (isset($request->customCRUD)) {
+            $permissionName = [strtolower($request->customCRUD).'_create',strtolower($request->customCRUD).'_read',strtolower($request->customCRUD).'_update',strtolower($request->customCRUD).'_delete'];
+        }else{
+            $permissionName = [strtolower($menu->judul).'_create',strtolower($menu->judul).'_read',strtolower($menu->judul).'_update',strtolower($menu->judul).'_delete'];
+        }
 
         // Jika request dengan name otomatis mempunyai value on dan request name mempunyai value CRUD
         if ($request->otomatis === "on" && $request->name == "CRUD") {

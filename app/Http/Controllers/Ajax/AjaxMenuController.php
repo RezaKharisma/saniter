@@ -21,7 +21,7 @@ class AjaxMenuController extends Controller
             // Query menu join kategori
             $menu = Menu::join('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
                 ->select('menu.*','menu_kategori.nama_kategori')
-                ->orderBy('menu.id', 'DESC')
+                ->orderBy('menu.order', 'ASC')
                 ->get();
 
             // Return datatables
@@ -31,7 +31,7 @@ class AjaxMenuController extends Controller
                     return "<i class='menu-icon tf-icons bx bx-".$menu->icon."'></i> ".$menu->icon;
                 })
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditMenu' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditMenu' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.menu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
@@ -66,7 +66,7 @@ class AjaxMenuController extends Controller
             return DataTables::of($menu)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalSubMenuEdit' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalSubMenuEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.submenu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
@@ -97,7 +97,7 @@ class AjaxMenuController extends Controller
             return DataTables::of($menu)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalKategoriMenuEdit' class='btn btn-primary btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalKategoriMenuEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.kategorimenu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })

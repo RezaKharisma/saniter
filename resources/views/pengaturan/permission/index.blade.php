@@ -93,10 +93,18 @@
                         <x-partials.input-desc text="Contoh user_create, user_read, user_update, user_delete." class="mb-3"/>
 
                         {{-- Input Otomatis CRUD --}}
-                        <div class="form-check mt-3 mb-3">
-                            <input class="form-check-input" type="checkbox" name="otomatis" id="otomatis">
-                            <label class="form-check-label" for="defaultCheck1"> Otomatis permission CRUD. </label>
+                        <div class="div">
+                            <div class="form-check form-check-inline mb-3">
+                                <input class="form-check-input" type="checkbox" name="otomatis" id="otomatis">
+                                <label class="form-check-label" for="defaultCheck1"> Otomatis permission CRUD. </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="custom" id="custom" disabled >
+                                <label class="form-check-label" for="defaultCheck1"> Custom nama CRUD. </label>
+                            </div>
                         </div>
+
+                        <div id="customCRUD"></div>
 
                         {{-- Input Permisson --}}
                         <x-partials.label title="Role" />
@@ -186,9 +194,20 @@
                 if (this.checked) { // Apakah ter check
                     $('#name').attr('readonly', 'readonly'); // Set id name ke readonly
                     $('#name').val('CRUD');
+                    $('#custom').prop('disabled', false);
                 }else{
                     $('#name').removeAttr('readonly'); // Hapus readonly
                     $('#name').val(namaPermission);
+                    $('#custom').prop('disabled', true);
+                }
+            })
+
+            // Jika checkbox berubah
+            $('#custom').on('change', function (e) {
+                if (this.checked) { // Apakah ter check
+                    $('#customCRUD').html("<label class='form-label mt-3'>Custom Nama CRUD</label><input name='customCRUD' type='text' class='form-control' placeholder='Custom jika terdapat sub-menu di menu tersebut. Input tanpa underscore ( _ ).' /><div class='form-text mb-3'>Contoh user menginput proyek, akan menjadi proyek_create, proyek_read, proyek_update, proyek_delete. </div>");
+                }else{
+                    $('#customCRUD').html("");
                 }
             })
 

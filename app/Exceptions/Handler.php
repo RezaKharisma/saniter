@@ -23,8 +23,9 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            toast('Oopss, anda tidak memiliki akses!', 'warning');
+            return redirect()->route('dashboard');
         });
     }
 }

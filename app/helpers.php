@@ -23,6 +23,7 @@ if (! function_exists('getMenu')) {
         $query = Menu::select('menu.*', 'menu_kategori.nama_kategori')
         ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
         ->orderBy('menu_kategori.order', 'ASC')
+        ->orderBy('menu.order', 'ASC')
         ->get();
 
         return $query->groupBy(function ($item, $key) {

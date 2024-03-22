@@ -34,18 +34,19 @@ class DatabaseSeeder extends Seeder
                 'order' => $i
             ]);
 
-            Menu::create([
-                'id_kategori' => $i+1,
-                'judul' => $menu[$i],
-                'order' => $i,
-                'url' => strtolower($kategori[$i]."/".$menu[$i]),
-                'icon' => 'menu'
-            ]);
+            // Menu::create([
+            //     'id_kategori' => $i+1,
+            //     'judul' => $menu[$i],
+            //     'order' => $i,
+            //     'url' => strtolower($kategori[$i]."/".$menu[$i]),
+            //     'icon' => 'menu'
+            // ]);
         }
 
         User::create([
             'regional_id' => 1,
             'role_id' => 1,
+            'lokasi_id' => 1,
             'name' => 'Admin Saniter',
             'email' => 'admin@gmail.com',
             'nik' => '5171012103010002',
@@ -57,6 +58,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'regional_id' => 2,
             'role_id' => 2,
+            'lokasi_id' => 1,
             'name' => 'Staff Saniter',
             'email' => 'staff@gmail.com',
             'nik' => '5171012103010002',
@@ -68,6 +70,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'regional_id' => 3,
             'role_id' => 3,
+            'lokasi_id' => 1,
             'name' => 'Teknisi Saniter',
             'email' => 'teknisi@gmail.com',
             'nik' => '5171012103010002',
@@ -82,7 +85,7 @@ class DatabaseSeeder extends Seeder
                 'nama_bandara' => fake()->country(),
                 'lokasi_proyek' => fake()->address(),
                 'latitude' => rand(100000,500000),
-                'longtitude' => rand(100000,500000),
+                'longitude' => rand(100000,500000),
                 'radius' => rand(10,200)
             ]);
         }

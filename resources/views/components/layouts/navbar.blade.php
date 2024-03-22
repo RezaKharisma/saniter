@@ -21,7 +21,7 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="{{ asset('storage/'.Auth()->user()->path) }}" :alt="Auth()->user()->name" class="w-px-40 rounded-circle" />
+                        <img src="{{ asset('storage/'.Auth()->user()->foto) }}" :alt="Auth()->user()->name" class="w-px-40 rounded-circle" />
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -30,7 +30,7 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ asset('storage/'.Auth()->user()->path) }}" :alt="Auth()->user()->name" class="w-px-40 rounded-circle" />
+                                        <img src="{{ asset('storage/'.Auth()->user()->foto) }}" :alt="Auth()->user()->name" class="w-px-40 rounded-circle" />
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
@@ -49,12 +49,17 @@
                             <span class="align-middle">Profil</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ route('pengaturan.index') }}">
-                            <i class="bx bx-cog me-2"></i>
-                            <span class="align-middle">Pengaturan</span>
-                        </a>
-                    </li>
+
+                    {{-- Menu Pengaturan Admin --}}
+                    @role('Admin')
+                        <li>
+                            <a class="dropdown-item" href="{{ route('pengaturan.index') }}">
+                                <i class="bx bx-cog me-2"></i>
+                                <span class="align-middle">Pengaturan</span>
+                            </a>
+                        </li>
+                    @endrole
+
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>

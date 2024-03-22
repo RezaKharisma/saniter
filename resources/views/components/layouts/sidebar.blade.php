@@ -24,13 +24,6 @@
         </li>
 
         <li class="menu-item">
-            <a href="{{ route('user.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Analytics">User</div>
-            </a>
-        </li>
-
-        <li class="menu-item">
             <a href="{{ route('regional.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-buildings"></i>
                 <div data-i18n="Analytics">Regional</div>
@@ -46,7 +39,7 @@
 
                 <!-- {{ $item->judul }} -->
                 <li class="menu-item">
-                    <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ $item->url }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
+                    <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ url($item->url) }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
                         <i class="menu-icon tf-icons bx bx-{{ $item->icon }}"></i>
                         <div data-i18n="Layouts">{{ $item->judul }}</div>
                     </a>
@@ -57,7 +50,7 @@
 
                             @foreach (getSubMenu($item->id) as $sm)
                             <li class="menu-item">
-                                <a href="{{ strval($item->url.'/'.$sm->url) }}" class="menu-link">
+                                <a href="{{ url(strval($item->url.'/'.$sm->url)) }}" class="menu-link">
                                     <div data-i18n="Without menu">{{ $sm->judul }}</div>
                                 </a>
                             </li>

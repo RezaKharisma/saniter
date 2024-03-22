@@ -125,6 +125,26 @@
                     <x-partials.error-message name="foto" class="d-block" />
                 </div>
 
+                {{-- TTD --}}
+                <div class="mb-3">
+                    <x-partials.label title="Tanda Tangan" />
+                    <div class="">
+                        <div class="col-auto mb-3">
+
+                            {{-- Foto Profile --}}
+                            @if ($user->ttd != null)
+                                <img src="{{ asset('storage/'.$user->ttd) }}" alt="user-avatar" class="d-block rounded img-fluid" style="max-height: 200px" id="ttdPreview" />
+                            @else
+                                <img src="{{ asset('storage/user-ttd/default.jpg') }}" alt="user-avatar" class="d-block rounded img-fluid" style="max-height: 200px" id="ttdPreview" />
+                            @endif
+
+                        </div>
+
+                        <input class="form-control  @error('ttd') is-invalid @enderror" type="file" id="ttd" name="ttd" accept="image/png, image/jpeg, image/jpg" />
+                    </div>
+                    <x-partials.error-message name="ttd" class="d-block" />
+                </div>
+
             </div>
             <div class="card-footer">
                 <a href="{{ route('user.index') }}" class="btn btn-secondary">Kembali</a>
@@ -138,11 +158,21 @@
             $(document).ready(() => {
                 $("#foto").change(function () {
                     const file = this.files[0];
-                    console.log(file);
                     if (file) {
                         let reader = new FileReader();
                         reader.onload = function (event) {
                             $("#fotoPreview").attr("src", event.target.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                $("#ttd").change(function () {
+                    const file = this.files[0];
+                    if (file) {
+                        let reader = new FileReader();
+                        reader.onload = function (event) {
+                            $("#ttdPreview").attr("src", event.target.result);
                         };
                         reader.readAsDataURL(file);
                     }

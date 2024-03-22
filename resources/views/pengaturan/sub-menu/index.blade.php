@@ -41,7 +41,6 @@
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
-                                <th>Nama Route</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -56,7 +55,6 @@
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
-                                <th>Nama Route</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -114,10 +112,6 @@
                                 {{-- Input Order --}}
                                 <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" :value="old('order')" />
                             </div>
-                            <div class="col">
-                                {{-- Input Route Name --}}
-                                <x-input-text title="Nama Route" id="route_name" name="route_name" placeholder="Masukkan nama route" :value="old('route_name')" readonly/>
-                            </div>
                         </div>
 
                     </div>
@@ -173,8 +167,12 @@
                             </div>
                         </div>
 
-                        {{-- Input Order --}}
-                        <x-input-number title="Urutan Order" name="order" id="orderEdit" style="width: 30%" placeholder="Masukkan order" :value="old('order')" />
+                        <div class="row">
+                            <div class="col">
+                                {{-- Input Order --}}
+                                <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" :value="old('order')" />
+                            </div>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -202,7 +200,6 @@
                         {data: 'judul', name: 'judul'},
                         {data: 'order', name: 'order'},
                         {data: 'url', name: 'url', orderable: false,},
-                        {data: 'route_name', name: 'route_name', orderable: false,},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
                     ],
                     rowGroup: {
@@ -243,17 +240,6 @@
             function convertToSlug(e, targetID) {
                 urlName = $(e).val().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
                 $("#"+targetID+"").val(urlName)
-                $('#route_name').val(menuName+'.'+urlName);
-            }
-
-            // Otomatis route name
-            function setRouteNameVal(e){
-                menuName = $(e).find("option:selected").text().toLowerCase();
-                $('#route_name').val(menuName+'.'+urlName);
-            }
-
-            function setRouteNameVal2(e){
-                urlName = $(e).val();
                 $('#route_name').val(menuName+'.'+urlName);
             }
 

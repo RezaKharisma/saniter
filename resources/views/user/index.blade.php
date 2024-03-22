@@ -1,20 +1,19 @@
 <x-layouts.app title="User">
-<h5 class="fw-bold py-3 mb-4">Selamat Datang</h5>
-
-<!-- Striped Rows -->
 <div class="card">
     <h5 class="card-header">Data Akun Saniter</h5>
     <div class="card-body">
-        <a href="{{ route('user.create') }}" class="mb-4 btn btn-secondary"><i class="bx bx-plus"></i> Tambah User</a>
+        @can('user_create')
+            <a href="{{ route('user.create') }}" class="mb-4 btn btn-secondary"><i class="bx bx-plus"></i> Tambah User</a>
+        @endcan
 
         <table class="table table-hover" id="user-table" width="100%">
             <thead>
                 <tr>
-                    <th>No</th>
+                    <th width="1">No</th>
                     <th>Nama</th>
-                    <th>Regional</th>
-                    <th>Email</th>
-                    <th>Aktif</th>
+                    <th width="1">Regional</th>
+                    <th width="1">Email</th>
+                    <th width="auto">Aktif</th>
                     <th>Role</th>
                     <th>Aksi</th>
                 </tr>

@@ -10,53 +10,61 @@
                     <div class="col-auto col-sm-12 col-md-auto mb-3">
                         <label class="form-label" for="basic-icon-default-phone">Foto</label>
                         {{-- Foto Profile --}}
-                        <img src="{{ asset('storage/'. $user->foto) }}" alt="user-avatar" class="d-block rounded img-fluid" style="max-height: 200px"/>
+                        <img src="{{ asset('storage/'. $user->foto) }}" alt="user-avatar" class="d-block img-fluid mx-auto d-block" style="max-height: 250px"/>
                     </div>
                     <div class="col-sm-12 col-md">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">Nama</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->name }}" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">E-mail</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->email }}" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">Telepon</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->telp }}" readonly/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">NIK</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->nik }}" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">Regional</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->regional_name }}" readonly/>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="nameBasic" class="form-label">Jabatan</label>
-                                <input type="text" id="nameBasic" class="form-control" value="{{ $user->roles_name }}" readonly/>
-                            </div>
-                        </div>
+                        <table class="table table-striped ">
+                            <tr>
+                                <td>Role</td>
+                                <td colspan="2">: <span class="badge bg-info">{{ $user->roles_name }}</span></td>
+                            </tr>
+                            <tr>
+                                <td>Nama</td>
+                                <td>: {{ $user->name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>: {{ $user->email }}</td>
+                            </tr>
+                            <tr>
+                                <td>NIK</td>
+                                <td>: {{ $user->nik }}</td>
+                            </tr>
+                            <tr>
+                                <td>Alamat KTP</td>
+                                <td>: {{ $user->alamat_ktp }}</td>
+                            </tr>
+                            <tr>
+                                <td>Alamat Domisili</td>
+                                <td>: {{ $user->alamat_dom }}</td>
+                            </tr>
+                            <tr>
+                                <td>Regional Kerja</td>
+                                <td>: {{ $user->regional_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Lokasi Proyek</td>
+                                <td>: {{ $user->bandara }} | {{ $user->lokasi }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nomor Telepon</td>
+                                <td>: {{ $user->telp }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tanda Tangan</td>
+                                <td>:
+                                    @if ($user->ttd)
+                                        <img src="{{ asset('storage/'. $user->ttd) }}" alt="user-avatar" class="img-fluid ms-2" style="max-height: 100px"/>
+                                    @else
+                                        <img src="{{ asset('storage/user-ttd/default.jpg') }}" alt="user-avatar" class="img-fluid ms-2" style="max-height: 100px"/>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer mt-0">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     Close
                 </button>

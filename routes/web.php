@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Ajax\AjaxMenuController;
+use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
 use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\DashboardController;
@@ -29,7 +30,7 @@ use Laravel\Fortify\Fortify;
 
 
 // Login
-Fortify::loginView('/', function(){ return view('auth.login'); });
+Fortify::loginView('start', function(){ return view('auth.login'); });
 Fortify::loginView(function () {return view('auth.login');});
 
 // Reset Password
@@ -58,28 +59,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/pengaturan/menu/{id}/edit', [MenuController::class, 'edit'])->name('pengaturan.menu.edit');
         Route::post('/pengaturan/menu', [MenuController::class, 'store'])->name('pengaturan.menu.store');
         Route::delete('/pengaturan/menu/{id}', [MenuController::class, 'delete'])->name('pengaturan.menu.delete');
-
-        // User
-        Route::controller(UserController::class)->group(function()
-        {
-            Route::get('user', 'index')->name('user.index');
-            Route::get('user/create', 'create')->name('user.create');
-            Route::post('user', 'store')->name('user.store');
-            Route::get('user/{id}/edit', 'edit')->name('user.edit');
-            Route::put('user/{id}', 'update')->name('user.update');
-            Route::put('user/{id}', 'updateIsActive')->name('user.updateIsActive');
-            Route::delete('user/{id}','delete')->name('user.delete');
-        });
-
-        // Regional
-        Route::controller(RegionalController::class)->group(function()
-        {
-            Route::get('regional', 'index')->name('regional.index');
-            Route::get('regional/create', 'create')->name('regional.create');
-            Route::post('regional/add', 'regional_add')->name('regional.add');
-            Route::delete('regional/delete/{id}','delete')->name('regional.delete');
-            Route::put('regional/{id}', 'update')->name('regional.update');
-        });
 
         // Menu
         Route::controller(MenuController::class)->group(function(){
@@ -138,12 +117,39 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/assign-role','getUser')->name('ajax.getUser');
             Route::post('/ajax/tabel-add-role-user','getTabelRoleUser')->name('ajax.getTabelRoleUser');
         });
+    });
 
-        // Ajax User Request
-        Route::controller(AjaxUserController::class)->group(function(){
-            Route::get('/ajax/user','getUser')->name('ajax.getUser');
-            Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail');
-        });
+    // User
+    Route::controller(UserController::class)->group(function()
+    {
+        Route::get('administrasi/user', 'index')->name('user.index')->middleware('permission:user_read');
+        Route::get('administrasi/user/create', 'create')->name('user.create')->middleware('permission:user_create');
+        Route::post('administrasi/user', 'store')->name('user.store')->middleware('permission:user_create');
+        Route::get('administrasi/user/{id}/edit', 'edit')->name('user.edit')->middleware('permission:user_update');
+        Route::put('administrasi/user/{id}', 'update')->name('user.update')->middleware('permission:user_update');
+        Route::put('administrasi/user/{id}/update-is-active', 'updateIsActive')->name('user.updateIsActive')->middleware('permission:user_update');
+        Route::delete('administrasi/user/{id}','delete')->name('user.delete')->middleware('permission:user_delete');
+    });
+
+    // Ajax User Request
+    Route::controller(AjaxUserController::class)->group(function(){
+        Route::get('/ajax/user','getUser')->name('ajax.getUser')->middleware('permission:user_read');
+        Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_read');
+    });
+
+    // Regional
+    Route::controller(RegionalController::class)->group(function()
+    {
+        Route::get('administrasi/building/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
+        Route::get('administrasi/building/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
+        Route::post('administrasi/building/regional/add', 'regional_add')->name('regional.add')->middleware('permission:regional_create');
+        Route::delete('administrasi/building/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
+        Route::put('administrasi/building/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
+    });
+
+    Route::controller(AjaxRegionalController::class)->group(function(){
+        Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
+        // Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_read');
     });
 
     // Dashboard
@@ -156,5 +162,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/profil/{id}', 'updateProfil')->name('profile.updateProfil');
         Route::put('/profil/{id}/password', 'updatePassword')->name('profile.updatePassword');
         Route::put('/profil/{id}/image', 'updateImage')->name('profile.updateImage');
+        Route::put('/profil/{id}/ttd', 'updateTtd')->name('profile.updateTtd');
     });
 });

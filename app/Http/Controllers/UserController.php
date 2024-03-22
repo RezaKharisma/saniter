@@ -63,6 +63,7 @@ class UserController extends Controller
             'alamat_dom' => 'required',
             'telp' => 'required|unique:users,telp',
             'foto' => 'mimes:png,jpg,jpeg|max:2000',
+            'ttd' => 'mimes:png,jpg,jpeg|max:2000',
         ],$messages);
 
         // Jika validasi gagal
@@ -86,6 +87,7 @@ class UserController extends Controller
             'telp' => $request->telp,
             'foto' => $this->imageStore($request->file('foto')) ?? 'user-images/default.jpg',
             'password' => bcrypt('qrm123'),
+            'ttd' => 'user-ttd/default.jpg'
         ]);
 
         $role = Role::findById(($request->role_id));
@@ -107,6 +109,8 @@ class UserController extends Controller
             'alamat_dom.required' => 'alamat domisili wajib diisi.',
             'telp.required' => 'nomor telepon wajib diisi.',
             'telp.unique' => 'nomor telepon sudah ada sebelumnya.',
+            'ttd.max' => 'tanda tangan maksimal berukuran 2mb.',
+            'ttd.mimes' => 'tanda tangan berupa file png, jpg dan jpeg.'
         ];
 
         $validator = Validator::make($request->all(), [
@@ -120,6 +124,7 @@ class UserController extends Controller
             'alamat_dom' => 'required',
             'telp' => 'required|unique:users,telp,'.$id,
             'foto' => 'mimes:png,jpg,jpeg|max:2000',
+            'ttd' => 'mimes:png,jpg,jpeg|max:2000',
         ],$messages);
 
         // Jika validasi gagal
@@ -142,6 +147,7 @@ class UserController extends Controller
             'alamat_dom' => $request->alamat_dom,
             'telp' => $request->telp,
             'foto' => $this->imageStore($request->file('foto'), $user) ?? 'user-images/default.jpg',
+            'ttd' => $this->ttdStore($request->file('ttd'), $user) ?? 'user-ttd/default.jpg',
         ];
 
         $role = Role::findById(($request->role_id));
@@ -193,10 +199,12 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        Storage::disk('public')->delete($user->foto);
+        Storage::disk('public')->delete($user->ttd);
         $user->delete();
 
         toast('Data berhasil dihapus!', 'success');
-        return Redirect()->to('/user'); // Redirect kembali
+        return Redirect::route('user.index'); // Redirect kembali
     }
 
     // Fungsi simpan data ke folder
@@ -212,6 +220,23 @@ class UserController extends Controller
         if (!empty($image)) {
             // Masukkan ke folder user-images dengan nama random dan extensi saat upload
             $image = Storage::disk('public')->put('user-images', $image);
+            return $image;
+        }
+    }
+
+    // Fungsi simpan data ke folder
+    private function ttdStore($image, $user = null)
+    {
+        // Delete jika foto bukan default.jpg
+        if (!empty($user)) {
+            if ($user->ttd != 'user-ttd/default.jpg') {
+                Storage::disk('public')->delete($user->ttd);
+            }
+        }
+
+        if (!empty($image)) {
+            // Masukkan ke folder user-images dengan nama random dan extensi saat upload
+            $image = Storage::disk('public')->put('user-ttd', $image);
             return $image;
         }
     }
