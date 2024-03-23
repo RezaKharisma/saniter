@@ -28,22 +28,32 @@ class RegionalController extends Controller
         return view('regional/create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     // Untuk menambahkan data regional kedalam database
-    public function regional_add(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|unique:nama',
-            
-    ]);
-    
-        // dd($request->all());
-        $data = new Regional;
-        $data->nama = $request->nama;
-        $data->save();
+            'nama' => 'required|unique:regional,nama',
+        ]);
+
+        // Jika validasi gagal
+        if ($validator->fails()) {
+            toast('Mohon periksa form kembali!', 'error'); // Toast
+            return Redirect::back()
+                ->withErrors($validator)
+                ->withInput(); // Return kembali membawa error dan old input
+        }
+
+        Regional::create([
+            'nama' => $request->nama
+        ]);
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect()->to('/regional'); // Redirect kembali
+        return Redirect::route('regional.index'); // Redirect kembali
     }
+
     // Untuk menghapus data regional
     public function delete($id)
     {
@@ -87,14 +97,6 @@ class RegionalController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)
@@ -106,14 +108,6 @@ class RegionalController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
     {
         //
     }
