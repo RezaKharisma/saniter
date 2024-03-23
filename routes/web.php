@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
@@ -149,7 +150,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::controller(AjaxRegionalController::class)->group(function(){
         Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
-        // Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_read');
+        Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
     });
 
     // Dashboard
@@ -163,5 +164,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/profil/{id}/password', 'updatePassword')->name('profile.updatePassword');
         Route::put('/profil/{id}/image', 'updateImage')->name('profile.updateImage');
         Route::put('/profil/{id}/ttd', 'updateTtd')->name('profile.updateTtd');
+    });
+
+    Route::controller(AbsenController::class)->group(function(){
+        Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
     });
 });

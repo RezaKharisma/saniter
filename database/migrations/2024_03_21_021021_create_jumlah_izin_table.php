@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('tahun');
             $table->integer('jumlah_izin');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

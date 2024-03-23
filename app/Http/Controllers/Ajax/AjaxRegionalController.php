@@ -22,7 +22,7 @@ class AjaxRegionalController extends Controller
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('regional_update')) {
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditMenu' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditRegional' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     }
                     if (auth()->user()->can('regional_delete')) {
                         $btn = $btn."<form action=".route('regional.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
@@ -31,6 +31,17 @@ class AjaxRegionalController extends Controller
                 })
                 ->rawColumns(['action'])
                 ->make(true);
+        }
+    }
+
+    // Ambil data regional untuk datatable
+    public function getRegionalEdit(Request $request){
+        if ($request->ajax()) {
+            $regional = Regional::find($request->id);
+            return response()->json([
+                'status' => 'success',
+                'data' => $regional
+            ],200);
         }
     }
 }

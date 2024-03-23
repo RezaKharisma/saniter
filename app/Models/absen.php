@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Regional extends Model
+class absen extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'regional';
+    protected $table = 'absen';
     protected $guarded = ['id'];
 }

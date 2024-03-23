@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('validasi_2');
             $table->string('validasi_2_by');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

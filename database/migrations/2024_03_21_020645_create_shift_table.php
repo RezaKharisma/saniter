@@ -18,6 +18,7 @@ return new class extends Migration
             $table->time('jam_masuk');
             $table->time('jam_pulang');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

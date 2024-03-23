@@ -1,5 +1,4 @@
 <x-layouts.app title="Pengaturan">
-<h5 class="fw-bold py-3 mb-4">Selamat Datang</h5>
 
 <!-- Striped Rows -->
 <div class="card">
@@ -35,11 +34,11 @@
 </div>
 
 {{-- Modal Edit Regional --}}
-<div class="modal fade" id="modalRegional" tabindex="-1" aria-modal="true" role="dialog">
+<div class="modal fade" id="modalEditRegional" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             {{-- Form Tambah Menu --}}
-            <form method="POST">
+            <form method="POST" id="formEdit">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalCenterTitle">Tambah Sub Menu</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -47,7 +46,14 @@
                 @csrf
 
                 <div class="modal-body">
-
+                    <div class="mb-0">
+                        <x-partials.label title="Nama Regional" />
+                        <div class="input-group input-group-merge">
+                            <span id="basic-icon-default-fullname" class="input-group-text" @error('nama') style="border: 1px solid red" @enderror><i class="bx bx-user"></i></span>
+                            <x-partials.input-text name="nama" placeholder="Nama Regional" id="namaEdit" />
+                        </div>
+                        <x-partials.error-message name="nama" class="d-block"/>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -76,6 +82,25 @@
                     {data: 'action', name: 'action'},
                 ],
             })
+
+            // Jika tombol delete diklik
+            $(document).on("click", "button.confirm-delete", function () {
+                var form = $(this).closest("form");
+                event.preventDefault();
+                Swal.fire({ // SweetAlert
+                    title: "Apa kamu yakin?",
+                    text: "Data regional akan terhapus!",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yakin",
+                    cancelButtonText: "Batal",
+                }).then((result) => {
+                    if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                        form.submit();
+                    }
+                });
+            });
         });
 
         // Ketika tombol edit diklik
@@ -92,21 +117,17 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('ajax.getSubMenuEdit') }}",
+                url: "{{ route('ajax.getRegionalEdit') }}",
                 data: {
                     id: e.dataset.id // Mengambil id pada event
                 },
                 dataType: "json",
                 success: function (response) { // Jika ajax sukses dan memberikan respon
-                    var menu = response.data;
-                    var url = "{{ route('pengaturan.submenu.update', ':id') }}"; // Action pada form edit
-                    url = url.replace(':id', menu.id );
-                    $("#formEdit")[0].reset();
+                    var regional = response.data;
+                    var url = "{{ route('regional.update', ':id') }}"; // Action pada form edit
+                    url = url.replace(':id', regional.id );
                     $('#formEdit').attr('action', url);
-                    $('#judulEdit').val(menu.judul);
-                    $('#urlEdit').val(menu.url);
-                    $('#orderEdit').val(menu.order);
-                    $('#id_menuEdit option[value='+menu.id_menu+']').attr('selected','selected');
+                    $('#namaEdit').val(regional.nama);
                 }
             });
             }
