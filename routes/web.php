@@ -141,11 +141,11 @@ Route::group(['middleware' => ['auth']], function () {
     // Regional
     Route::controller(RegionalController::class)->group(function()
     {
-        Route::get('administrasi/building/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
-        Route::get('administrasi/building/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
-        Route::post('administrasi/building/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
-        Route::delete('administrasi/building/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
-        Route::put('administrasi/building/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
+        Route::get('/pengaturan/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
+        Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
+        Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
+        Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
+        Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
     });
 
     Route::controller(AjaxRegionalController::class)->group(function(){

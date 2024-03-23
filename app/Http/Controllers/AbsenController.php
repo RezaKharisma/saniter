@@ -8,6 +8,6 @@ class AbsenController extends Controller
 {
     public function index()
     {
-        echo "Halo semuanya";
+        return view('absen.index');
     }
 }

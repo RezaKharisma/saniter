@@ -42,6 +42,9 @@
                 Auth::logout();
                 Redirect::route('login');
             }
+
+            setlocale(LC_TIME, 'id_ID');
+            \Carbon\Carbon::setLocale('id');
         @endphp
 
         <div class="layout-wrapper layout-content-navbar">
