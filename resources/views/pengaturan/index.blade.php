@@ -91,13 +91,13 @@
                         <li class="nav-item me-2">
                             {{-- Jika request url adalah url yg di tentukan, set class active --}}
                             <a class="btn btn-primary" href="{{ route('regional.index') }}">
-                                <i class="bx bx-menu me-1"></i> Regional
+                                <i class="bx bx-map-pin me-1"></i> Regional
                             </a>
                         </li>
                         <li class="nav-item me-2">
                             {{-- Jika request url adalah url yg di tentukan, set class active --}}
                             <a class="btn btn-primary" href="{{ route('pengaturan.submenu.index') }}">
-                                <i class="bx bx-menu-alt-right me-1"></i> Lokasi
+                                <i class="bx bx-map me-1"></i> Lokasi
                             </a>
                         </li>
                     </ul>

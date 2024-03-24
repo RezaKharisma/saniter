@@ -42,7 +42,8 @@ class MenuController extends Controller
             'judul' => $request->judul,
             'order' => $request->order,
             'url' => trim($request->url),
-            'icon' => trim($request->icon)
+            'icon' => trim($request->icon),
+            'show' => 1
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -77,6 +78,17 @@ class MenuController extends Controller
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::back(); // Return kembali
+    }
+
+    public function updateShow($id){
+        $menu = Menu::find($id);
+        $data = [
+            'show' => $menu->show == 1 ? 0 : 1 // Jika value 1 maka ubah ke 0, dan sebaliknya
+        ];
+
+        $menu->update($data);
+        toast('Data berhasil tersimpan!', 'success');
+        return Redirect::route('pengaturan.menu.index');
     }
 
     public function delete($id){ // Id pada parameter url

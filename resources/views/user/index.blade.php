@@ -1,4 +1,20 @@
 <x-layouts.app title="User">
+    <x-slot name="style">
+        <style>
+            .table th {
+                text-align: left !important;
+            }
+        </style>
+    </x-slot>
+
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi /</span> User</h4>
+
+    <ul class="nav nav-pills flex-column flex-md-row mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ route('dashboard') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+        </li>
+    </ul>
+
 <div class="card">
     <h5 class="card-header">Data Akun Saniter</h5>
     <div class="card-body">

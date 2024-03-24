@@ -17,6 +17,28 @@ if (! function_exists('getRegional')) {
     }
 }
 
+if (! function_exists('getRoleAccessMenu')) {
+    function getRoleAccessMenu($option)
+    {
+        foreach($option as $item){
+            $roles = str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles));
+        }
+
+
+        $query = Menu::select('menu.*', 'menu_kategori.nama_kategori')
+        ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
+        ->orderBy('menu_kategori.order', 'ASC')
+        ->orderBy('menu.order', 'ASC')
+        ->where('menu_kategori.show', '1')
+        ->where('menu.show', '1')
+        ->get();
+
+        return $query->groupBy(function ($item, $key) {
+            return $item['nama_kategori'];
+        });
+    }
+}
+
 if (! function_exists('getMenu')) {
     function getMenu()
     {
@@ -24,6 +46,8 @@ if (! function_exists('getMenu')) {
         ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
         ->orderBy('menu_kategori.order', 'ASC')
         ->orderBy('menu.order', 'ASC')
+        ->where('menu_kategori.show', '1')
+        ->where('menu.show', '1')
         ->get();
 
         return $query->groupBy(function ($item, $key) {

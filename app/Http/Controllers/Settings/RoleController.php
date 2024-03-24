@@ -63,6 +63,15 @@ class RoleController extends Controller
             if (count($request->checkBox) > 0) {
                 foreach ($request->checkBox as $item) {
                     $permission = Permission::findByName($item);
+                    $menu = Menu::find($permission->id_menu);
+                    $accessRoles = json_decode($menu->access_roles);
+
+                    array_push($accessRoles, $role->name);
+
+                    $menu->update([
+                        'access_roles' => json_encode(array_unique($accessRoles))
+                    ]);
+
                     $role->givePermissionTo($permission);
                 }
             }
@@ -107,7 +116,7 @@ class RoleController extends Controller
                 ->withInput(); // Return kembali
         }
 
-        $role = Role::find($id); // Cari sub menu berdasarkan ID
+        $role = Role::with('permissions')->find($id);
         $role->update([
             'name' => $request->name,
         ]);
@@ -117,7 +126,26 @@ class RoleController extends Controller
         if ($request->checkBox != null) {
             foreach ($request->checkBox as $item) {
                 $permission = Permission::findByName($item);
+                $menu = Menu::find($permission->id_menu);
+                $accessRoles = json_decode($menu->access_roles);
+
+                array_push($accessRoles, $role->name);
+
+                $menu->update([
+                    'access_roles' => json_encode(array_unique($accessRoles))
+                ]);
+
                 array_push($newPermission, $permission);
+            }
+        }else{
+            $newAccessRoles = array();
+            foreach ($role->permissions as $item) {
+                $menu = Menu::find($item->id_menu);
+                $newAccessRoles = array_values(array_diff(json_decode($menu->access_roles), array($role->name)));
+
+                $menu->update([
+                    'access_roles' => json_encode(array_unique($newAccessRoles))
+                ]);
             }
         }
 
@@ -160,7 +188,18 @@ class RoleController extends Controller
     }
 
     public function delete($id){
-        $role = Role::findOrFail($id);
+        $role = Role::with('permissions')->findOrFail($id);
+
+        $newAccessRoles = array();
+        foreach ($role->permissions as $item) {
+            $menu = Menu::find($item->id_menu);
+            $newAccessRoles = array_values(array_diff(json_decode($menu->access_roles), array($role->name)));
+
+            $menu->update([
+                'access_roles' => json_encode(array_unique($newAccessRoles))
+            ]);
+        }
+
         $role->delete();
 
         toast('Data berhasil terhapus!', 'success'); // Toast
@@ -175,4 +214,18 @@ class RoleController extends Controller
         toast('Data berhasil terimpan!', 'success'); // Toast
         return Redirect::back(); // Return kembali
     }
+
+    // public function addAccessRoleMenu($accessRoles, $roleName)
+    // {
+    //     $accessRoles = json_decode($accessRoles);
+    //     $newAccessRoles = array();
+    //     for ($i=0; $i < count($accessRoles); $i++) {
+    //         if ($roleName != $accessRoles[$i]) {
+    //             array_push($newAccessRoles, $accessRoles[$i]);
+    //         }
+    //     }
+
+    //     dd($newAccessRoles);
+    //     return json_encode($newAccessRoles);
+    // }
 }

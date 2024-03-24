@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
 
             KategoriMenu::create([
                 'nama_kategori' => $kategori[$i],
-                'order' => $i
+                'order' => $i,
+                'show' => 1
             ]);
 
             // Menu::create([

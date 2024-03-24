@@ -52,20 +52,16 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/pengaturan/kategori-menu','index')->name('pengaturan.kategorimenu.index');
             Route::post('/pengaturan/kategori-menu','store')->name('pengaturan.kategorimenu.store');
             Route::put('/pengaturan/kategori-menu/{id}','update')->name('pengaturan.kategorimenu.update');
+            Route::put('/pengaturan/kategori-menu/{id}/show','updateShow')->name('pengaturan.kategorimenu.updateShow');
             Route::delete('/pengaturan/kategori-menu/{id}','delete')->name('pengaturan.kategorimenu.delete');
         });
-
-        // Menu
-        Route::get('/pengaturan/menu', [MenuController::class, 'index'])->name('pengaturan.menu.index');
-        Route::get('/pengaturan/menu/{id}/edit', [MenuController::class, 'edit'])->name('pengaturan.menu.edit');
-        Route::post('/pengaturan/menu', [MenuController::class, 'store'])->name('pengaturan.menu.store');
-        Route::delete('/pengaturan/menu/{id}', [MenuController::class, 'delete'])->name('pengaturan.menu.delete');
 
         // Menu
         Route::controller(MenuController::class)->group(function(){
             Route::get('/pengaturan/menu','index')->name('pengaturan.menu.index');
             Route::post('/pengaturan/menu','store')->name('pengaturan.menu.store');
             Route::put('/pengaturan/menu/{id}','update')->name('pengaturan.menu.update');
+            Route::put('/pengaturan/menu/{id}/show','updateShow')->name('pengaturan.menu.updateShow');
             Route::delete('/pengaturan/menu/{id}','delete')->name('pengaturan.menu.delete');
         });
 
@@ -148,6 +144,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
     });
 
+    // Ajax Regional Request
     Route::controller(AjaxRegionalController::class)->group(function(){
         Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
         Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');

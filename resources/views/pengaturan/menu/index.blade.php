@@ -43,6 +43,7 @@
                                 <th>Url</th>
                                 <th>Icon</th>
                                 <th>Kategori</th>
+                                <th>Show</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -53,11 +54,12 @@
                         <tfoot>
                             <tr>
                                 <th>#</th>
-                                <th>Menu</th>
                                 <th>Judul</th>
                                 <th>Order</th>
                                 <th>Url</th>
+                                <th>Icon</th>
                                 <th>Kategori</th>
+                                <th>Show</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -224,7 +226,8 @@
                         {data: 'order', name: 'order'},
                         {data: 'url', name: 'url', orderable: false},
                         {data: 'icon', name: 'icon', searchable: false, orderable: false},
-                        {data: 'nama_kategori', name: 'nama_kategori'},
+                        {data: 'nama_kategori', name: 'nama_kategori', visible: false},
+                        {data: 'show', name: 'show', searchable: false, orderable: false},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
                     ],
                     rowGroup: {
@@ -246,6 +249,25 @@
                     Swal.fire({ // SweetAlert
                         title: "Apa kamu yakin?",
                         text: "Data submenu akan ikut terhapus!",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yakin",
+                        cancelButtonText: "Batal",
+                    }).then((result) => {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                            form.submit();
+                        }
+                    });
+                });
+
+                // Jika tombol delete diklik
+                $(document).on("click", "button.confirm-edit-show", function () {
+                    var form = $(this).closest("form");
+                    event.preventDefault();
+                    Swal.fire({ // SweetAlert
+                        title: "Apa kamu yakin?",
+                        text: "Mengubah visible kategori!",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",

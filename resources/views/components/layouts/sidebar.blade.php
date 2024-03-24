@@ -23,19 +23,20 @@
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="{{ route('regional.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-buildings"></i>
-                <div data-i18n="Analytics">Regional</div>
-            </a>
-        </li>
-
         @foreach (getMenu() as $group => $options)
 
-            <!-- {{ $group }} -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">{{ $group }}</span></li>
-
+            @php $first = true; @endphp
             @foreach ($options as $item)
+
+                @php $roles = str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles)); @endphp
+
+                @role($roles)
+
+                @if ($first)
+                    <!-- {{ $group }} -->
+                    <li class='menu-header small text-uppercase'><span class='menu-header-text'>{{ $group }}</span></li>
+                    @php $first = false; @endphp
+                @endif
 
                 <!-- {{ $item->judul }} -->
                 <li class="menu-item">
@@ -61,6 +62,8 @@
                     @endif
 
                 </li>
+
+                @endrole
 
             @endforeach
 

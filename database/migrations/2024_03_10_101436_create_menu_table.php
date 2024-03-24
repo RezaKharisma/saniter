@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('order');
             $table->string('url');
             $table->string('icon');
+            $table->boolean('show');
+            $table->string('access_roles')->nullable();
             $table->timestamps();
         });
     }

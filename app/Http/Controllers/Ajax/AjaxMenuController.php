@@ -30,13 +30,24 @@ class AjaxMenuController extends Controller
                 ->editColumn('icon', function($menu) {
                     return "<i class='menu-icon tf-icons bx bx-".$menu->icon."'></i> ".$menu->icon;
                 })
+                ->addColumn('show', function($row){
+                    if ($row->show == 1) {
+                        return "<form action=".route('pengaturan.menu.updateShow', $row->id)." method='POST'>".csrf_field().method_field('PUT')."
+                                <button type='button' class='btn btn-success btn-sm confirm-edit-show'>Tampil</button>
+                            </form>";
+                    }else{
+                        return "<form action=".route('pengaturan.menu.updateShow', $row->id)." method='POST'>".csrf_field().method_field('PUT')."
+                            <button type='button' class='btn btn-danger btn-sm confirm-edit-show'>Tidak Tampil</button>
+                        </form>";
+                    }
+                })
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
                     $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditMenu' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.menu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
                 ->escapeColumns('icon')
-                ->rawColumns(['action'])
+                ->rawColumns(['action','show'])
                 ->make(true);
         }
     }
@@ -96,12 +107,27 @@ class AjaxMenuController extends Controller
             // Return datatables
             return DataTables::of($menu)
                 ->addIndexColumn()
+                ->addColumn('show', function($row){
+                    if ($row->show == 1) {
+                        return "
+                            <form action=".route('pengaturan.kategorimenu.updateShow', $row->id)." method='POST'>".csrf_field().method_field('PUT')."
+                                <button type='button' class='btn btn-success btn-sm confirm-edit-show'>Tampil</button>
+                            </form>
+                        ";
+                    }else{
+                        return "
+                        <form action=".route('pengaturan.kategorimenu.updateShow', $row->id)." method='POST'>".csrf_field().method_field('PUT')."
+                            <button type='button' class='btn btn-danger btn-sm confirm-edit-show'>Tidak Tampil</button>
+                        </form>
+                        ";
+                    }
+                })
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
                     $btn = "<button data-bs-toggle='modal' data-bs-target='#modalKategoriMenuEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
                     $btn = $btn."<form action=".route('pengaturan.kategorimenu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','show'])
                 ->make(true);
         }
     }

@@ -34,6 +34,7 @@ class KategoriMenuController extends Controller
         KategoriMenu::create([ // Insert data baru pada database
             'nama_kategori' => $request->nama_kategori,
             'order' => $request->order, // Ambil request sesuai name input
+            'show' => 1
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -62,6 +63,17 @@ class KategoriMenuController extends Controller
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::back(); // Return kembali
+    }
+
+    public function updateShow($id){
+        $kategori = KategoriMenu::find($id);
+        $data = [
+            'show' => $kategori->show == 1 ? 0 : 1 // Jika value 1 maka ubah ke 0, dan sebaliknya
+        ];
+
+        $kategori->update($data);
+        toast('Data berhasil tersimpan!', 'success');
+        return Redirect::route('pengaturan.kategorimenu.index');
     }
 
     public function delete($id){ // ID parameter url

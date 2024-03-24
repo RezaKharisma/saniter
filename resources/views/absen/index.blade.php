@@ -77,7 +77,7 @@
                 currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
 
                 // Choose either "AM" or "PM" as appropriate
-                var timeOfDay = ( currentHours < 11 ) ? "Pagi" : (currentHours < 15) ? "Siang" : (currentHours < 18) ? "Sore" : (currentHours < 5) ? "Malam" : "";
+                var timeOfDay = ( currentHours < 11 ) ? "Pagi" : (currentHours < 15) ? "Siang" : (currentHours < 18) ? "Sore" : "Malam";
 
                 // Convert the hours component to 12-hour format if needed
                 currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;

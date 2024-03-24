@@ -45,7 +45,19 @@ class PermissionController extends Controller
     }
 
     public function delete($id){
-        $permission = Permission::findOrFail($id);
+        $permission = Permission::with('roles')->findOrFail($id);
+        $newAccessRoles = array();
+
+        foreach ($permission->roles as $item) {
+            $role = Role::findByName($item);
+            array_push($newAccessRoles, $role->name);
+        }
+
+        $menu = Menu::find($permission->id_menu);
+        $menu->update([
+            'access_roles' => json_encode($newAccessRoles)
+        ]);
+
         $permission->delete();
 
         toast('Data berhasil terhapus!', 'success'); // Toast
@@ -70,16 +82,24 @@ class PermissionController extends Controller
                 ->withInput(); // Return kembali
         }
 
-        $permission = Permission::find($id); // Cari sub menu berdasarkan ID
+        $permission = Permission::with('roles')->find($id); // Cari sub menu berdasarkan ID
         $permission->update([
             'name' => $request->name,
         ]);
 
         $newRole = array();
+        $newAccessRoles = array();
+
         foreach ($request->roles as $item) {
             $role = Role::findByName($item);
+            array_push($newAccessRoles, $role->name);
             array_push($newRole, $role);
         }
+
+        $menu = Menu::find($permission->id_menu);
+        $menu->update([
+            'access_roles' => json_encode($newAccessRoles)
+        ]);
 
         $permission->syncRoles($newRole);
 
@@ -118,14 +138,20 @@ class PermissionController extends Controller
         // Jika ada request role
         if (isset($request->role) != null) {
             $newPermission = array(); // Buat variable array
+            $roleNames = array();
             foreach ($request->role as $item) { // Karna name input yg ditentukan berupa array contoh: role[], lakukan foreach
                 $role = Role::findByName($item);
+                array_push($roleNames, $role->name);
                 array_push($newPermission, $role); // Push ke variable diatas
             }
 
             for ($i=0; $i < count($permissionArray); $i++) {
                 $permissionArray[$i]->syncRoles($newPermission); // Cocokkan role dan permission sesuai length data di variable permissionArray
             }
+
+            $menu->update([
+                'access_roles' => json_encode($roleNames)
+            ]);
         }
 
         return;
