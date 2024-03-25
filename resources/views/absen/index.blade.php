@@ -21,7 +21,7 @@
                 <div class="card-body mb-0" style="margin-bottom: -30px !important">
                     <p class="mb-3">Jadwal Anda :</p>
                     <h4 class="mb-2">Shift Pagi</h4>
-                    <h2>09:00 - 13:00</h2>
+                    <h2>09:00 - 17:00</h2>
                 </div>
                 <div class="card-body mt-0">
                     <div class="row">

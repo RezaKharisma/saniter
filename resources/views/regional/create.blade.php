@@ -1,4 +1,7 @@
 <x-layouts.app title="Tambah Regional">
+
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / Regional /</span> Tambah Regional</h4>
+
     <div class="card mb-12">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Form Tambah Regional</h5>
