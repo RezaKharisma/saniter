@@ -1,19 +1,20 @@
 <?php
 
+use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\RegionalController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Settings\KategoriMenuController;
 use App\Http\Controllers\Settings\MenuController;
-use App\Http\Controllers\Settings\PengaturanController;
-use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
-use App\Http\Controllers\RegionalController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Fortify;
+use App\Http\Controllers\Settings\PengaturanController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\KategoriMenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,16 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('regional/add', 'regional_add')->name('regional.add');
             Route::delete('regional/delete/{id}','delete')->name('regional.delete');
             Route::put('regional/{id}', 'update')->name('regional.update');
+        });
+
+        // Lokasi
+        Route::controller(LokasiController::class)->group(function()
+        {
+            Route::get('lokasi', 'index')->name('lokasi.index');
+            Route::get('lokasi/create', 'create')->name('lokasi.create');
+            Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+            Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+            Route::put('lokasi/{id}', 'update')->name('lokasi.update');
         });
 
         // Menu
