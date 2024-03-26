@@ -74,7 +74,7 @@ class AjaxUserController extends Controller
             ->where('users.id', $request->id)
             ->first();
 
-            $modal = view('modals.detail-user', compact('user'))->render();
+            $modal = view('components.modals.detail-user', compact('user'))->render();
 
             return response()->json([
                 'status' => 'success',

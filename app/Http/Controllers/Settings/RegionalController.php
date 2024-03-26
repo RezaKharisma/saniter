@@ -18,7 +18,7 @@ class RegionalController extends Controller
         $regional = Regional::Select('*')
             ->get();
 
-        return view('regional/index', compact('regional'));
+        return view('pengaturan.regional.index', compact('regional'));
     }
 
     /**
@@ -26,7 +26,7 @@ class RegionalController extends Controller
      */
     public function create()
     {
-        return view('regional/create');
+        return view('pengaturan.regional.create');
     }
 
     /**

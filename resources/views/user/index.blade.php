@@ -141,13 +141,12 @@
                 },
                 dataType: "json",
                 success: function (response) { // Jika ajax sukses dan memberikan respon
-                    console.log(response.modal);
                     $('#modalDetailUser').html('');
                     $('#modalDetailUser').html(response.modal);
                     $('#detailUser').modal('show');
                 }
             });
-            }
+        }
     </script>
 </x-slot>
 

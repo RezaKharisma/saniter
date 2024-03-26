@@ -84,21 +84,42 @@
 </div>
 
 <x-slot name="script">
+    {{-- Berikan akses role sesuai user->role --}}
+    @if(auth()->user()->can('regional_update') || auth()->user()->can('regional_update'))
+        <script>
+            $(document).ready(function () {
+                $('#tabel-regional').DataTable({
+                    ajax: "{{ route('ajax.getRegional') }}",
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    columns:[
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'nama', name: 'nama'},
+                        {data: 'action', name: 'action', searchable: false, orderable: false},
+                    ]
+                });
+            });
+        </script>
+    @else
+        <script>
+            $(document).ready(function () {
+                $('#tabel-regional').DataTable({
+                    ajax: "{{ route('ajax.getRegional') }}",
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    columns:[
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'nama', name: 'nama'},
+                    ]
+                });
+            });
+        </script>
+    @endif
+
     <script>
         $(document).ready(function () {
-            // Datatables
-            $('#tabel-regional').DataTable({
-                ajax: "{{ route('ajax.getRegional') }}",
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
-                    {data: 'nama', name: 'nama'},
-                    {data: 'action', name: 'action'},
-                ],
-            })
-
             // Jika tombol delete diklik
             $(document).on("click", "button.confirm-delete", function () {
                 var form = $(this).closest("form");

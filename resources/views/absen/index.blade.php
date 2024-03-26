@@ -18,11 +18,31 @@
                     </div>
                 </div>
 
-                <div class="card-body mb-0" style="margin-bottom: -30px !important">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="mb-3">Pilih Shift :</p>
+
+                            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                @foreach ($shift as $key => $item)
+                                    <input type="radio" class="btn-check" name="btnradio" id="btnradio{{ $item->nama }}" onchange="getShift()">
+                                    <label class="btn btn-outline-primary" for="btnradio1">
+                                        {{ $item->nama }}
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-body mb-0" id="showJadwal">
                     <p class="mb-3">Jadwal Anda :</p>
                     <h4 class="mb-2">Shift Pagi</h4>
                     <h2>09:00 - 17:00</h2>
                 </div>
+
                 <div class="card-body mt-0">
                     <div class="row">
                         <div class="col-6">
@@ -90,6 +110,32 @@
 
 
                 $("#clock").html(currentTimeString);
+            }
+        </script>
+        <script>
+            function getShift()
+            {
+                // Mengatur ajax csrf
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('ajax.getAbsenShift') }}",
+                    data: {
+                        id: e.dataset.id // Mengambil id pada event
+                    },
+                    dataType: "json",
+                    success: function (response) { // Jika ajax sukses dan memberikan respon
+                        console.log(response.data);
+                        // $('#modalDetailUser').html('');
+                        // $('#modalDetailUser').html(response.modal);
+                        // $('#detailUser').modal('show');
+                    }
+                });
             }
         </script>
     </x-slot>

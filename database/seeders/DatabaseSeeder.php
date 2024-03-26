@@ -9,6 +9,7 @@ use App\Models\Lokasi;
 use App\Models\Menu;
 use App\Models\MenuKategori;
 use App\Models\Regional;
+use App\Models\Shift;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Database\Seeder;
@@ -34,14 +35,6 @@ class DatabaseSeeder extends Seeder
                 'order' => $i,
                 'show' => 1
             ]);
-
-            // Menu::create([
-            //     'id_kategori' => $i+1,
-            //     'judul' => $menu[$i],
-            //     'order' => $i,
-            //     'url' => strtolower($kategori[$i]."/".$menu[$i]),
-            //     'icon' => 'menu'
-            // ]);
         }
 
         User::create([

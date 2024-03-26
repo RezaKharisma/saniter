@@ -84,7 +84,7 @@
                     <ul class="nav nav-pills flex-column flex-md-row mb-3">
                         <li class="nav-item me-2">
                             {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                            <a class="btn btn-primary" href="{{ route('pengaturan.kategorimenu.index') }}">
+                            <a class="btn btn-primary" href="{{ route('shift.index') }}">
                                 <i class="bx bx-time me-1"></i> Shift
                             </a>
                         </li>

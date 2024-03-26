@@ -23,8 +23,10 @@ if (! function_exists('getRoleAccessMenu')) {
         $roleMenu = array();
         foreach($option as $item){
             $permission = Permission::with('roles')->where('id_menu', $item['id'])->get();
-            foreach($permission[0]->roles as $itemRole){
-                array_push($roleMenu, $itemRole['name']);
+            if (isset($permission[0])) {
+                foreach($permission[0]->roles as $itemRole){
+                    array_push($roleMenu, $itemRole['name']);
+                }
             }
         }
         return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode($roleMenu))));

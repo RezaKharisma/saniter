@@ -21,9 +21,11 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/jquery-ui.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
         <style>
             .swal2-container {
@@ -92,6 +94,8 @@
         <script src="{{ asset('assets/js/main.js') }}"></script>
         <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
+        {{-- <script src="{{ asset('assets/js/moment.js') }}"></script> --}}
+        <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 
         {{-- Sweet Alert --}}
@@ -100,6 +104,7 @@
         <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
 
         <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

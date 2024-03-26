@@ -99,7 +99,7 @@ class AjaxRoleController extends Controller
             ->get());
             $permissionsAll = $permissionsAll->groupBy('judul');
 
-            $table = view('table-html.table-role-user', compact('role','permissionsAll','user', 'userRole'))->render();
+            $table = view('components.table-html.table-role-user', compact('role','permissionsAll','user', 'userRole'))->render();
 
             return response()->json($table);
         }

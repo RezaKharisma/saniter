@@ -27,6 +27,7 @@ class RoleController extends Controller
         return view('pengaturan.role.index', compact('permissions'));
     }
 
+    // Fungsi menambah role user route(/assign-role)
     public function indexAssign(){
         $users = User::all();
         $roles = Role::all();
@@ -36,6 +37,7 @@ class RoleController extends Controller
     }
 
     public function create(){
+        // Masukkan ke dalam collection agar bisa group by, permission join menu
         $permissions = new Collection(Permission::select('name','menu.judul','menu.id')
         ->with('roles')
         ->join('menu', 'permissions.id_menu', '=', 'menu.id')
@@ -57,22 +59,15 @@ class RoleController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
+        // Buat role sesuai request name
         $role = Role::create(['name' => $request->name]);
 
-        if (!empty($request->checkBox)) {
-            if (count($request->checkBox) > 0) {
+        // request checkbox berasal dari inputan array, <input name='checkBox[]' />
+        if (!empty($request->checkBox)) { // Jika input checkbox tidak kosong
+            if (count($request->checkBox) > 0) { // Jika tercentang lebih dari 0
                 foreach ($request->checkBox as $item) {
-                    $permission = Permission::findByName($item);
-                    $menu = Menu::find($permission->id_menu);
-                    $accessRoles = json_decode($menu->access_roles);
-
-                    array_push($accessRoles, $role->name);
-
-                    $menu->update([
-                        'access_roles' => json_encode(array_unique($accessRoles))
-                    ]);
-
-                    $role->givePermissionTo($permission);
+                    $permission = Permission::findByName($item); // Cari nama permision berdasarkan value checkbox
+                    $role->givePermissionTo($permission); // Berikan permission pada role yg dibuat
                 }
             }
         }
@@ -82,8 +77,9 @@ class RoleController extends Controller
     }
 
     public function edit($id){
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = Role::with('permissions')->findOrFail($id); // Cari role berdasarkan id
 
+        // Masukkan ke dalam collection agar bisa group by, permission join menu
         $permissionsAll = new Collection(Permission::select('name','menu.judul','menu.id')
         ->join('menu', 'permissions.id_menu', '=', 'menu.id')
         ->get());
@@ -92,6 +88,7 @@ class RoleController extends Controller
         return view('pengaturan.role.edit', compact('role', 'permissionsAll'));
     }
 
+    // Fungsi mengedit role user route(/assign-role)
     public function editAssign($id)
     {
         $role = Role::select('id','name')->get();
@@ -116,67 +113,26 @@ class RoleController extends Controller
                 ->withInput(); // Return kembali
         }
 
-        $role = Role::with('permissions')->find($id);
+        $role = Role::with('permissions')->find($id); // Cari role dengan permission berdasarkan id
         $role->update([
-            'name' => $request->name,
+            'name' => $request->name, // Update nama role tersebut
         ]);
 
         $newPermission = array();
-        $oldAccessRoles = array();
-        $permissionOld = json_decode($request->oldPermission, true);
-
-        foreach($permissionOld as $key => $itemOld)
-        {
-            $permission = Permission::findByName($itemOld['name']);
-            $oldAccessRoles[$itemOld['name']] = $permission->roles;
-        }
-
         if ($request->checkBox != null) {
             foreach ($request->checkBox as $item) { // Ambil value checkbox berdasarkan nama itemnya
                 $permission = Permission::findByName($item); // Kemudian cari nama item tersebut dan sesuaikan dengan nama permission yg ada
                 array_push($newPermission, $permission);
             }
-        }else{
-            $newAccessRoles = array();
-            foreach ($role->permissions as $item) { // Role memiliki berapa permission
-                $menu = Menu::find($item->id_menu); // Cari menu berdasar id menu pada permission
-                // Ambil value nya saja dari array yang tidak termasuk di access_roles dengan nama role
-                $newAccessRoles = array_values(array_diff(json_decode($menu->access_roles), array($role->name)));
-                $menu->update([
-                    'access_roles' => json_encode(array_unique($newAccessRoles))
-                ]);
-            }
         }
 
-        $role->syncPermissions($newPermission);
-
-        // foreach ($request->checkBox as $item)
-        // {
-        //     $accessRoles = array();
-        //     $newAccessRoles = array();
-        //     $permission = Permission::findByName($item);
-        //     $menu = Menu::find($permission->id_menu);
-        //     $accessRoles[$item] = $permission->roles;
-
-        //     dd( $accessRoles);
-
-        //     if (count($oldAccessRoles) > count($accessRoles)) {
-        //         foreach($permission->roles as $itemRoles){
-        //             array_push($newAccessRoles, $itemRoles->name);
-        //         }
-        //     }else{
-        //         dd('berkurang');
-        //     }
-
-        //     $menu->update([
-        //         'access_roles' => json_encode(array_unique($newAccessRoles))
-        //     ]);
-        // }
+        $role->syncPermissions($newPermission); // Cocokkan role dengan permission
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::route('pengaturan.role.index'); // Return kembali
     }
 
+    // Fungsi update role user route(/assign-role)
     public function updateAssign(Request $request, $id){
         $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
             'user_name' => 'required|unique:roles,name,'.$id,
@@ -191,9 +147,9 @@ class RoleController extends Controller
         }
 
         $user = User::find($id);
-        $role = Role::find($id); // Cari sub menu berdasarkan ID
+        $role = Role::find($id);
 
-        $user->syncRoles($role);
+        $user->syncRoles($role); // Cocokkan user dengan role
 
         $newPermission = array();
         if ($request->checkBox != null) {
@@ -203,7 +159,7 @@ class RoleController extends Controller
             }
         }
 
-        $user->syncPermissions($newPermission);
+        $user->syncPermissions($newPermission); // Cocokkan user dengan permission
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::route('pengaturan.assign-role.index'); // Return kembali
@@ -211,19 +167,7 @@ class RoleController extends Controller
 
     public function delete($id){
         $role = Role::with('permissions')->findOrFail($id);
-
-        $newAccessRoles = array();
-        foreach ($role->permissions as $item) {
-            $menu = Menu::find($item->id_menu);
-            $newAccessRoles = array_values(array_diff(json_decode($menu->access_roles), array($role->name)));
-
-            $menu->update([
-                'access_roles' => json_encode(array_unique($newAccessRoles))
-            ]);
-        }
-
         $role->delete();
-
         toast('Data berhasil terhapus!', 'success'); // Toast
         return Redirect::back(); // Return kembali
     }
@@ -232,7 +176,6 @@ class RoleController extends Controller
         $user = User::find($id);
         $user->syncRoles([]);
         $user->syncPermissions([]);
-
         toast('Data berhasil terimpan!', 'success'); // Toast
         return Redirect::back(); // Return kembali
     }

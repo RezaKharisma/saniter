@@ -21,13 +21,13 @@ class ProfilController extends Controller
             ->join('roles', 'users.role_id', '=', 'roles.id')
             ->where('users.id', auth()->user()->id)
             ->first(); // Select row table user, join (regional)
-        return view('profil.index', compact('user')); // Kirim data compact sesuai variable
+        return view('pengaturan.profil.index', compact('user')); // Kirim data compact sesuai variable
     }
 
     public function indexResetPassword()
     {
         $user = User::where('users.id', Auth()->user()->id)->first(); // Select row table user, join (user_role, regional)
-        return view('profil.reset-password', compact('user')); // Kirim data compact sesuai variable
+        return view('pengaturan.profil.reset-password', compact('user')); // Kirim data compact sesuai variable
     }
 
     // Update profil user

@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
+use App\Http\Controllers\Ajax\AjaxShiftController;
 use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Settings\KategoriMenuController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\Settings\RegionalController;
+use App\Http\Controllers\Settings\ShiftController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;
@@ -41,7 +43,14 @@ Fortify::resetPasswordView(function () { return view('auth.reset-password'); });
 // Verified Account
 Route::group(['middleware' => ['auth']], function () {
 
-    // Admin Role
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware Admin
+    |--------------------------------------------------------------------------
+    |
+    | Berikan untuk admin saja, seperti pengaturan dan yg berhubungan dengan inti website
+    |
+    */
     Route::group(['middleware' => ['role:Admin']], function () {
 
         // Pengaturan
@@ -114,6 +123,30 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/assign-role','getUser')->name('ajax.getUser');
             Route::post('/ajax/tabel-add-role-user','getTabelRoleUser')->name('ajax.getTabelRoleUser');
         });
+
+        // Regional
+        Route::controller(RegionalController::class)->group(function()
+        {
+            Route::get('/pengaturan/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
+            Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
+            Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
+            Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
+            Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
+        });
+
+        // Ajax Regional Request
+        Route::controller(AjaxRegionalController::class)->group(function(){
+            Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
+            Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
+        });
+
+        Route::resource('/pengaturan/shift',ShiftController::class);
+
+        // Ajax Shift Request
+        Route::controller(AjaxShiftController::class)->group(function(){
+            Route::get('/ajax/shift','getShift')->name('ajax.getShift')->middleware('permission:shift_read');
+            Route::post('/ajax/shift/edit','getShiftEdit')->name('ajax.getShiftEdit')->middleware('permission:shift_update');
+        });
     });
 
     // User
@@ -134,22 +167,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_read');
     });
 
-    // Regional
-    Route::controller(RegionalController::class)->group(function()
-    {
-        Route::get('/pengaturan/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
-        Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
-        Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
-        Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
-        Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
-    });
-
-    // Ajax Regional Request
-    Route::controller(AjaxRegionalController::class)->group(function(){
-        Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
-        Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
-    });
-
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -163,7 +180,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/profil/{id}/ttd', 'updateTtd')->name('profile.updateTtd');
     });
 
+    // Absen
     Route::controller(AbsenController::class)->group(function(){
         Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
+    });
+
+    // Ajax Absen Request
+    Route::controller(AjaxUserController::class)->group(function(){
+        Route::get('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
     });
 });

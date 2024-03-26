@@ -344,7 +344,6 @@
                         $('#iconEdit').val(menu.icon);
                         $('#id_kategoriEdit option[value='+menu.id_kategori+']').attr('selected','selected');
                         judul_menu = $('#judulEdit').val().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-                        console.log(judul_menu);
                     }
                 });
             }
