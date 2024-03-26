@@ -13,7 +13,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
-use App\Http\Controllers\RegionalController;
+use App\Http\Controllers\Settings\RegionalController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Fortify;

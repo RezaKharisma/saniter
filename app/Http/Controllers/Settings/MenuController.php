@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class MenuController extends Controller
 {
@@ -95,6 +97,12 @@ class MenuController extends Controller
 
         $menu = Menu::find($id); // Cari menu berdasarkan id
         $subMenu = SubMenu::where('id_menu', $id); // Cari sub menu berdasarkan id_menu FK
+
+        $roles = Role::all();
+        $permissions = Permission::where('id_menu', $id)->get();
+
+        $roles->revokePermissionTo($permissions);
+        $permissions->delete();
 
         // Delete menu tersebut dan sub menu
         $menu->delete();

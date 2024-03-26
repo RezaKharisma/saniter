@@ -26,6 +26,7 @@
         @foreach (getMenu() as $group => $options)
 
             @php $first = true; @endphp
+
             @foreach ($options as $item)
 
                 @php $roles = str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles)); @endphp
