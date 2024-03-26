@@ -31,10 +31,24 @@
         </li>
 
         <li class="menu-item">
-            <a href="{{ route('regional.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-buildings"></i>
-                <div data-i18n="Analytics">Regional</div>
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+            <div data-i18n="Misc">Regional & Lokasi</div>
             </a>
+            <ul class="menu-sub">
+            <li class="menu-item">
+                <a href="{{ route('regional.index') }}" class="menu-link">
+                    {{-- <i class="menu-icon tf-icons bx bx-buildings"></i> --}}
+                    <div data-i18n="Analytics">Regional</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{{ route('lokasi.index') }}" class="menu-link">
+                    {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
+                    <div data-i18n="Analytics">Lokasi</div>
+                </a>
+            </li>
+            </ul>
         </li>
 
         @foreach (getMenu() as $group => $options)

@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LokasiController;
 use Laravel\Fortify\Fortify;
 
 /*
@@ -147,6 +148,16 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/shift','getShift')->name('ajax.getShift')->middleware('permission:shift_read');
             Route::post('/ajax/shift/edit','getShiftEdit')->name('ajax.getShiftEdit')->middleware('permission:shift_update');
         });
+    });
+
+    // Lokasi
+    Route::controller(LokasiController::class)->group(function()
+    {
+        Route::get('lokasi', 'index')->name('lokasi.index');
+        Route::get('lokasi/create', 'create')->name('lokasi.create');
+        Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+        Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+        Route::put('lokasi/{id}', 'update')->name('lokasi.update');
     });
 
     // User

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('longitude', length: 50);
             $table->integer('radius');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
