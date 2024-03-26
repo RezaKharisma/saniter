@@ -29,9 +29,9 @@
 
             @foreach ($options as $item)
 
-                @php $roles = str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles)); @endphp
+                @php $roles = str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles))); @endphp
 
-                @role($roles)
+                @hasrole($roles)
 
                 @if ($first)
                     <!-- {{ $group }} -->
@@ -64,7 +64,7 @@
 
                 </li>
 
-                @endrole
+                @endhasrole
 
             @endforeach
 

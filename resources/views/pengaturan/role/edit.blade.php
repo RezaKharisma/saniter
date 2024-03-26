@@ -23,6 +23,8 @@
                     @csrf
                     @method('PUT')
 
+                    <input type="hidden" name="oldPermission" value="{{ $role->permissions }}">
+
                     <div class="card-body">
 
                         {{-- Input Judul --}}

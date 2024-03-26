@@ -122,27 +122,26 @@ class RoleController extends Controller
         ]);
 
         $newPermission = array();
+        $oldAccessRoles = array();
+        $permissionOld = json_decode($request->oldPermission, true);
+
+        foreach($permissionOld as $key => $itemOld)
+        {
+            $permission = Permission::findByName($itemOld['name']);
+            $oldAccessRoles[$itemOld['name']] = $permission->roles;
+        }
 
         if ($request->checkBox != null) {
-            foreach ($request->checkBox as $item) {
-                $permission = Permission::findByName($item);
-                $menu = Menu::find($permission->id_menu);
-                $accessRoles = json_decode($menu->access_roles);
-
-                array_push($accessRoles, $role->name);
-
-                $menu->update([
-                    'access_roles' => json_encode(array_unique($accessRoles))
-                ]);
-
+            foreach ($request->checkBox as $item) { // Ambil value checkbox berdasarkan nama itemnya
+                $permission = Permission::findByName($item); // Kemudian cari nama item tersebut dan sesuaikan dengan nama permission yg ada
                 array_push($newPermission, $permission);
             }
         }else{
             $newAccessRoles = array();
-            foreach ($role->permissions as $item) {
-                $menu = Menu::find($item->id_menu);
+            foreach ($role->permissions as $item) { // Role memiliki berapa permission
+                $menu = Menu::find($item->id_menu); // Cari menu berdasar id menu pada permission
+                // Ambil value nya saja dari array yang tidak termasuk di access_roles dengan nama role
                 $newAccessRoles = array_values(array_diff(json_decode($menu->access_roles), array($role->name)));
-
                 $menu->update([
                     'access_roles' => json_encode(array_unique($newAccessRoles))
                 ]);
@@ -150,6 +149,29 @@ class RoleController extends Controller
         }
 
         $role->syncPermissions($newPermission);
+
+        foreach ($request->checkBox as $item)
+        {
+            $accessRoles = array();
+            $newAccessRoles = array();
+            $permission = Permission::findByName($item);
+            $menu = Menu::find($permission->id_menu);
+            $accessRoles[$item] = $permission->roles;
+
+            dd( $accessRoles);
+
+            if (count($oldAccessRoles) > count($accessRoles)) {
+                foreach($permission->roles as $itemRoles){
+                    array_push($newAccessRoles, $itemRoles->name);
+                }
+            }else{
+                dd('berkurang');
+            }
+
+            $menu->update([
+                'access_roles' => json_encode(array_unique($newAccessRoles))
+            ]);
+        }
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::route('pengaturan.role.index'); // Return kembali
@@ -214,18 +236,4 @@ class RoleController extends Controller
         toast('Data berhasil terimpan!', 'success'); // Toast
         return Redirect::back(); // Return kembali
     }
-
-    // public function addAccessRoleMenu($accessRoles, $roleName)
-    // {
-    //     $accessRoles = json_decode($accessRoles);
-    //     $newAccessRoles = array();
-    //     for ($i=0; $i < count($accessRoles); $i++) {
-    //         if ($roleName != $accessRoles[$i]) {
-    //             array_push($newAccessRoles, $accessRoles[$i]);
-    //         }
-    //     }
-
-    //     dd($newAccessRoles);
-    //     return json_encode($newAccessRoles);
-    // }
 }

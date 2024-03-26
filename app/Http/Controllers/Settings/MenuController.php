@@ -97,6 +97,7 @@ class MenuController extends Controller
 
         $menu = Menu::find($id); // Cari menu berdasarkan id
         $subMenu = SubMenu::where('id_menu', $id); // Cari sub menu berdasarkan id_menu FK
+        $permission = Permission::where('id_menu', $id);
 
         $roles = Role::all();
         $permissions = Permission::where('id_menu', $id)->get();
@@ -107,6 +108,7 @@ class MenuController extends Controller
         // Delete menu tersebut dan sub menu
         $menu->delete();
         $subMenu->delete();
+        $permission->delete();
 
         // Redirect kembali
         toast('Data berhasil terhapus!', 'success');
