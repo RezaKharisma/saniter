@@ -29,9 +29,7 @@
 
             @foreach ($options as $item)
 
-                @php $roles = str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles))); @endphp
-
-                @hasrole($roles)
+                @hasrole(getRoleAccessMenu($options))
 
                 @if ($first)
                     <!-- {{ $group }} -->

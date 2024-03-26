@@ -1,11 +1,11 @@
 <?php
 
 use App\Models\Menu;
-use App\Models\MenuKategori;
-use App\Models\Regional;
-use App\Models\SubMenu;
 use App\Models\User;
+use App\Models\SubMenu;
+use App\Models\Regional;
 use App\Models\UserRole;
+use App\Models\MenuKategori;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
@@ -20,22 +20,14 @@ if (! function_exists('getRegional')) {
 if (! function_exists('getRoleAccessMenu')) {
     function getRoleAccessMenu($option)
     {
+        $roleMenu = array();
         foreach($option as $item){
-            $roles = str_replace('","', '|', str_replace(array('[',']'),'',$item->access_roles));
+            $permission = Permission::with('roles')->where('id_menu', $item['id'])->get();
+            foreach($permission[0]->roles as $itemRole){
+                array_push($roleMenu, $itemRole['name']);
+            }
         }
-
-
-        $query = Menu::select('menu.*', 'menu_kategori.nama_kategori')
-        ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
-        ->orderBy('menu_kategori.order', 'ASC')
-        ->orderBy('menu.order', 'ASC')
-        ->where('menu_kategori.show', '1')
-        ->where('menu.show', '1')
-        ->get();
-
-        return $query->groupBy(function ($item, $key) {
-            return $item['nama_kategori'];
-        });
+        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode($roleMenu))));
     }
 }
 

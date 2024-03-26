@@ -150,28 +150,28 @@ class RoleController extends Controller
 
         $role->syncPermissions($newPermission);
 
-        foreach ($request->checkBox as $item)
-        {
-            $accessRoles = array();
-            $newAccessRoles = array();
-            $permission = Permission::findByName($item);
-            $menu = Menu::find($permission->id_menu);
-            $accessRoles[$item] = $permission->roles;
+        // foreach ($request->checkBox as $item)
+        // {
+        //     $accessRoles = array();
+        //     $newAccessRoles = array();
+        //     $permission = Permission::findByName($item);
+        //     $menu = Menu::find($permission->id_menu);
+        //     $accessRoles[$item] = $permission->roles;
 
-            dd( $accessRoles);
+        //     dd( $accessRoles);
 
-            if (count($oldAccessRoles) > count($accessRoles)) {
-                foreach($permission->roles as $itemRoles){
-                    array_push($newAccessRoles, $itemRoles->name);
-                }
-            }else{
-                dd('berkurang');
-            }
+        //     if (count($oldAccessRoles) > count($accessRoles)) {
+        //         foreach($permission->roles as $itemRoles){
+        //             array_push($newAccessRoles, $itemRoles->name);
+        //         }
+        //     }else{
+        //         dd('berkurang');
+        //     }
 
-            $menu->update([
-                'access_roles' => json_encode(array_unique($newAccessRoles))
-            ]);
-        }
+        //     $menu->update([
+        //         'access_roles' => json_encode(array_unique($newAccessRoles))
+        //     ]);
+        // }
 
         toast('Data berhasil tersimpan!', 'success'); // Toast
         return Redirect::route('pengaturan.role.index'); // Return kembali
