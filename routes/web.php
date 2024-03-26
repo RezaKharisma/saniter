@@ -9,15 +9,16 @@ use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Settings\KategoriMenuController;
 use App\Http\Controllers\Settings\MenuController;
-use App\Http\Controllers\Settings\PengaturanController;
-use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\Settings\RegionalController;
 use App\Http\Controllers\Settings\ShiftController;
+use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\PengaturanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfilController;
 use Laravel\Fortify\Fortify;
 
 /*
