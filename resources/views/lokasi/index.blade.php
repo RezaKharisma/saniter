@@ -47,7 +47,7 @@
                             <div class="modal fade" id="update{{ $key }}" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
-                                        <form method="POST" action="{{ route('lokasi.update', $u->id) }}" class="d-inline">
+                                        <form method="POST" action="{{ route('lokasi.update', $u->lokasi_id) }}" class="d-inline">
                                             @csrf @method('PUT')
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel1">Detail Nama Regional</h5>
