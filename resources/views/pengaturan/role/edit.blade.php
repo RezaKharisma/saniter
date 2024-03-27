@@ -34,6 +34,7 @@
                             <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3" value="{{ $role->name ?? old('name') }}" />
                         @endif
 
+                        <div class="table-responsive">
                         <table class="table table-bordered mt-4">
                             <thead>
                                 <th>Menu</th>
@@ -85,6 +86,7 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <div class="card-footer">

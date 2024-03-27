@@ -34,7 +34,7 @@
                         </div>
                     </div>
 
-                    <table id="role-table" class="table table-hover table-sm" width="100%">
+                    <table id="role-table" class="table table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>

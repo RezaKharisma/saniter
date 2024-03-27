@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\Ajax\AjaxAbsenController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
@@ -141,13 +142,15 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
         });
 
-        Route::resource('/pengaturan/shift',ShiftController::class);
+    });
 
-        // Ajax Shift Request
-        Route::controller(AjaxShiftController::class)->group(function(){
-            Route::get('/ajax/shift','getShift')->name('ajax.getShift')->middleware('permission:shift_read');
-            Route::post('/ajax/shift/edit','getShiftEdit')->name('ajax.getShiftEdit')->middleware('permission:shift_update');
-        });
+    // Shift
+    Route::resource('/pengaturan/shift',ShiftController::class);
+
+    // Ajax Shift Request
+    Route::controller(AjaxShiftController::class)->group(function(){
+        Route::get('/ajax/shift','getShift')->name('ajax.getShift')->middleware('permission:shift_read');
+        Route::post('/ajax/shift/edit','getShiftEdit')->name('ajax.getShiftEdit')->middleware('permission:shift_update');
     });
 
     // Lokasi
@@ -194,10 +197,11 @@ Route::group(['middleware' => ['auth']], function () {
     // Absen
     Route::controller(AbsenController::class)->group(function(){
         Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
+        Route::post('/administrasi/absen', 'store')->name('absen.store')->middleware('permission:absen_create');
     });
 
     // Ajax Absen Request
-    Route::controller(AjaxUserController::class)->group(function(){
-        Route::get('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
+    Route::controller(AjaxAbsenController::class)->group(function(){
+        Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
     });
 });
