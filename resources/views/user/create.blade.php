@@ -1,11 +1,17 @@
 
 <x-layouts.app title="Pengaturan">
-{{ $errors }}
-<div class="card mb-12">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Form User Baru</h5>
+  <div class="card-body">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">User</a>
+        </li>
+        <li class="breadcrumb-item active">Form User Baru</li>
+      </ol>
+    </nav>
+  </div>
 
-    </div>
+<div class="card mb-12">
     <div class="card-body">
       <form method="post" action="{{ route('user.add') }}" enctype="multipart/form-data">
         @csrf
