@@ -1,16 +1,10 @@
 <?php
 
-
-use App\Http\Controllers\AbsenController;
-use App\Http\Controllers\Ajax\AjaxAbsenController;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\Ajax\AjaxAbsenController;
 use App\Http\Controllers\IzinController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LokasiController;
-use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\RegionalController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
@@ -27,9 +21,7 @@ use App\Http\Controllers\Settings\ShiftController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LokasiController;
-use Laravel\Fortify\Fortify;
 
 /*
 |--------------------------------------------------------------------------
