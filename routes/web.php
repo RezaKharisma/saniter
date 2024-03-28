@@ -1,7 +1,16 @@
 <?php
 
+
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\Ajax\AjaxAbsenController;
+use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IzinController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\RegionalController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
@@ -66,6 +75,28 @@ Route::group(['middleware' => ['auth']], function () {
             Route::put('/pengaturan/kategori-menu/{id}/show','updateShow')->name('pengaturan.kategorimenu.updateShow');
             Route::delete('/pengaturan/kategori-menu/{id}','delete')->name('pengaturan.kategorimenu.delete');
         });
+
+        // Lokasi
+        Route::controller(LokasiController::class)->group(function()
+        {
+            Route::get('lokasi', 'index')->name('lokasi.index');
+            Route::get('lokasi/create', 'create')->name('lokasi.create');
+            Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+            Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+            Route::put('lokasi/{id}', 'update')->name('lokasi.update');
+        });
+
+        // Izin
+        Route::controller(IzinController::class)->group(function()
+        {
+            Route::get('izin', 'index')->name('izin.index');
+            Route::get('settingizin', 'setting')->name('izin.setting');
+            // Route::get('lokasi/create', 'create')->name('lokasi.create');
+            // Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+            // Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+            // Route::put('lokasi/{id}', 'update')->name('lokasi.update');
+        });
+
 
         // Menu
         Route::controller(MenuController::class)->group(function(){

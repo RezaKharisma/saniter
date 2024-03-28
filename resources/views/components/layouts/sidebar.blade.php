@@ -42,6 +42,7 @@
                     <div data-i18n="Analytics">Regional</div>
                 </a>
             </li>
+
             <li class="menu-item">
                 <a href="{{ route('lokasi.index') }}" class="menu-link">
                     {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
@@ -49,6 +50,22 @@
                 </a>
             </li>
             </ul>
+        </li>
+
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Kehadiran</span></li>
+
+        <li class="menu-item">
+            <a href="#" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-book-content"></i>
+                <div data-i18n="Analytics">Absen</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('izin.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-task-x"></i>
+                <div data-i18n="Analytics">Izin</div>
+            </a>
         </li>
 
         @foreach (getMenu() as $group => $options)
