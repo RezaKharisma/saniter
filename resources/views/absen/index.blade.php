@@ -255,12 +255,31 @@
                             sweetAlertMessage('Kesalahan Pada Kamera!','Pastikan akses kamera pada browser aktif.','warning');
                         } );
 
+                        var width = 720;
+                        var height = 540;
+
+                        if (screen.height <= screen.width) {
+                            // Landscape
+                            Webcam.set({
+                                width: width,
+                                height: height,
+                                dest_width: width,
+                                dest_height: height,
+                            });
+                        } else {
+                            // Portrait
+                            Webcam.set({
+                                width: height,
+                                height: width,
+                                dest_width: height,
+                                dest_height: width,
+                            });
+                        }
+
                         // Set webcam untuk mengambil gambar absen
                         Webcam.set({
-                            width: 1280,
-                            height: 720,
-                            dest_width: 1280,
-                            dest_height: 720,
+                            crop_width: 500,
+                            crop_height: 500,
                             align: 'center',
                             image_format: 'jpeg',
                             jpeg_quality: 90,

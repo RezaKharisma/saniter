@@ -36,8 +36,8 @@ use App\Http\Controllers\LokasiController;
 
 
 // Login
-Fortify::loginView('start', function(){ return view('auth.login'); });
-Fortify::loginView(function () {return view('auth.login');});
+Route::any('/', function(){ return view('auth.login'); });
+Fortify::loginView('/login',function () {return view('auth.login');});
 
 // Reset Password
 Fortify::requestPasswordResetLinkView(function () { return view('auth.forgot-password'); });
