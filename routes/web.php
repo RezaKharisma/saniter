@@ -2,6 +2,7 @@
 
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IzinController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ProfilController;
@@ -87,6 +88,17 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
             Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
             Route::put('lokasi/{id}', 'update')->name('lokasi.update');
+        });
+
+        // Izin
+        Route::controller(IzinController::class)->group(function()
+        {
+            Route::get('izin', 'index')->name('izin.index');
+            Route::get('settingizin', 'setting')->name('izin.setting');
+            // Route::get('lokasi/create', 'create')->name('lokasi.create');
+            // Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+            // Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+            // Route::put('lokasi/{id}', 'update')->name('lokasi.update');
         });
 
         // Menu
