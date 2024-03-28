@@ -12,22 +12,7 @@
                 height: auto !important;
             }
         </style>
-        {{-- <style>
-            @media (max-width: 576px) {
-            #my_camera video {
-                max-width: 80%;
-                max-height: 80%;
-            }
-
-            #results img {
-                max-width: 80%;
-                max-height: 80%;
-
-            }
-        }
-        </style> --}}
     </x-slot>
-
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi /</span> Absen</h4>
 

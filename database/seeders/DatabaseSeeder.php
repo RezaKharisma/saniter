@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
     {
         $regional = ['Timur', 'Tengah', 'Barat', 'Pusat'];
         $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Pengaturan'];
-        $menu = ['User', 'Absen', 'Laporan', 'Dokumen'];
         for ($i=0; $i < count($regional); $i++) {
             Regional::create([
                 'nama' => $regional[$i]
@@ -36,6 +35,15 @@ class DatabaseSeeder extends Seeder
                 'show' => 1
             ]);
         }
+
+        Menu::create([
+            'id_kategori' => 2,
+            'judul' => 'Absen',
+            'order' => 1,
+            'url' => 'administrasi/absen',
+            'icon' => 'calendar-check',
+            'show' => 1,
+        ]);
 
         User::create([
             'regional_id' => 1,
@@ -73,7 +81,16 @@ class DatabaseSeeder extends Seeder
             'is_active' => 1
         ]);
 
-        for ($i=1; $i <= 5; $i++) {
+        Lokasi::create([
+            'regional_id' => 1,
+            'nama_bandara' => fake()->country(),
+            'lokasi_proyek' => fake()->address(),
+            'latitude' => -8.6608598,
+            'longitude' => 115.2149947,
+            'radius' => rand(10,200)
+        ]);
+
+        for ($i=2; $i <= 5; $i++) {
             Lokasi::create([
                 'regional_id' => $i,
                 'nama_bandara' => fake()->country(),
@@ -83,6 +100,27 @@ class DatabaseSeeder extends Seeder
                 'radius' => rand(10,200)
             ]);
         }
+
+        Shift::create([
+            'nama' => 'Pagi',
+            'server_time' => 1,
+            'jam_masuk' => "09:00:00",
+            'jam_pulang' => "17:00:00"
+        ]);
+
+        Shift::create([
+            'nama' => 'Sore',
+            'server_time' => 1,
+            'jam_masuk' => "15:00:00",
+            'jam_pulang' => "23:00:00"
+        ]);
+
+        Shift::create([
+            'nama' => 'Malam',
+            'server_time' => 1,
+            'jam_masuk' => "23:00:00",
+            'jam_pulang' => "07:00:00"
+        ]);
 
         $this->call(PermissionSeeder::class);
 
