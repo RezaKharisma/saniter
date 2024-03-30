@@ -36,6 +36,18 @@ class LokasiController extends Controller
         return view('lokasi.create', compact('regional'));
     }
 
+    // Fungsi dibawah digunakan untuk menampilkan halaman form EDIT lokasi
+    public function edit($id)
+    {
+        $lokasi = Lokasi::select('*','lokasi.longitude as lokasi_longitude','lokasi.latitude as lokasi_latitude','regional.id as regioanl_id')
+            ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')->find($id);
+
+        // Ambil data regional
+        $regional = Regional::select('*')->get();
+
+        return view('lokasi.edit', compact('lokasi','regional'));
+    }
+
     // fungsi dibawah digunakan untuk menambahkan data Lokasi
     public function store(Request $request)
     {
@@ -119,6 +131,6 @@ class LokasiController extends Controller
         $lokasi->update($data); // Update data
 
         toast('Data Lokasi berhasil tersimpan!', 'success');
-        return Redirect::back(); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 }

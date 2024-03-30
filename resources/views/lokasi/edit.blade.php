@@ -14,8 +14,9 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Form Lokasi Baru</h5>
         </div>
-        <form method="post" action="{{ route('lokasi.add') }}" enctype="multipart/form-data">
+        <form method="post" action="{{ route('lokasi.update', $lokasi->id) }}" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="card-body">
 
                 {{-- Input Regional --}}
@@ -24,7 +25,7 @@
                     <select class="form-select @error('regional_id') is-invalid @enderror" name="regional_id" id="regional_id" onchange="getRegionalMap()">
                         <option disabled selected="">Pilih Regional Kerja</option>
                         @foreach ($regional as $r)
-                            <option @if(old('regional_id') == $r->id) selected @endif value="{{ $r->id }}"> {{ $r->nama }}</option>
+                            <option @if(old('regional_id') == $r->id || $lokasi->regional_id == $r->id) selected @endif value="{{ $r->id }}"> {{ $r->nama }}</option>
                         @endforeach
                     </select>
                     <x-partials.error-message class="d-block" name="regional_id" />
@@ -35,7 +36,7 @@
                     <x-partials.label title="Nama Bandara"/>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text" @error('nama_bandara') style="border: solid red 1px;" @enderror><i class="bx bxs-plane-alt"></i></span>
-                        <input type="text" name="nama_bandara" class="form-control @error('nama_bandara') is-invalid @enderror" placeholder="Bandara International I Gusti Ngurah Rai" />
+                        <input type="text" name="nama_bandara" class="form-control @error('nama_bandara') is-invalid @enderror" placeholder="Bandara International I Gusti Ngurah Rai" value="{{ old('nama_bandara') ?? $lokasi->nama_bandara  }}"/>
                     </div>
                     <x-partials.error-message class="d-block" name="nama_bandara" class="d-block"/>
                 </div>
@@ -45,7 +46,7 @@
                     <x-partials.label title="Lokasi Proyek (Terminal)"/>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text" @error('lokasi_proyek') style="border: solid red 1px;" @enderror><i class="bx bxs-map"></i></span>
-                        <input type="text" name="lokasi_proyek" class="form-control @error('lokasi_proyek') is-invalid @enderror" placeholder="Terminal Domestik / International" />
+                        <input type="text" name="lokasi_proyek" class="form-control @error('lokasi_proyek') is-invalid @enderror" placeholder="Terminal Domestik / International" value="{{ old('lokasi_proyek') ?? $lokasi->lokasi_proyek  }}"/>
                     </div>
                     <x-partials.error-message class="d-block" name="lokasi_proyek" />
                 </div>
@@ -66,7 +67,7 @@
                                     <x-partials.label title="Latitude"/>
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text" @error('latitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
-                                        <input type="number" name="latitude" id="latitude" class="form-control @error('latitude') is-invalid @enderror" placeholder="-8.6605651" step="any"/>
+                                        <input type="number" name="latitude" id="latitude" class="form-control @error('latitude') is-invalid @enderror" placeholder="-8.6605651" step="any" value="{{ old('latitude') ?? $lokasi->lokasi_latitude  }}"/>
                                     </div>
                                     <x-partials.error-message class="d-block" name="latitude" />
                                 </div>
@@ -79,7 +80,7 @@
                                     <x-partials.label title="Longitude"/>
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text" @error('longitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
-                                        <input type="number" name="longitude" id="longitude" class="form-control @error('longitude') is-invalid @enderror" placeholder="115.2154872" step="any"/>
+                                        <input type="number" name="longitude" id="longitude" class="form-control @error('longitude') is-invalid @enderror" placeholder="115.2154872" step="any" value="{{ old('longitude') ?? $lokasi->lokasi_longitude  }}"/>
                                     </div>
                                     <x-partials.error-message class="d-block" name="longitude" />
                                 </div>
@@ -94,7 +95,7 @@
                     <x-partials.label title="Radius"/>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text" @error('radius') style="border: solid red 1px;" @enderror><i class="bx bx-trip"></i></span>
-                        <input type="number" name="radius" id="radius" class="form-control @error('radius') is-invalid @enderror" placeholder="150" onkeyup="getRadiusMarker()"/>
+                        <input type="number" name="radius" id="radius" class="form-control @error('radius') is-invalid @enderror" placeholder="150" onkeyup="getRadiusMarker()" value="{{ old('radius') ?? $lokasi->radius  }}"/>
                     </div>
                     <x-partials.error-message class="d-block" name="radius" />
                 </div>
@@ -113,6 +114,11 @@
     <x-slot name="script">
         <script src="{{ asset('assets/vendor/libs/leaflet/leaflet.js') }}"></script>
         <script>
+            // Variable
+            var map = L.map('map');
+            var radiusCircle;
+            var radiusCirclePop;
+
             $(document).ready(function () {
                 getGeo();
             });
@@ -137,13 +143,13 @@
             function locationSuccess(position) {
                 // Set default map indonesia
                 if ($("#radius_id").val() == null) {
-                    var lat = -5.4525809;
-                    var long = 111.8390276;
+                    var lat = {{$lokasi->lokasi_latitude}};
+                    var long = {{ $lokasi->lokasi_longitude }};
                 }else{
                     getRegionalMap();
                 }
                 // Pemanggilan fungsi render map dibawah
-                getMapView(lat,long,5);
+                getMapView(lat,long,15);
             }
 
             // Jika pencarian lokasi error
@@ -185,8 +191,6 @@
 
         <script>
             // Fungsi render map leaflet
-            var map = L.map('map');
-            var radiusCircle;
             function getMapView(lat, long, zoom)
             {
                 // Reload map setiap render
@@ -223,12 +227,21 @@
 
                 // Pemanggilan default marker kantor regional Qinar
                 markerDefault(map);
+
+                radiusCirclePop = L.popup()
+                    .setLatLng([{{ $lokasi->lokasi_latitude }},{{ $lokasi->lokasi_longitude }}])
+                    .setContent('Lokasi yang dipilih')
+                    .addTo(map);
             }
         </script>
 
         <script>
             // Fungsi saat select regional dipilih
             function getRegionalMap(){
+                if (radiusCirclePop != undefined) {
+                    map.removeLayer(radiusCirclePop);
+                }
+
                 // Mengatur ajax csrf
                 $.ajaxSetup({
                     headers: {
@@ -306,39 +319,6 @@
         </script>
 
         <script>
-            var vars = {};
-            // Marker default lokasi kantor regional Qinar
-            function markerDefault(map){
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                // Ambil data dari ajax
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ajax.getAllRegionalMap') }}",
-                    data: {
-                        id: $('#regional_id').val() // Mengambil id pada event
-                    },
-                    dataType: "json",
-                    success: function (response) { // Jika ajax sukses dan memberikan respon
-                        response.data.forEach(element => {
-                            vars['Kantor'+element.nama] = L.circle([element.latitude, element.longitude], {
-                                color: 'red',
-                                fillColor: '#f03',
-                                fillOpacity: 0.5,
-                                radius: 100
-                            }).addTo(map);
-                            vars['Kantor'+element.nama].bindPopup("Kantor Regional "+element.nama+" PT. Qinar Raya Mandiri");
-                        });
-                    }
-                });
-            }
-        </script>
-
-        {{-- <script>
             // Marker default lokasi kantor regional Qinar
             function markerDefault(map){
                 // Marker Kantor Pusat
@@ -358,7 +338,15 @@
                     radius: 100
                 }).addTo(map);
                 kantorQinarJakarta.bindPopup("Kantor Regional Tengah PT. Qinar Raya Mandiri");
+
+                radiusCircle = L.circle([{{ $lokasi->lokasi_latitude }},{{ $lokasi->lokasi_longitude }}], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5,
+                    radius: {{ $lokasi->radius }}
+                }).addTo(map);
+                radiusCircle.bindPopup("Lokasi dipilih");
             }
-        </script> --}}
+        </script>
     </x-slot>
 </x-layouts.app>

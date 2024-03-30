@@ -14,20 +14,20 @@ class AjaxLokasiController extends Controller
         if ($request->ajax()) {
 
             // Query menu join kategori
-            $regional = Lokasi::select('id','nama')
+            $lokasi = Lokasi::select('*','lokasi.id as lokasi_id','regional.nama as regional_name')
             ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')
             ->get();
 
             // Return datatables
-            return DataTables::of($regional)
+            return DataTables::of($lokasi)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('lokasi_update')) {
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditRegional' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                        $btn = "<a class='btn btn-warning btn-sm d-inline me-1' href='".route('lokasi.edit', $row->lokasi_id)."' >Ubah</a>";
                     }
                     if (auth()->user()->can('lokasi_delete')) {
-                        $btn = $btn."<form action=".route('regional.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn."<form action=".route('lokasi.delete', $row->lokasi_id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     }
                     return $btn;
                 })

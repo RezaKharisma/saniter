@@ -30,6 +30,18 @@ class RegionalController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        $regional = Regional::find($id);
+
+        return view('pengaturan.regional.edit', compact('regional'));
+
+
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     // Untuk menambahkan data regional kedalam database
@@ -37,6 +49,8 @@ class RegionalController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required|unique:regional,nama',
+            'latitude' => 'required',
+            'longitude' => 'required'
         ]);
 
         // Jika validasi gagal
@@ -48,7 +62,9 @@ class RegionalController extends Controller
         }
 
         Regional::create([
-            'nama' => $request->nama
+            'nama' => $request->nama,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -70,13 +86,12 @@ class RegionalController extends Controller
     public function update(Request $request, $id)
     {
         // Mengambil request dari submit form
-        $validator = Validator::make(
-            $request->all(),
-            [
+        $validator = Validator::make($request->all(),[
                 // Validasi & ambil semua request
                 'nama' => 'required',
-            ]
-        );
+                'latitude' => 'required',
+                'longitude' => 'required'
+        ]);
 
         // Jika validasi gagal
         if ($validator->fails()) {
@@ -89,27 +104,13 @@ class RegionalController extends Controller
         $regional = Regional::find($id); // Where user = $id
         $data = [
             'nama' => $request->nama,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ];
         // dd($regional);
         $regional->update($data); // Update data
 
         toast('Data berhasil tersimpan!', 'success');
         return Redirect::back(); // Redirect kembali
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 }

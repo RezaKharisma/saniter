@@ -11,6 +11,7 @@ use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
 use App\Http\Controllers\Ajax\AjaxShiftController;
 use App\Http\Controllers\Ajax\AjaxUserController;
+use App\Http\Controllers\AjaxIzinController;
 use App\Http\Controllers\Settings\KategoriMenuController;
 use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\PengaturanController;
@@ -92,6 +93,8 @@ Route::group(['middleware' => ['auth']], function () {
             // Izin untuk admin (setting)
             Route::get('izin/setting', 'setting_index')->name('izin.setting');
             Route::get('izin/setting-create', 'setting_create')->name('izin.setting-create');
+            Route::post('izin/setting-add', 'setting_izin_add')->name('izin.setting-add');
+            Route::delete('izin-setting/{id}/delete','setting_delete')->name('izin.setting-delete');
 
 
             // Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
@@ -99,6 +102,9 @@ Route::group(['middleware' => ['auth']], function () {
             // Route::put('lokasi/{id}', 'update')->name('lokasi.update');
         });
 
+        Route::controller(AjaxIzinController::class)->group(function(){
+            Route::post('ajax/jumlah-izin', 'getJumlahIzin')->name('ajax.getJumlahIzin');
+        });
 
         // Menu
         Route::controller(MenuController::class)->group(function(){
@@ -167,6 +173,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
         Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
         Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
+        Route::get('/pengaturan/regional/{id}/edit', 'edit')->name('regional.edit')->middleware('permission:regional_update');
         Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
     });
 
@@ -174,6 +181,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(AjaxRegionalController::class)->group(function(){
         Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
         Route::post('/ajax/regional/map','getRegionalMap')->name('ajax.getRegionalMap')->middleware('permission:regional_read');
+        Route::post('/ajax/regional/all-map','getAllRegionalMap')->name('ajax.getAllRegionalMap')->middleware('permission:regional_read');
         Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
     });
 
@@ -193,12 +201,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('lokasi/create', 'create')->name('lokasi.create');
         Route::post('lokasi/add', 'store')->name('lokasi.add');
         Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
+        Route::get('lokasi/{id}/edit', 'edit')->name('lokasi.edit');
         Route::put('lokasi/{id}', 'update')->name('lokasi.update');
     });
 
     // Ajax Lokasi Request
     Route::controller(AjaxLokasiController::class)->group(function(){
-        Route::get('/ajax','getLokasi')->name('lokasi.getLokasi');
+        Route::get('/ajax','getLokasi')->name('ajax.getLokasi');
     });
 
     // User

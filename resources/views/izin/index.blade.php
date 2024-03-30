@@ -9,7 +9,7 @@
             </li>
         </ul>
         <div class="card mb-4">
-        
+
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
                     <table class="table table-striped" id="tabel-user">
@@ -49,7 +49,7 @@
                                     </form>
                                 </td>
 
-                                
+
                                     <div class="modal fade" id="update{{ $key }}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
@@ -67,7 +67,7 @@
                                                             <input type="text" name="nama" class="form-control" value="{{ $u->nama }}" />
                                                         </div>
                                                     </div>
-                                                    
+
                                                 </div>
                                                 <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -79,7 +79,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                
+
 
 
                             </tr>
