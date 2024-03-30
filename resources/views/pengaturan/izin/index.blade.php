@@ -3,8 +3,10 @@
 
 <div class="row">
     <div class="col-md-12">
-    <ul class="nav nav-pills flex-md-row mb-3">
 
+    <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu!</div>
+
+    <ul class="nav nav-pills flex-md-row mb-3">
         @foreach ($regional as $item)
             <li class="nav-item">
                 <a class="nav-link btn-regional" href="#" data-id="{{ $item->id }}" onclick="getIzin(this)"><i class="bx bx-plus-circle me-1"></i> Regional {{ $item->nama }}</a>
@@ -12,6 +14,9 @@
         @endforeach
     </ul>
         <div class="card mb-4">
+            <h5 class="card-header">
+                Jumlah Izin
+            </h5>
 
             <div class="card-body">
             <a href="{{ route('izin.setting-create') }}" class="mb-4 btn btn-primary">Setting Izin</a>
@@ -121,6 +126,7 @@
 
         // Fungsi mengambil jumlah izin user sesuai regional
         function getIzin(e){
+            $(".alertRegional").addClass('d-none');
             // Menghapus seluruh btn-regional yg memiliki class active
             $('.btn-regional').removeClass('active');
 

@@ -24,8 +24,6 @@ class AbsenController extends Controller
             ->whereMonth('created_at', Carbon::now()->month)
             ->get();
 
-            dd($cekUserIzin);
-
         // Perulangan user izin
         foreach ($cekUserIzin as $item) {
 
@@ -44,7 +42,7 @@ class AbsenController extends Controller
         }
 
         // Ambil lokasi user berdasarkan id user, join tabel lokasi
-        $lokasiUser = User::select('lokasi.latitude','lokasi.longitude','lokasi.radius')
+        $lokasiUser = User::select('users.lokasi_id as lokasi_id','lokasi.lokasi_proyek','lokasi.latitude','lokasi.longitude','lokasi.radius')
             ->join('lokasi','users.lokasi_id','=','lokasi.id')
             ->where('users.id', auth()->user()->id)
             ->first();
@@ -70,23 +68,54 @@ class AbsenController extends Controller
              // Pilih shift yang di checked pada form
             $shiftYangDipilih = Shift::find($request->shiftChecked);
 
-            // Cek apakah user sudah absen pada hari itu dengan shiftnya
-            $cekAbsen = Absen::where('user_id', auth()->user()->id)
+            dd($this->cekTerlambat(Carbon::now()->format('H:i:s'), $shiftYangDipilih->jam_masuk));
+
+            // Cek apakah user sudah absen masuk pada hari itu dengan shiftnya
+            $cekAbsenMasuk = Absen::where('user_id', auth()->user()->id)
                 ->where('shift_id', $shiftYangDipilih->id)
                 ->where('tgl_masuk', Carbon::now()->format('Y-m-d'))
                 ->get();
 
-            // Jika belum absen pada hari itu (Jika row data = 0 atau berarti tidak ada)
-            if (count($cekAbsen) == 0) {
+            // Cek apakah user sudah absen pulang pada hari itu dengan shiftnya
+            $cekAbsenPulang = Absen::where('user_id', auth()->user()->id)
+                ->where('shift_id', $shiftYangDipilih->id)
+                ->where('tgl_pulang', Carbon::now()->format('Y-m-d'))
+                ->get();
+
+            // Jika belum absen masuk pada hari itu (Jika row data = 0 atau berarti tidak ada)
+            if (count($cekAbsenMasuk) == 0) {
 
                 // Ambil nama foto dari fungsi absenImageStore dibawah
-                $namaFoto = $this->absenImageStore($request->image);
+                $pathFoto = $this->absenImageStore($request->image);
 
+                $data = [
+                    'lokasi_id' => '',
+                    'shift_id' => '',
+                    'tgl_masuk' => Carbon::now()->format('Y-m-d'),
+                    'jam_masuk' => Carbon::now()->format('H:i:s'),
+                    'foto_masuk' => $pathFoto,
+                    'lokasi_masuk' => $request->lokasi,
+                    'tgl_pulang' => '',
+                    'jam_pulang' => '',
+                    'foto_pulang' => '',
+                    'lokasi_pulang' => '',
+                    'terlambat' => '',
+                    'keterangan' => request()->userAgent(),
+                    'status' => ''
+                ];
 
+            }else{ // Kondisi jika sudah absen
+                toast('Anda sudah absen masuk hari ini!','Info');
+                return Redirect::back();
+            }
 
-
-            }else{ // Kondisi jika diluar radius
-                dd('Sudah Absen');
+            // Jika belum absen pulang pada hari itu (Jika row data = 0 atau berarti tidak ada)
+            if (count($cekAbsenPulang) == 0) {
+                toast('Proses Absen Pulang','Info');
+                return Redirect::back();
+            }else{
+                toast('Anda sudah absen pulang hari ini!','Info');
+                return Redirect::back();
             }
 
         }else{
@@ -98,7 +127,7 @@ class AbsenController extends Controller
     private function absenImageStore($imageRequest)
     {
         $img = $imageRequest;
-        $folderPath = "user-absen/";
+        $folderPath = "user-absen/".Carbon::now()->format('Y-m-d')."/";
         $image_parts = explode(";base64,", $img);
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
@@ -107,7 +136,16 @@ class AbsenController extends Controller
 
         $file = $folderPath . $fileName;
         Storage::disk('public')->put($file, $image_base64);
-        return $fileName;
+        return $file;
+    }
+
+    // Fungsi cek keterlambatan
+    private function cekTerlambat($jamMasukUser, $jamMasukShift){
+        $jamShift = Carbon::parse($jamMasukShift);
+        $jamMasuk = Carbon::parse($jamMasukUser);
+
+        $result = $jamMasuk->diff($jamShift)->format('%H:%I:%S');
+        return $result;
     }
 
     // Fungsi radius lokasi, apakah didalam atau diluar radius || Output true false

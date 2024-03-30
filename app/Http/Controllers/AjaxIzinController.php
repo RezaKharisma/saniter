@@ -30,11 +30,12 @@ class AjaxIzinController extends Controller
                     ->join('users','jumlah_izin.user_id','=','users.id')
                     ->first();
 
-                array_push($jumlahIzin, $data);
-                // $userSesuaiRegional->jumlahIzin = $jumlahIzin;
+                if ($data) {
+                    array_push($jumlahIzin, $data);
+                }
             }
 
-            return response()->json($jumlahIzin);
+            // return response()->json($jumlahIzin);
 
             // Return datatables
             return DataTables::of(Collection::make($jumlahIzin))

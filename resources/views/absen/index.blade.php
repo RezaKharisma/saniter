@@ -37,6 +37,8 @@
                     @csrf
 
                     <input type="hidden" name="image" class="image-tag">
+                    <input type="hidden" name="lokasi_id" value="{{ $lokasiUser->lokasi_id }}">
+                    <input type="hidden" name="lokasi_proyek" value="{{ $lokasiUser->lokasi_proyek }}">
                     <input type="hidden" name="latitude" id="latitudeUser">
                     <input type="hidden" name="longitude" id="longitudeUser">
                     <input type="hidden" name="latitude" value="{{ $lokasiUser->latitude }}" id="latitude">
