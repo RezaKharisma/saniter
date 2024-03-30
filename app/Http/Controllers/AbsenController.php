@@ -17,29 +17,29 @@ class AbsenController extends Controller
 {
     public function index()
     {
-        // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
-        $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
-            ->where('user_id', auth()->user()->id)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->get();
+        // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
+        // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
+        //     ->where('user_id', auth()->user()->id)
+        //     ->whereYear('created_at', Carbon::now()->year)
+        //     ->whereMonth('created_at', Carbon::now()->month)
+        //     ->get();
 
-        // Perulangan user izin
-        foreach ($cekUserIzin as $item) {
+        // // Perulangan user izin
+        // foreach ($cekUserIzin as $item) {
 
-            if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
-                $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
+        //     if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
+        //         $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
 
-                $periode = array();
+        //         $periode = array();
 
-                foreach ($periodeTanggal as $tgl) {
-                    array_push($periode, $tgl->format('Y-m-d'));
-                }
+        //         foreach ($periodeTanggal as $tgl) {
+        //             array_push($periode, $tgl->format('Y-m-d'));
+        //         }
 
-                dd($periode);
+        //         dd($periode);
 
-            }
-        }
+        //     }
+        // }
 
         // Ambil lokasi user berdasarkan id user, join tabel lokasi
         $lokasiUser = User::select('users.lokasi_id as lokasi_id','lokasi.lokasi_proyek','lokasi.latitude','lokasi.longitude','lokasi.radius')
@@ -47,10 +47,14 @@ class AbsenController extends Controller
             ->where('users.id', auth()->user()->id)
             ->first();
 
+        $cekAbsenMasukHariIni = Absen::where('user_id', auth()->user()->id)
+            ->where('tgl_masuk', Carbon::now()->format('Y-m-d'))
+            ->get();
+
         // Ambil shift
         $shift = Shift::all();
 
-        return view('absen.index', compact('shift', 'lokasiUser'));
+        return view('absen.index', compact('cekAbsenMasukHariIni','shift', 'lokasiUser'));
     }
 
     // Simpan absen
@@ -65,10 +69,8 @@ class AbsenController extends Controller
         // Kondisi jika didalam radius
         if ($this->radiusLokasi($request->latitude, $request->longitude)) {
 
-             // Pilih shift yang di checked pada form
+            // Pilih shift yang di checked pada form
             $shiftYangDipilih = Shift::find($request->shiftChecked);
-
-            dd($this->cekTerlambat(Carbon::now()->format('H:i:s'), $shiftYangDipilih->jam_masuk));
 
             // Cek apakah user sudah absen masuk pada hari itu dengan shiftnya
             $cekAbsenMasuk = Absen::where('user_id', auth()->user()->id)
@@ -88,6 +90,9 @@ class AbsenController extends Controller
                 // Ambil nama foto dari fungsi absenImageStore dibawah
                 $pathFoto = $this->absenImageStore($request->image);
 
+                // Fungsi cek terlambat, return ['time', 'status']
+                $keterlambatan = $this->cekTerlambat(Carbon::now()->format('H:i:s'), $shiftYangDipilih->jam_masuk);
+
                 $data = [
                     'lokasi_id' => '',
                     'shift_id' => '',
@@ -99,10 +104,15 @@ class AbsenController extends Controller
                     'jam_pulang' => '',
                     'foto_pulang' => '',
                     'lokasi_pulang' => '',
-                    'terlambat' => $this->cekTerlambat(Carbon::now()->format('H:i:s'), $shiftYangDipilih->jam_masuk),
+                    'terlambat' => $keterlambatan['time'],
                     'keterangan' => request()->userAgent(),
-                    'status' => ''
+                    'status' => $keterlambatan['status']
                 ];
+
+                Absen::create($data);
+
+                toast('Absen berhasil', 'success');
+                return Redirect::back();
 
             }else{ // Kondisi jika sudah absen
                 toast('Anda sudah absen masuk hari ini!','Info');
@@ -139,14 +149,35 @@ class AbsenController extends Controller
         return $file;
     }
 
-    // Fungsi cek keterlambatan
+    // Fungsi cek lebih waktu keterlambatan
     private function cekTerlambat($jamMasukUser, $jamMasukShift){
         $jamShift = Carbon::parse($jamMasukShift);
         $jamMasuk = Carbon::parse($jamMasukUser);
 
-        $result = $jamMasuk->diff($jamShift)->format('%H:%I:%S');
-        return $result;
+        if ($jamMasuk <= $jamShift) {
+            return [
+                'time' => "00:00:00",
+                'status' => "Normal"
+            ];
+        }else{
+            return [
+                'time' => $jamMasuk->diff($jamShift)->format('%H:%I:%S'),
+                'status' => "Normal"
+            ];
+        }
     }
+
+    // Fungsi set status apakah terlambat atau tidak
+    // private function setStatus($jamMasukUser, $jamMasukShift){
+    //     $jamShift = Carbon::parse($jamMasukShift);
+    //     $jamMasuk = Carbon::parse($jamMasukUser);
+
+    //     if ($jamMasuk <= $jamShift) {
+    //         return 'Normal';
+    //     }else{
+    //         return 'Terlambat';
+    //     }
+    // }
 
     // Fungsi radius lokasi, apakah didalam atau diluar radius || Output true false
     private function radiusLokasi($latitudeRequest, $longitudeRequest) {
