@@ -4,6 +4,7 @@ use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\Ajax\AjaxAbsenController;
+use App\Http\Controllers\Ajax\AjaxLokasiController;
 use App\Http\Controllers\IzinController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
@@ -187,6 +188,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
         Route::put('lokasi/{id}', 'update')->name('lokasi.update');
     });
+
+    // Ajax Lokasi Request
+    Route::controller(AjaxLokasiController::class)->group(function(){
+        Route::get('/ajax','getLokasi')->name('lokasi.getLokasi');
+    })
 
     // User
     Route::controller(UserController::class)->group(function()

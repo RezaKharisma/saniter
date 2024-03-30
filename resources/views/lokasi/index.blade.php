@@ -7,7 +7,7 @@
         <div class="card-body">
             <a href="{{ route('lokasi.create') }}" class="mb-4 btn btn-primary">Tambah Lokasi</a>
             <div class="table-responsive text-nowrap">
-                <table class="table table-striped" id="tabel-user">
+                <table class="table table-striped" id="lokasi-table">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -125,4 +125,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            // Datatables
+            $('#lokasi-table').DataTable({
+                ajax: "{{ route('ajax.getLokasi') }}",
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                    {data: 'name', name: 'name'},
+                    {data: 'regional_name', name: 'regional_name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'is_active', name: 'is_active'},
+                    {data: 'roles_name', name: 'roles_name'},
+                    {data: 'action', name: 'action'},
+                ],
+            })
+        });
+    </script>
 </x-layouts.app>
