@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lokasi;
 use App\Models\User;
 use App\Models\Regional;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Foundation\Auth\User;
@@ -15,6 +16,16 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->_client = new Client([
+            'base_uri' => 'https://api.qrm15.com/user/',
+            'http_errors' => false,
+            'protocols'       => ['http', 'https']
+            //   'auth'  => ['public', 'qrm15@bali123']
+        ]);
+    }
+
     public function index()
     {
         $users = User::select('*', 'users.name','users.id','users.email','regional.nama as regional_name')
