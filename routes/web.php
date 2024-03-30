@@ -19,6 +19,7 @@ use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\Settings\RegionalController;
 use App\Http\Controllers\Settings\ShiftController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GuzzleController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LokasiController;
@@ -34,10 +35,11 @@ use App\Http\Controllers\LokasiController;
 |
 */
 
+// Route::get('/guzzle', [GuzzleController::class, 'index']);
 
 // Login
-Route::any('/', function(){ return view('auth.login'); });
-Fortify::loginView('/login',function () {return view('auth.login');});
+Route::get('/', function(){Fortify::loginView(function () {return view('auth.login');});});
+Fortify::loginView(function () {return view('auth.login');});
 
 // Reset Password
 Fortify::requestPasswordResetLinkView(function () { return view('auth.forgot-password'); });
@@ -148,23 +150,23 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/assign-role','getUser')->name('ajax.getUser');
             Route::post('/ajax/tabel-add-role-user','getTabelRoleUser')->name('ajax.getTabelRoleUser');
         });
+    });
 
-        // Regional
-        Route::controller(RegionalController::class)->group(function()
-        {
-            Route::get('/pengaturan/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
-            Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
-            Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
-            Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
-            Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
-        });
+    // Regional
+    Route::controller(RegionalController::class)->group(function()
+    {
+        Route::get('/pengaturan/regional', 'index')->name('regional.index')->middleware('permission:regional_read');
+        Route::get('/pengaturan/regional/create', 'create')->name('regional.create')->middleware('permission:regional_create');
+        Route::post('/pengaturan/regional/add', 'store')->name('regional.add')->middleware('permission:regional_create');
+        Route::delete('/pengaturan/regional/delete/{id}','delete')->name('regional.delete')->middleware('permission:regional_delete');
+        Route::put('/pengaturan/regional/{id}', 'update')->name('regional.update')->middleware('permission:regional_update');
+    });
 
-        // Ajax Regional Request
-        Route::controller(AjaxRegionalController::class)->group(function(){
-            Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
-            Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
-        });
-
+    // Ajax Regional Request
+    Route::controller(AjaxRegionalController::class)->group(function(){
+        Route::get('/ajax/regional','getRegional')->name('ajax.getRegional')->middleware('permission:regional_read');
+        Route::post('/ajax/regional/map','getRegionalMap')->name('ajax.getRegionalMap')->middleware('permission:regional_read');
+        Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
     });
 
     // Shift
@@ -181,7 +183,7 @@ Route::group(['middleware' => ['auth']], function () {
     {
         Route::get('lokasi', 'index')->name('lokasi.index');
         Route::get('lokasi/create', 'create')->name('lokasi.create');
-        Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
+        Route::post('lokasi/add', 'store')->name('lokasi.add');
         Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
         Route::put('lokasi/{id}', 'update')->name('lokasi.update');
     });

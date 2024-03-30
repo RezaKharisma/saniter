@@ -44,4 +44,15 @@ class AjaxRegionalController extends Controller
             ],200);
         }
     }
+
+    // Ambil data map regional untuk datatable
+    public function getRegionalMap(Request $request){
+        if ($request->ajax()) {
+            $regional = Regional::select('nama','latitude','longitude')->find($request->id);
+            return response()->json([
+                'status' => 'success',
+                'data' => $regional
+            ],200);
+        }
+    }
 }

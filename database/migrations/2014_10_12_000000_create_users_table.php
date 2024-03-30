@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->enum('status', ['?','??']);
             $table->timestamps();
+            $table->rememberToken();
             $table->softDeletes();
         });
     }

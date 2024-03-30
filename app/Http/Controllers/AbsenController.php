@@ -39,6 +39,7 @@ class AbsenController extends Controller
                 }
 
                 dd($periode);
+
             }
         }
 

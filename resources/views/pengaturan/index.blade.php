@@ -12,7 +12,6 @@
                     {{-- Menu --}}
                     <ul class="nav nav-pills flex-column flex-md-row mb-3">
                         <li class="nav-item me-2">
-
                             {{-- Jika request url adalah url yg di tentukan, set class active --}}
                             <a class="btn btn-primary" href="{{ route('pengaturan.role.index') }}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Hak akses.</span>">
                                 <i class="bx bx-user-circle me-1"></i> Role
@@ -107,5 +106,6 @@
 
         </div>
     </div>
+
 
 </x-layouts.app>

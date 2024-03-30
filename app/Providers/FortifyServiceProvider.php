@@ -25,7 +25,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        Fortify::ignoreRoutes();
     }
 
     /**
@@ -57,6 +57,24 @@ class FortifyServiceProvider extends ServiceProvider
                 }
                 return $user;
             }
+        });
+
+        $this->configureRoutes();
+    }
+
+    /**
+     * Configure the routes offered by the application.
+     *
+     * @return void
+     */
+    protected function configureRoutes()
+    {
+        Route::group([
+            'namespace' => 'Laravel\Fortify\Http\Controllers',
+            'domain' => config('fortify.domain', null),
+            'prefix' => config('fortify.prefix'),
+        ], function () {
+            $this->loadRoutesFrom(base_path('routes/fortify.php'));
         });
     }
 }
