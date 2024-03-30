@@ -245,6 +245,7 @@
                     },
                     dataType: "json",
                     success: function (response) { // Jika ajax sukses dan memberikan respon
+                        console.log(response);
                         var regional = response.data;
                         $('#latitude').val(regional.latitude);
                         $('#longitude').val(regional.longitude);
@@ -308,7 +309,7 @@
             // Marker default lokasi kantor regional Qinar
             function markerDefault(map){
                 // Marker Kantor Pusat
-                var kantorQinarPusat = L.circle([-8.661973126511242, 115.21623151823447], {
+                var kantorQinarPusat = L.circle([-8.661063, 115.214712], {
                     color: 'red',
                     fillColor: '#f03',
                     fillOpacity: 0.5,
@@ -317,7 +318,7 @@
                 kantorQinarPusat.bindPopup("Kantor Regional Pusat PT. Qinar Raya Mandiri");
 
                 // Marker Kantor Jakarta
-                var kantorQinarJakarta = L.circle([-6.1827443, 106.8188200], {
+                var kantorQinarJakarta = L.circle([-6.175357, 106.827192], {
                     color: 'red',
                     fillColor: '#f03',
                     fillOpacity: 0.5,

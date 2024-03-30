@@ -25,8 +25,8 @@ class DatabaseSeeder extends Seeder
         $regional = ['Barat','Tengah', 'Pusat'];
         $lokasiRegional = [
             ['-6.2279776','106.912502'],
-            ['-8.4682841','115.1845072'],
-            ['-8.4682841','115.1845072'],
+            [-6.175357, 106.827192],
+            [-8.661063, 115.214712],
         ];
         $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Pengaturan'];
         for ($i=0; $i < count($regional); $i++) {
@@ -50,11 +50,29 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Menu::create([
-            'id_kategori' => 2,
+            'id_kategori' => 3,
             'judul' => 'Absen',
             'order' => 1,
             'url' => 'administrasi/absen',
             'icon' => 'calendar-check',
+            'show' => 1,
+        ]);
+
+        Menu::create([
+            'id_kategori' => 2,
+            'judul' => 'Regional',
+            'order' => 1,
+            'url' => 'pengaturan/regional',
+            'icon' => 'map',
+            'show' => 1,
+        ]);
+
+        Menu::create([
+            'id_kategori' => 2,
+            'judul' => 'Lokasi',
+            'order' => 1,
+            'url' => 'lokasi',
+            'icon' => 'map-pin',
             'show' => 1,
         ]);
 
