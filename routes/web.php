@@ -36,7 +36,7 @@ use App\Http\Controllers\LokasiController;
 
 
 // Login
-Fortify::loginView('start', function(){ return view('auth.login'); });
+Fortify::loginView('/', function(){ return view('auth.login'); });
 Fortify::loginView(function () {return view('auth.login');});
 
 // Reset Password
@@ -81,9 +81,16 @@ Route::group(['middleware' => ['auth']], function () {
         // Izin
         Route::controller(IzinController::class)->group(function()
         {
+            // Izin untuk tampilan Teknisi
             Route::get('izin', 'index')->name('izin.index');
-            Route::get('settingizin', 'setting')->name('izin.setting');
-            // Route::get('lokasi/create', 'create')->name('lokasi.create');
+            Route::get('izin/create', 'create')->name('izin.create');
+
+
+            // Izin untuk admin (setting)
+            Route::get('izin/setting', 'setting_index')->name('izin.setting');
+            Route::get('izin/setting-create', 'setting_create')->name('izin.setting-create');
+
+            
             // Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
             // Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
             // Route::put('lokasi/{id}', 'update')->name('lokasi.update');
