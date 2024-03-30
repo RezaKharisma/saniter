@@ -99,7 +99,7 @@ class AbsenController extends Controller
                     'jam_pulang' => '',
                     'foto_pulang' => '',
                     'lokasi_pulang' => '',
-                    'terlambat' => '',
+                    'terlambat' => $this->cekTerlambat(Carbon::now()->format('H:i:s'), $shiftYangDipilih->jam_masuk),
                     'keterangan' => request()->userAgent(),
                     'status' => ''
                 ];
