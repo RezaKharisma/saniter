@@ -33,7 +33,7 @@
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-            <div data-i18n="Misc">Regional & Lokasi</div>
+            <div data-i18n="Misc">Setting</div>
             </a>
             <ul class="menu-sub">
             <li class="menu-item">
@@ -47,6 +47,13 @@
                 <a href="{{ route('lokasi.index') }}" class="menu-link">
                     {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
                     <div data-i18n="Analytics">Lokasi</div>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="{{ route('izin.setting') }}" class="menu-link">
+                    {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
+                    <div data-i18n="Analytics">Izin</div>
                 </a>
             </li>
             </ul>

@@ -1,20 +1,15 @@
 <x-layouts.app title="Pengaturan">
-<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Izin /</span> Setting Jumlah Izin Teknisi</h4>
+<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Izin /</span> Setting Jumlah Izin Teknisi</h5>
 
 <div class="row">
     <div class="col-md-12">
-        <ul class="nav nav-pills flex-column flex-md-row mb-3">
+    <ul class="nav nav-pills flex-md-row mb-3">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('izin.index') }}"><i class="bx bxs-detail me-1"></i> Izin</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="{{ route('izin.setting') }}"><i class="bx bx-cog me-1"></i> Setting Izin</a>
+                <a class="nav-link active" href="{{ route('izin.setting-create') }}"><i class="bx bx-plus-circle me-1"></i> Setting Izin</a>
             </li>
         </ul>
         <div class="card mb-4">
-        
             <div class="card-body">
-                <a href="{{ route('regional.create') }}" class="mb-4 btn btn-primary">Buat Izin</a>
                 <div class="table-responsive text-nowrap">
                     <table class="table table-striped" id="tabel-user">
                         <thead>
