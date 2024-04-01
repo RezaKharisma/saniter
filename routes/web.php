@@ -244,11 +244,14 @@ Route::group(['middleware' => ['auth']], function () {
     // Absen
     Route::controller(AbsenController::class)->group(function(){
         Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
+        Route::get('/administrasi/absen/detail', 'detail')->name('absen.detail')->middleware('permission:absen_read');
+        Route::get('/administrasi/absen/create', 'create')->name('absen.create')->middleware('permission:absen_create');
         Route::post('/administrasi/absen', 'store')->name('absen.store')->middleware('permission:absen_create');
     });
 
     // Ajax Absen Request
     Route::controller(AjaxAbsenController::class)->group(function(){
         Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
+        Route::get('/ajax/absen-log','getAbsenLog')->name('ajax.getAbsenLog');
     });
 });
