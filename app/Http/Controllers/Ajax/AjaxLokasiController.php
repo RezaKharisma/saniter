@@ -16,6 +16,7 @@ class AjaxLokasiController extends Controller
             // Query menu join kategori
             $lokasi = Lokasi::select('*','lokasi.id as lokasi_id','regional.nama as regional_name')
             ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')
+            ->orderBy('lokasi.id','DESC')
             ->get();
 
             // Return datatables
@@ -36,14 +37,14 @@ class AjaxLokasiController extends Controller
         }
     }
 
-    // Ambil data regional untuk datatable
-    // public function getRegionalEdit(Request $request){
-    //     if ($request->ajax()) {
-    //         $regional = Regional::find($request->id);
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'data' => $regional
-    //         ],200);
-    //     }
-    // }
+    // Ambil data map regional untuk datatable
+    public function getAllLokasiMap(Request $request){
+        if ($request->ajax()) {
+            $lokasi = Lokasi::select('nama_bandara','lokasi_proyek','latitude','longitude','radius')->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $lokasi
+            ],200);
+        }
+    }
 }

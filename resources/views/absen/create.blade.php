@@ -129,6 +129,21 @@
                 }
             }
 
+            // Fungsi pemberian lokasi pada input hidden
+            function distance(){
+                var latitude = $('#latitude').val();
+                var longitude = $('#longitude').val();
+
+                var latitudeUser = $('#latitudeUser').val();
+                var longitudeUser = $('#longitudeUser').val();
+
+                // Radius bumi pada KM
+                var R = 6371;
+
+                // Rumus perhitungan radius
+                return Math.acos(Math.sin(latitudeUser)*Math.sin(latitude) + Math.cos(latitudeUser)*Math.cos(latitude) * Math.cos(longitude-longitudeUser)) * R;
+            }
+
             // Fungsi jika pencarian lokasi gagal
             function showError(error) {
                 switch(error.code) {
@@ -145,20 +160,6 @@
                         sweetAlertMessage('Peringatan!', 'Terdapat kesalahan saat mencari lokasi.', 'warning');
                     break;
                 }
-            }
-
-            // Fungsi pemberian lokasi pada input hidden
-            function distance(){
-                var latitude = $('#latitude').val();
-                var latitudeUser = $('#latitudeUser').val();
-                var longitude = $('#longitude').val();
-                var longitudeUser = $('#longitudeUser').val();
-
-                // Radius bumi pada KM
-                var R = 6371;
-
-                // Rumus perhitungan radius
-                return Math.acos(Math.sin(latitudeUser)*Math.sin(latitude) + Math.cos(latitudeUser)*Math.cos(latitude) * Math.cos(longitude-longitudeUser)) * R;
             }
 
             // SweetAlert

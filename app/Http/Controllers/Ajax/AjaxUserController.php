@@ -15,6 +15,7 @@ class AjaxUserController extends Controller
             $users = User::join('regional', 'users.regional_id', '=', 'regional.id')
                 ->join('roles', 'users.role_id', '=', 'roles.id')
                 ->select('users.id','users.name', 'regional.nama as regional_name', 'email', 'is_active', 'roles.name as roles_name')
+                ->orderBy('id', 'DESC')
                 ->get(); // Ambil semua user
 
             // Return datatables

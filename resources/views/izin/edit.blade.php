@@ -40,6 +40,7 @@
                                 <option value="" selected disabled>Pilih jenis izin...</option>
                                 <option @if($izin->jenis_izin == "Sakit" || old('jenis_izin') == "Sakit") selected  @endif value="Sakit" >Sakit</option>
                                 <option @if($izin->jenis_izin == "Cuti" || old('jenis_izin') == "Cuti") selected @endif value="Cuti">Cuti</option>
+                                <option @if($izin->jenis_izin == "Izin" || old('jenis_izin') == "Izin") selected @endif value="Izin">Izin</option>
                             </select>
                             <x-partials.error-message name="jenis_izin" class="d-block" />
                         </div>

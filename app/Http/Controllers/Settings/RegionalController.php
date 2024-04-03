@@ -15,8 +15,7 @@ class RegionalController extends Controller
      */
     public function index()
     {
-        $regional = Regional::Select('*')
-            ->get();
+        $regional = Regional::Select('*')->get();
 
         return view('pengaturan.regional.index', compact('regional'));
     }
@@ -75,7 +74,6 @@ class RegionalController extends Controller
     public function delete($id)
     {
         $regional = Regional::findOrFail($id);
-
         $regional->delete();
 
         toast('Data berhasil dihapus!', 'success');
@@ -111,6 +109,6 @@ class RegionalController extends Controller
         $regional->update($data); // Update data
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect::back(); // Redirect kembali
+        return Redirect::route('regional.index'); // Redirect kembali
     }
 }

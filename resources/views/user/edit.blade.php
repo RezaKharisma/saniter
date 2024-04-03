@@ -77,7 +77,7 @@
                     <select class="form-select  @error('lokasi_id') is-invalid @enderror" name="lokasi_id">
                         <option value="" disabled selected>Pilih Lokasi Kerja</option>
                         @foreach ($lokasi as $l)
-                            <option @if(old('lokasi_id') == $l->id || $user->regional_id == $l->id) selected @endif value="{{ $l->id }}"> {{ $l->nama_bandara }} | {{ $l->lokasi_proyek }}</option>
+                            <option @if(old('lokasi_id') == $l->id || $user->lokasi_id == $l->id) selected @endif value="{{ $l->id }}"> {{ $l->nama_bandara }} | {{ $l->lokasi_proyek }}</option>
                         @endforeach
                     </select>
                     <x-partials.error-message name="lokasi_id" class="d-block" />

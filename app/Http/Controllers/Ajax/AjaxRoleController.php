@@ -54,7 +54,7 @@ class AjaxRoleController extends Controller
             return DataTables::of($permissions)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.permission.edit', $row->permissions_id)."'>Info</a>";
+                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.permission.edit', $row->permissions_id)."' style='padding: 7px;padding-top: 5.6px; padding-left: 10px;padding-right: 10px' >Info</a>";
                     $btn = $btn."<form action=".route('pengaturan.permission.delete', $row->permissions_id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })

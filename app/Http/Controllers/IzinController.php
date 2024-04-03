@@ -31,7 +31,8 @@ class IzinController extends Controller
     public function create()
     {
         $user = User::whereNot('role_id',1)->get();
-        return view('izin/create', compact('user'));
+        $jumlahIzin = JumlahIzin::select('jumlah_izin')->where('tahun', Carbon::now()->format('Y'))->where('user_id', auth()->user()->id)->first();
+        return view('izin/create', compact('user','jumlahIzin'));
     }
 
     public function store(Request $request)
@@ -55,18 +56,23 @@ class IzinController extends Controller
 
         $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
 
-        $data = [
-            'user_id' => $request->name,
-            'jenis_izin' => $request->jenis_izin,
-            'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
-            'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
-            'total_izin' => $total_izin,
-            'foto' => $this->fileStore($request->file('foto'))
-        ];
-        Izin::create($data);
+        if ($this->cekSisaCuti($request->name, $total_izin)) {
+            toast('Sisa cuti telah habis / tidak mencukupi!', 'success');
+            return Redirect::route('izin.index'); // Redirect kembali
+        }else{
+            $data = [
+                'user_id' => $request->name,
+                'jenis_izin' => $request->jenis_izin,
+                'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
+                'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
+                'total_izin' => $total_izin,
+                'foto' => $this->fileStore($request->file('foto'))
+            ];
+            Izin::create($data);
 
-        toast('Data berhasil tersimpan!', 'success');
-        return Redirect::route('izin.index'); // Redirect kembali
+            toast('Data berhasil tersimpan!', 'success');
+            return Redirect::route('izin.index'); // Redirect kembali
+        }
     }
 
     public function edit($id)
@@ -98,19 +104,24 @@ class IzinController extends Controller
 
         $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
 
-        $izin = Izin::find($id);
-        $data = [
-            'user_id' => $request->name,
-            'jenis_izin' => $request->jenis_izin,
-            'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
-            'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
-            'total_izin' => $total_izin,
-            'foto' => $this->fileStore($request->file('foto'), $izin) ?? $request->oldFoto
-        ];
-        $izin->update($data);
+        if ($this->cekSisaCuti($request->name, $total_izin)) {
+            toast('Sisa cuti telah habis / tidak mencukupi!', 'success');
+            return Redirect::route('izin.index'); // Redirect kembali
+        }else{
+            $izin = Izin::find($id);
+            $data = [
+                'user_id' => $request->name,
+                'jenis_izin' => $request->jenis_izin,
+                'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
+                'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
+                'total_izin' => $total_izin,
+                'foto' => $this->fileStore($request->file('foto'), $izin) ?? $request->oldFoto
+            ];
+            $izin->update($data);
 
-        toast('Data berhasil tersimpan!', 'success');
-        return Redirect::route('izin.index'); // Redirect kembali
+            toast('Data berhasil tersimpan!', 'success');
+            return Redirect::route('izin.index'); // Redirect kembali
+        }
     }
 
     public function updateValidasi(Request $request, $id)
@@ -133,6 +144,10 @@ class IzinController extends Controller
         if ($data != null) {
             $izin = Izin::find($id);
             $izin->update($data);
+
+            if ($izin->validasi_1 != 0 && $izin->validasi_2 != 0) {
+                $this->duaValidasiDisetujui($id);
+            }
 
             toast('Data berhasil tersimpan!', 'success');
             return Redirect::route('izin.index'); // Redirect kembali
@@ -169,35 +184,54 @@ class IzinController extends Controller
     private function duaValidasiDisetujui($izinId)
     {
         $izin = Izin::find($izinId);
-        $user = User::
-            select(
-                'user.id as userId',
-                'lokasi.id as lokasiId',
-                'shift.id as shiftId',
-                'tgl_masuk'
-            )
-            ->where('id', $izin->user_id)
-            ->join('lokasi','users.lokasi_id','=','lokasi.id')
-            ->join('shift','users.shift_id','=','shift.id')
-            ->get();
 
-        // $data = [
-        //     'user_id' => auth()->user()->id,
-        //     'lokasi_id' => $request->lokasi_id,
-        //     'shift_id' => $shiftYangDipilih->id,
-        //     'tgl_masuk' => Carbon::now()->format('Y-m-d'),
-        //     'jam_masuk' => Carbon::now()->format('H:i:s'),
-        //     'foto_masuk' => $pathFoto,
-        //     'lokasi_masuk' => $request->lokasi_proyek,
-        //     'tgl_pulang' => '',
-        //     'jam_pulang' => '',
-        //     'foto_pulang' => 'Belum Dilakukan',
-        //     'lokasi_pulang' => 'Belum Dilakukan',
-        //     'terlambat' => $keterlambatan['time'],
-        //     'keterangan' => $keterangan,
-        //     'status' => $keterlambatan['status'],
-        // ];
-        Absen::create($data);
+        $user = User::select('users.id as userId','lokasi.id as lokasiId',)
+            ->where('users.id', $izin->user_id)
+            ->join('lokasi','users.lokasi_id','=','lokasi.id')
+            ->first();
+
+        $jumlahIzin = JumlahIzin::where('user_id', $user->userId)->first();
+
+        if ($jumlahIzin->jumlah_izin < $izin->total_izin) {
+            toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
+            return Redirect::route('izin.index'); // Redirect kembali
+        }else{
+            $jumlahIzin->update([
+                'jumlah_izin' => $jumlahIzin->jumlah_izin - $izin->total_izin
+            ]);
+
+            $periodeTanggal = CarbonPeriod::create(Carbon::parse($izin->tgl_mulai_izin), Carbon::parse($izin->tgl_akhir_izin));
+            $keterangan = $izin->jenis_izin." dari tanggal (".Carbon::parse($izin->tgl_mulai_izin)->format('F')." - ".Carbon::parse($izin->tgl_akhir_izin)->format('F').") selama ".$izin->total_izin." hari.";
+
+            foreach($periodeTanggal as $item){
+                $data = [
+                    'user_id' => $user->userId,
+                    'lokasi_id' => $user->lokasiId,
+                    'shift_id' => 1,
+                    'tgl_masuk' => $item->format('Y-m-d'),
+                    'jam_masuk' => Carbon::createFromTimeString('00:00:00')->format('H:i:s'),
+                    'foto_masuk' => 'user-absen/default.jpg',
+                    'lokasi_masuk' => '0',
+                    'tgl_pulang' => $item->format('Y-m-d'),
+                    'jam_pulang' => Carbon::createFromTimeString('00:00:00')->format('H:i:s'),
+                    'foto_pulang' => 'user-absen/default.jpg',
+                    'lokasi_pulang' => '0',
+                    'terlambat' => Carbon::createFromTimeString('00:00:00')->format('H:i:s'),
+                    'keterangan' => $keterangan,
+                    'status' => $izin->jenis_izin,
+                ];
+                Absen::create($data);
+            }
+        }
+    }
+
+    private function cekSisaCuti($userId, $total_izin)
+    {
+        $jumlahIzin = JumlahIzin::where('user_id', $userId)->first();
+        if ($jumlahIzin->jumlah_izin < $total_izin) {
+            return true;
+        }
+        return false;
     }
 
     /*

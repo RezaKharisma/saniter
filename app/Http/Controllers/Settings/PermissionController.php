@@ -49,7 +49,7 @@ class PermissionController extends Controller
         $newAccessRoles = array();
 
         foreach ($permission->roles as $item) {
-            $role = Role::findByName($item);
+            $role = Role::findByName($item->name);
             array_push($newAccessRoles, $role->name);
         }
 

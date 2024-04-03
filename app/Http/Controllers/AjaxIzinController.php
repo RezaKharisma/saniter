@@ -49,29 +49,39 @@ class AjaxIzinController extends Controller
                     $btn = '';
 
                     // Menampilkan tombol validasi icon alert
-                    if (auth()->user()->hasRole('Staff')) {
+                    if (auth()->user()->can('validasi1_izin')) {
                         $warn = $row->validasi_1 == 0 ? "<span class='tf-icons bx bx-error me-2 text-danger'></span>" : '';
                     }
 
                     // Menampilkan tombol validasi icon alert
-                    if (auth()->user()->hasRole('Admin')) {
+                    if (auth()->user()->can('validasi2_izin')) {
                         $warn = $row->validasi_2 == 0 ? "<span class='tf-icons bx bx-error me-2 text-danger'></span>" : '';
+                    }
+
+                    if (auth()->user()->hasRole('Teknisi') && ($row->validasi_1 != 1 || $row->validasi_2 != 1)) {
+                        $btn = "<button class='btn btn-secondary btn-sm d-inline me-1' disabled>Menunggu Validasi</button>";
                     }
 
                     // Jika sudah tervalidasi semua tampilkan tombol sukses
                     if ($row->validasi_1 == 1 && $row->validasi_2 == 1) {
                         $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Tervalidasi</button>";
                     }else{
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalValid' class='btn btn-info btn-sm d-inline me-1' data-id='".$row->id."' onclick='validasiData(this)'>".$warn." Validasi</button>";
-                        $btn = $btn."<a class='btn btn-warning btn-sm d-inline' href='".route('izin.edit', $row->id)."' style='padding: 6.5px' >Ubah</a>";
+                        if (auth()->user()->can('validasi1_izin') || auth()->user()->can('validasi2_izin')) {
+                            $btn = "<button data-bs-toggle='modal' data-bs-target='#modalValid' class='btn btn-info btn-sm d-inline me-1' data-id='".$row->id."' onclick='validasiData(this)'>".$warn." Validasi</button>";
+                        }
+
+                        if (auth()->user()->can('izin_update')) {
+                            if (auth()->user()->hasRole('Teknisi') && ($row->validasi_1 == 1 || $row->validasi_2 == 1)) {
+                                $btn = $btn."<a class='btn btn-warning btn-sm d-inline disabled' href='".route('izin.edit', $row->id)."' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                            }else{
+                                $btn = $btn."<a class='btn btn-warning btn-sm d-inline' href='".route('izin.edit', $row->id)."' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                            }
+                        }
                     }
 
-                    // if (auth()->user()->can('jumlah izin_update')) {
-                        // $btn = $btn."<a class='btn btn-warning btn-sm d-inline' href='".route('izin.edit', $row->id)."' style='padding: 6.5px' >Ubah</a>";
-                    // }
-                    // if (auth()->user()->can('jumlah izin_delete')) {
+                    if (auth()->user()->can('izin_delete') && ($row->validasi_1 != 1 || $row->validasi_2 != 1)) {
                         $btn = $btn."<form action=".route('izin.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
-                    // }
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action','tanggal','file','jenis'])
@@ -86,7 +96,6 @@ class AjaxIzinController extends Controller
             return response()->json([
                 'status' => 'success',
                 'id' => $izin->id,
-                'status' => auth()->user()->getRoleNames()[0],
                 'validasi1' => $izin->validasi_1,
                 'validasi1nama' => $izin->validasi_1_by,
                 'validasi2' => $izin->validasi_2,

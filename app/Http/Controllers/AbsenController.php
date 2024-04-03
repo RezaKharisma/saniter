@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absen;
 use App\Models\Izin;
+use App\Models\JumlahIzin;
 use App\Models\Lokasi;
 use App\Models\Shift;
 use App\Models\User;
@@ -18,9 +19,10 @@ class AbsenController extends Controller
 {
     public function index()
     {
-        $countKehadiranPerBulan = count(Absen::whereMonth('tgl_masuk', Carbon::now()->format('m'))->get());
+        $countKehadiranPerBulan = count(Absen::where('user_id', auth()->user()->id)->whereMonth('tgl_masuk', Carbon::now()->format('m'))->get());
+        $countJumlahIzin = JumlahIzin::select('jumlah_izin')->where('tahun', Carbon::now()->format('Y'))->where('user_id', auth()->user()->id)->first();
         $this->cekAlfa();
-        return view('absen.index', compact('countKehadiranPerBulan'));
+        return view('absen.index', compact('countKehadiranPerBulan','countJumlahIzin'));
     }
 
     public function create()
@@ -482,7 +484,7 @@ class AbsenController extends Controller
                 }
 
                 $startHariKedua = Carbon::createFromTimeString('00:00');
-                $endHariKedua = Carbon::createFromTimeString('07:00');
+                $endHariKedua = Carbon::createFromTimeString('09:00');
 
                 if(Carbon::now()->between($startHariKedua, $endHariKedua)){
                     $waktuShift = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $shiftDipilih->jam_pulang)->format('H:i:s');
@@ -510,6 +512,8 @@ class AbsenController extends Controller
                         return 2;
                     }
                 }
+
+                return 1;
             }else{
                 $cekAbsenMasukHariIni = Absen::where('user_id', auth()->user()->id)
                     ->where('tgl_masuk', Carbon::now()->format('Y-m-d'))
@@ -540,7 +544,7 @@ class AbsenController extends Controller
 
     private function cekAlfa()
     {
-        $absen = Absen::where('jam_pulang', "00:00:00")->get();
+        $absen = Absen::where('jam_pulang', "00:00:00")->whereNot('status', 'Cuti')->whereNot('status', 'Ijin')->get();
         foreach($absen as $item){
             if (Carbon::parse($item->created_at)->diffInHours(Carbon::now()) > 12) {
                 $item->update([

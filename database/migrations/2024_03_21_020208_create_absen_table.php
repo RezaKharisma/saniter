@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('lokasi_pulang');
             $table->string('terlambat');
             $table->string('keterangan');
-            $table->enum('status', ['?','??']);
+            $table->enum('status', ['Normal','Terlambat','Alfa','Cuti','Izin','Sakit']);
             $table->timestamps();
             $table->softDeletes();
         });

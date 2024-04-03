@@ -33,7 +33,7 @@
                                     <span class="badge bg-label-warning rounded-pill">Tahun {{ Carbon\Carbon::now()->format('Y') }}</span>
                                 </div>
                                 <div class="mt-sm-auto">
-                                    <h3 class="mb-0">50</h3>
+                                    <h3 class="mb-0">{{ $countJumlahIzin->jumlah_izin ?? '0' }}</h3>
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                             <h5 class="card-title text-center mb-2">Pengajuan</h5>
                             <p class="card-text text-center mb-4">Ajukan cuti ataupun izin.</p>
                             <div class="d-block d-flex justify-content-center">
-                                <button class="btn btn-warning d-block w-100">Ajukan</button>
+                                <a href="{{ route('izin.create') }}" class="btn btn-warning d-block w-100">Ajukan</a>
                             </div>
                         </div>
                     </div>
@@ -148,12 +148,6 @@
 
                 // Choose either "AM" or "PM" as appropriate
                 var timeOfDay = ( currentHours < 11 ) ? "Pagi" : (currentHours < 15) ? "Siang" : (currentHours < 18) ? "Sore" : "Malam";
-
-                // Convert the hours component to 12-hour format if needed
-                currentHours = ( currentHours > 24 ) ? currentHours - 24 : currentHours;
-
-                // Convert an hours component of "0" to "12"
-                currentHours = ( currentHours == 0 ) ? 12 : currentHours;
 
                 // Compose the string for display
                 var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;

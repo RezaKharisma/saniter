@@ -223,6 +223,7 @@
 
                 // Pemanggilan default marker kantor regional Qinar
                 markerDefault(map);
+                markerLokasiDefault(map);
             }
         </script>
 
@@ -336,29 +337,33 @@
                     }
                 });
             }
-        </script>
 
-        {{-- <script>
-            // Marker default lokasi kantor regional Qinar
-            function markerDefault(map){
-                // Marker Kantor Pusat
-                var kantorQinarPusat = L.circle([-8.661063, 115.214712], {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.5,
-                    radius: 100
-                }).addTo(map);
-                kantorQinarPusat.bindPopup("Kantor Regional Pusat PT. Qinar Raya Mandiri");
+            function markerLokasiDefault(map){
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
 
-                // Marker Kantor Jakarta
-                var kantorQinarJakarta = L.circle([-6.175357, 106.827192], {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.5,
-                    radius: 100
-                }).addTo(map);
-                kantorQinarJakarta.bindPopup("Kantor Regional Tengah PT. Qinar Raya Mandiri");
+                // Ambil data dari ajax
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('ajax.getAllLokasiMap') }}",
+                    dataType: "json",
+                    success: function (response) { // Jika ajax sukses dan memberikan respon
+                        console.log(response);
+                        response.data.forEach(element => {
+                            vars['Lokasi'+$.trim(element.nama_bandara)] = L.circle([element.latitude, element.longitude], {
+                                color: 'red',
+                                fillColor: '#f03',
+                                fillOpacity: 0.5,
+                                radius: element.radius
+                            }).addTo(map);
+                            vars['Lokasi'+$.trim(element.nama_bandara)].bindPopup("Lokasi "+element.lokasi_proyek+", "+element.nama_bandara+"<br/> PT. Qinar Raya Mandiri");
+                        });
+                    }
+                });
             }
-        </script> --}}
+        </script>
     </x-slot>
 </x-layouts.app>

@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-md-12">
 
-    <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu!</div>
+    <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu untuk melihat data!</div>
 
     <ul class="nav nav-pills flex-md-row mb-3">
         @foreach ($regional as $item)

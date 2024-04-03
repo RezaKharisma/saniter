@@ -18,21 +18,26 @@ if (! function_exists('getRegional')) {
 }
 
 if (! function_exists('getRoleAccessMenu')) {
-    function getRoleAccessMenu($option)
+    function getRoleAccessMenu($itemOption)
     {
+        $permission = Permission::with('roles')->where('id_menu', $itemOption->id)->get();
         $roleMenu = array();
-        foreach($option as $item){
-            $permission = Permission::with('roles')->where('id_menu', $item['id'])->get();
-            if (isset($permission[0])) {
-                foreach($permission[0]->roles as $itemRole){
-                    array_push($roleMenu, $itemRole['name']);
+        foreach($permission as $item){
+            if ($item != null) {
+                foreach($item->roles as $itemRole){
+                    array_push($roleMenu, $itemRole->name);
                 }
             }
         }
-        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode($roleMenu))));
+        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode(array_unique($roleMenu)))));
     }
 }
 
+/*
+|---------------------------------
+| Get Semua Menu
+|---------------------------------
+*/
 if (! function_exists('getMenu')) {
     function getMenu()
     {
@@ -81,7 +86,6 @@ if (! function_exists('getCheckedUserMenu')) {
     {
         $group = 0;
         foreach ($userPermissions as $value) {
-            // return $value;
             $permission = Permission::findByName($value);
             $menu = Menu::select('judul')->find($permission->id_menu);
 

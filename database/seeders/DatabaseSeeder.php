@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             [-6.175357, 106.827192],
             [-8.661063, 115.214712],
         ];
-        $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Pengaturan'];
+        // $kategori = ['Rekapan', 'Proyek', 'Administrasi', 'Pengaturan'];
         for ($i=0; $i < count($regional); $i++) {
             Regional::create([
                 'nama' => $regional[$i],
@@ -36,45 +36,45 @@ class DatabaseSeeder extends Seeder
                 'longitude' => $lokasiRegional[$i][1]
             ]);
 
-            KategoriMenu::create([
-                'nama_kategori' => $kategori[$i],
-                'order' => $i,
-                'show' => 1
-            ]);
+            // KategoriMenu::create([
+            //     'nama_kategori' => $kategori[$i],
+            //     'order' => $i,
+            //     'show' => 1
+            // ]);
         }
 
-        KategoriMenu::create([
-            'nama_kategori' => 'Pengaturan',
-            'order' => 3,
-            'show' => 1
-        ]);
+        // KategoriMenu::create([
+        //     'nama_kategori' => 'Pengaturan',
+        //     'order' => 3,
+        //     'show' => 1
+        // ]);
 
-        Menu::create([
-            'id_kategori' => 3,
-            'judul' => 'Absen',
-            'order' => 1,
-            'url' => 'administrasi/absen',
-            'icon' => 'calendar-check',
-            'show' => 1,
-        ]);
+        // Menu::create([
+        //     'id_kategori' => 3,
+        //     'judul' => 'Absen',
+        //     'order' => 1,
+        //     'url' => 'administrasi/absen',
+        //     'icon' => 'calendar-check',
+        //     'show' => 1,
+        // ]);
 
-        Menu::create([
-            'id_kategori' => 2,
-            'judul' => 'Regional',
-            'order' => 1,
-            'url' => 'pengaturan/regional',
-            'icon' => 'map',
-            'show' => 1,
-        ]);
+        // Menu::create([
+        //     'id_kategori' => 2,
+        //     'judul' => 'Regional',
+        //     'order' => 1,
+        //     'url' => 'pengaturan/regional',
+        //     'icon' => 'map',
+        //     'show' => 1,
+        // ]);
 
-        Menu::create([
-            'id_kategori' => 2,
-            'judul' => 'Lokasi',
-            'order' => 1,
-            'url' => 'lokasi',
-            'icon' => 'map-pin',
-            'show' => 1,
-        ]);
+        // Menu::create([
+        //     'id_kategori' => 2,
+        //     'judul' => 'Lokasi',
+        //     'order' => 1,
+        //     'url' => 'lokasi',
+        //     'icon' => 'map-pin',
+        //     'show' => 1,
+        // ]);
 
         User::create([
             'regional_id' => 1,
@@ -112,25 +112,25 @@ class DatabaseSeeder extends Seeder
             'is_active' => 1
         ]);
 
-        Lokasi::create([
-            'regional_id' => 1,
-            'nama_bandara' => fake()->country(),
-            'lokasi_proyek' => fake()->address(),
-            'latitude' => -8.6608598,
-            'longitude' => 115.2149947,
-            'radius' => rand(10,200)
-        ]);
+        // Lokasi::create([
+        //     'regional_id' => 1,
+        //     'nama_bandara' => fake()->country(),
+        //     'lokasi_proyek' => fake()->address(),
+        //     'latitude' => -8.6608598,
+        //     'longitude' => 115.2149947,
+        //     'radius' => rand(10,200)
+        // ]);
 
-        for ($i=2; $i <= 5; $i++) {
-            Lokasi::create([
-                'regional_id' => $i,
-                'nama_bandara' => fake()->country(),
-                'lokasi_proyek' => fake()->address(),
-                'latitude' => rand(100000,500000),
-                'longitude' => rand(100000,500000),
-                'radius' => rand(10,200)
-            ]);
-        }
+        // for ($i=2; $i <= 5; $i++) {
+        //     Lokasi::create([
+        //         'regional_id' => $i,
+        //         'nama_bandara' => fake()->country(),
+        //         'lokasi_proyek' => fake()->address(),
+        //         'latitude' => rand(100000,500000),
+        //         'longitude' => rand(100000,500000),
+        //         'radius' => rand(10,200)
+        //     ]);
+        // }
 
         Shift::create([
             'nama' => 'Pagi',

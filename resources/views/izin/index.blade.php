@@ -12,15 +12,20 @@
 
 <div class="row">
     <div class="col-md-12">
+
+        @can('izin_create')
         <ul class="nav nav-pills flex-md-row mb-3">
             <li class="nav-item">
                 <a class="nav-link active" href="{{ route('izin.create') }}"><i class="bx bx-plus-circle me-1"></i> Buat Izin</a>
             </li>
         </ul>
+        @endcan
+
         <div class="card mb-4">
 
             <div class="card-body">
-                <table class="table table-hover table-responsive" id="tabel-izin">
+                <table class="table table-hover table-responsive
+                " id="tabel-izin">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -159,12 +164,6 @@
             });
         }
 
-        function checkValid(response){
-            resetValid()
-            kecualiRole1(response);
-            kecualiRole2(response);
-        }
-
         function resetValid(){
             $('#validasi1').prop('checked', false);
             $('#validasi1').prop('disabled', false);
@@ -178,20 +177,18 @@
     <script>
         function checkValid(response){
             resetValid()
-
-            if (response.status != "Admin") {
-                    $('#validasi2').prop('disabled', true);
-                }
+            if ($.isFunction(validasi1)) {
+                validasi1();
+            }
+            if ($.isFunction(validasi2)) {
+                validasi2();
+            }
             if (response.validasi2) {
                 $('#validasi2').prop('checked', true);
                 $('#validasi2').prop('disabled', true);
                 $('#validasi2nama').html(response.validasi2nama)
-
             }
 
-            if (response.status != "Staff") {
-                $('#validasi1').prop('disabled', true);
-            }
             if (response.validasi1) {
                 $('#validasi1').prop('checked', true);
                 $('#validasi1').prop('disabled', true);
@@ -199,6 +196,24 @@
             }
         }
     </script>
+
+    @can('validasi1_izin')
+        <script>
+            function validasi1() {
+                $('#validasi1').prop('disabled', false);
+                $('#validasi2').prop('disabled', true);
+            }
+        </script>
+    @endcan
+
+    @can('validasi2_izin')
+        <script>
+            function validasi2() {
+                $('#validasi1').prop('disabled', true);
+                $('#validasi2').prop('disabled', false);
+            }
+        </script>
+    @endcan
 </x-slot>
 
 </x-layouts.app>

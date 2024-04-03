@@ -52,9 +52,14 @@
                                 <option value="" selected disabled>Pilih jenis izin...</option>
                                 <option @if(old('jenis_izin') == "Sakit") selected  @endif value="Sakit" >Sakit</option>
                                 <option @if(old('jenis_izin') == "Cuti") selected @endif value="Cuti">Cuti</option>
+                                <option @if(old('jenis_izin') == "Izin") selected @endif value="Izin">Izin</option>
                             </select>
                             <x-partials.error-message name="jenis_izin" class="d-block" />
                         </div>
+
+                        @role('Teknisi')
+                            <div class="alert alert-warning" role="alert">Sisa Jumlah Izin : <span id="jumlah">{{ $jumlahIzin->jumlah_izin ?? 'Belum memiliki hak cuti / belum ditambahkan' }}</span></div>
+                        @endrole
 
                         <div class="mb-3" id="alertSisaJumlahIzin"></div>
 
@@ -72,7 +77,7 @@
                             </div>
                             <div class="col-12 col-sm-12 col-md-2">
                                 <x-partials.label title="Total Hari"/>
-                                <input type="text" class="form-control" id="total" placeholder="Total" disabled/>
+                                <input type="text" class="form-control" name="total_izin" id="total" placeholder="Total" disabled/>
                             </div>
                         </div>
 
@@ -187,9 +192,9 @@
                         var data = response.data;
 
                         if (data.jumlah_izin != undefined ) {
-                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert" id="alertSisaJumlahIzin">Sisa Jumlah Izin : <span id="jumlah">'+data.jumlah_izin+'</span></div>')
+                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Sisa Jumlah Izin : <span id="jumlah">'+data.jumlah_izin+'</span></div>')
                         }else{
-                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert" id="alertSisaJumlahIzin">Belum memiliki hak cuti / belum ditambahkan</div>')
+                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Belum memiliki hak cuti / belum ditambahkan</div>')
                         }
                     }
                 });

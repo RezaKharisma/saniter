@@ -43,6 +43,8 @@ class AjaxAbsenController extends Controller
         if ($request->ajax()) {
             $absen = Absen::select('absen.*','absen.id','shift.nama as shift_nama','shift.jam_masuk as shiftMasuk','shift.jam_pulang as shiftPulang')
                 ->where('user_id', auth()->user()->id)
+                ->whereNot('status','Cuti')
+                ->whereNot('status','Izin')
                 ->join('shift','absen.shift_id','=','shift.id')
                 ->limit(7)
                 ->orderBy('tgl_masuk','DESC')
@@ -52,28 +54,32 @@ class AjaxAbsenController extends Controller
             return DataTables::of($absen)
                 ->addIndexColumn()
                 ->addColumn('shift', function($row){
-                    $shift = "
-                    $row->shift_nama
-                    <p class='text-muted mb-0'>(".Carbon::parse($row->shiftMasuk)->format('H:i')." - ".Carbon::parse($row->shiftPulang)->format('H:i').")</p>
-                    ";
-                    return $shift;
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
+                    }
+                    return $row->shift_nama."<p class='text-muted mb-0'>(".Carbon::parse($row->shiftMasuk)->format('H:i')." - ".Carbon::parse($row->shiftPulang)->format('H:i').")</p>";
                 })
                 ->addColumn('tanggalAbsen', function($row){
                     return \Carbon\Carbon::parse($row->tgl_masuk)->isoFormat('dddd, D MMMM Y');
                 })
                 ->addColumn('jamMasuk', function($row){
-                    if($this->cekTerlambat($row->jam_masuk,$row->shiftMasuk)){
-                        $waktuMasuk = "<span>".Carbon::parse($row->jam_masuk)->format('H:i')."</span>";
-                    }else{
-                        $waktuMasuk = "<span class='text-danger'>".Carbon::parse($row->jam_masuk)->format('H:i')."</span>";
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
                     }
-                    return $waktuMasuk;
+
+                    if($this->cekTerlambat($row->jam_masuk,$row->shiftMasuk)){
+                        return "<span>".Carbon::parse($row->jam_masuk)->format('H:i')."</span>";
+                    }else{
+                        return "<span class='text-danger'>".Carbon::parse($row->jam_masuk)->format('H:i')."</span>";
+                    }
                 })
                 ->addColumn('jamPulang', function($row){
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
+                    }
                     if(Carbon::parse($row->tgl_masuk)->diffInDays(Carbon::now()->format('Y-m-d')) && Carbon::parse($row->jam_pulang) == Carbon::parse("00:00:00")){
                         return "<span class='text-danger'>".Carbon::parse($row->jam_pulang)->format('H:i')."</span>";
                     }
-
                     return "<span>".Carbon::parse($row->jam_pulang)->format('H:i')."</span>";
                 })
                 ->rawColumns(['tanggalAbsen','jamMasuk','jamPulang','shift'])
@@ -108,6 +114,10 @@ class AjaxAbsenController extends Controller
                     return "<div class='row p-0 justify-content-center'>".$fotoMasuk.$fotoPulang."</div>";
                 })
                 ->addColumn('shift', function($row){
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
+                    }
+
                     $shift = "
                     $row->shift_nama
                     <p class='text-muted mb-0'>(".Carbon::parse($row->shiftMasuk)->format('H:i')." - ".Carbon::parse($row->shiftPulang)->format('H:i').")</p>
@@ -118,6 +128,10 @@ class AjaxAbsenController extends Controller
                     return \Carbon\Carbon::parse($row->tgl_masuk)->isoFormat('dddd, D MMMM Y');
                 })
                 ->addColumn('jamMasuk', function($row){
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
+                    }
+
                     if($this->cekTerlambat($row->jam_masuk,$row->shiftMasuk)){
                         $waktuMasuk = "<span>".Carbon::parse($row->jam_masuk)->format('H:i')."</span>";
                     }else{
@@ -126,6 +140,10 @@ class AjaxAbsenController extends Controller
                     return $waktuMasuk;
                 })
                 ->addColumn('jamPulang', function($row){
+                    if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
+                        return "-";
+                    }
+
                     if(Carbon::parse($row->tgl_masuk)->diffInDays(Carbon::now()->format('Y-m-d')) && Carbon::parse($row->jam_pulang) == Carbon::parse("00:00:00")){
                         return "<span class='text-danger'>".Carbon::parse($row->jam_pulang)->format('H:i')."</span>";
                     }
@@ -144,9 +162,14 @@ class AjaxAbsenController extends Controller
                         return "<span class='badge bg-warning'>Cuti</span>";
                     }
 
+                    if ($row->status == "Sakit") {
+                        return "<span class='badge bg-warning'>Sakit</span>";
+                    }
+
                     if ($row->status == "Alfa") {
                         return "<span class='badge bg-secondary'>Alfa</span>";
                     }
+
 
                     return "<span class='badge bg-success'>Normal</span>";
                 })
@@ -158,10 +181,10 @@ class AjaxAbsenController extends Controller
     // Fungsi cek lebih waktu keterlambatan
     private function cekTerlambat($jamUser, $jamShift){
         // Parse waktu user dengan waktu shift
-        $waktuShift = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamShift);
-        $waktuMasuk = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamUser);
+        $waktuShift = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamShift)->format('Y-m-d H:i:s');
+        $waktuMasuk = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamUser)->format('Y-m-d H:i:s');
 
-        if ($waktuMasuk < $waktuShift) {
+        if ($waktuMasuk > $waktuShift) {
             return true;
         }else{
             return false;

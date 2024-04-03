@@ -23,65 +23,13 @@
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="{{ route('user.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Analytics">User</div>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-            <div data-i18n="Misc">Setting</div>
-            </a>
-            <ul class="menu-sub">
-            <li class="menu-item">
-                <a href="{{ route('regional.index') }}" class="menu-link">
-                    {{-- <i class="menu-icon tf-icons bx bx-buildings"></i> --}}
-                    <div data-i18n="Analytics">Regional</div>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('lokasi.index') }}" class="menu-link">
-                    {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
-                    <div data-i18n="Analytics">Lokasi</div>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('pengaturan.izin.index') }}" class="menu-link">
-                    {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
-                    <div data-i18n="Analytics">Izin</div>
-                </a>
-            </li>
-            </ul>
-        </li>
-
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Kehadiran</span></li>
-
-        <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bxs-book-content"></i>
-                <div data-i18n="Analytics">Absen</div>
-            </a>
-        </li>
-
-        <li class="menu-item">
-            <a href="{{ route('izin.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-task-x"></i>
-                <div data-i18n="Analytics">Izin</div>
-            </a>
-        </li>
-
         @foreach (getMenu() as $group => $options)
 
             @php $first = true; @endphp
 
             @foreach ($options as $item)
 
-                @hasrole(getRoleAccessMenu($options))
+                @hasrole(getRoleAccessMenu($item))
 
                 @if ($first)
                     <!-- {{ $group }} -->

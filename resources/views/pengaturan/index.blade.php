@@ -12,23 +12,20 @@
                     {{-- Menu --}}
                     <ul class="nav nav-pills flex-column flex-md-row mb-3">
                         <li class="nav-item me-2">
-                            {{-- Jika request url adalah url yg di tentukan, set class active --}}
                             <a class="btn btn-primary" href="{{ route('pengaturan.role.index') }}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Hak akses.</span>">
                                 <i class="bx bx-user-circle me-1"></i> Role
                             </a>
                         </li>
                         <li class="nav-item me-2">
-                            {{-- Jika request url adalah url yg di tentukan, set class active --}}
                             <a class="btn btn-primary" href="{{ route('pengaturan.permission.index') }}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>Izin hak akses.</span>">
                                 <i class="bx bx-lock-alt me-1"></i> Permission
                             </a>
                         </li>
-                        <li class="nav-item me-2">
-                            {{-- Jika request url adalah url yg di tentukan, set class active --}}
+                        {{-- <li class="nav-item me-2">
                             <a class="btn btn-primary" href="{{ route('pengaturan.assign-role.index') }}" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" data-bs-original-title="<span>User Akses.</span>">
                                 <i class="bx bx-key me-1"></i> Tetapkan Role
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
 
                 </div>

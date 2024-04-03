@@ -80,7 +80,7 @@ class LokasiController extends Controller
         ]);
 
         toast('Data Lokasi berhasil tersimpan!', 'success');
-        return Redirect()->to('/lokasi'); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 
     // fungsi dibawah digunakan untuk menghapus data lokasi
@@ -93,7 +93,7 @@ class LokasiController extends Controller
         $lokasi->delete();
 
         toast('Data berhasil dihapus!', 'success');
-        return Redirect()->to('/lokasi'); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 
     // Fungsi dibawah berguna untuk mengupdate data lokasi
