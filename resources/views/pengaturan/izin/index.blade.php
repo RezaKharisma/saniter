@@ -19,102 +19,62 @@
             </h5>
 
             <div class="card-body">
-            <a href="{{ route('izin.setting-create') }}" class="mb-4 btn btn-primary">Setting Izin</a>
-                <table class="table table-striped" id="izin-table">
+            <a href="{{ route('pengaturan.izin.create') }}" class="mb-4 btn btn-primary">
+                <i class="bx bx-plus"></i> Tambah Jumlah Izin
+            </a>
+                <table class="table table-hover" id="izin-table">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
-                            <!-- <th>Regional</th> -->
                             <th>Jumlah Izin</th>
                             <th>aksi</th>
                         </tr>
                     </thead>
-                    {{-- <tbody class="table-border-bottom-0">
-                        <?php $no = 1; ?>
-                        @foreach ($jumlah as $key => $j)
+
+                    <tfoot>
                         <tr>
-                            <td>{{ $no++ }}</td>
-                            <td>{{ $j->name_user }}</td>
-                            <td>{{ $j->jumlah_izin }}</td>
-                            <!-- <td>{{ $j->regional_nama }}</td> -->
-                            <td>
-
-                                <button
-                                type="button"
-                                class="btn btn-warning btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#update{{ $key }}">
-                                Update
-                                </button>
-
-                                <form method="POST" action="{{ route('izin.setting-delete', $j->id) }}" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button
-                                type="submit"
-                                class="btn btn-danger btn-sm">
-                                Hapus
-                                </button>
-                                </form>
-                            </td>
-
-
-                                <div class="modal fade" id="update{{ $key }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                        <form method="POST" action="{{ route('regional.update', $j->id) }}" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel1">Update Jumlah Izin</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col mb-3">
-                                                        <label for="nameBasic" class="form-label">Nama Teknisi</label>
-                                                        <input type="text" name="user_id" class="form-control" value="{{ $j->name_user }}" readonly/>
-                                                    </div>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="basic-icon-default-company">Tahun</label>
-                                                    <div class="input-group input-group-merge">
-                                                        <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bxs-calendar"></i></span>
-                                                        <input type="text" name="tahun" id="basic-icon-default-company" class="form-control" placeholder="20..">
-                                                    </div>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="basic-icon-default-company">Jumlah Izin</label>
-                                                    <div class="input-group input-group-merge">
-                                                        <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-plus-circle"></i></span>
-                                                        <input type="text" name="jumlah_izin" id="basic-icon-default-company" class="form-control" placeholder="12">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                            </div>
-                                        </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Jumlah Izin</th>
+                            <th>aksi</th>
                         </tr>
-                        @endforeach
-                    </tbody> --}}
+                    </tfoot>
+
                 </table>
             </div>
         </div>
     </div>
-    <!-- / Content -->
+</div>
+
+<div class="modal fade" id="modalIzinEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <form method="POST" class="d-inline" id="formEdit">
+        @csrf
+        @method('PUT')
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Update Jumlah Izin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="nameBasic" class="form-label">Jumlah Izin</label>
+                        <input type="text" name="jumlahIzinEdit" id="jumlahIzinEdit" class="form-control" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57" />
+                        <x-partials.error-message name="jumlahIzinEdit" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+        </div>
+    </div>
 </div>
 
 <x-slot name="script">
@@ -167,7 +127,51 @@
                 }
             });
         }
+
+        // Ketika tombol edit diklik
+        function editData(e){
+            resetFormValidation();
+
+            // Mengatur ajax csrf
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('ajax.getJumlahIzinEdit') }}",
+                data: {
+                    id: e.dataset.id // Mengambil id pada event
+                },
+                dataType: "json",
+                success: function (response) { // Jika ajax sukses dan memberikan respon
+                    var jumlahIzin = response.data;
+                    var url = "{{ route('pengaturan.izin.update', ':id') }}"; // Action pada form edit
+                    url = url.replace(':id', jumlahIzin.id );
+                    $("#formEdit")[0].reset();
+                    $('#formEdit').attr('action', url);
+                    $('#jumlahIzinEdit').val(jumlahIzin.jumlah_izin);
+                }
+            });
+        }
+
+        // Reset is-invalid form validation
+        function resetFormValidation(){
+            $(".is-invalid").removeClass("is-invalid")
+            $(".invalid-feedback").addClass("d-none")
+        }
     </script>
+
+    {{-- Jika terdapat session dengan nama modalEdit, untuk validasi popup otomatis --}}
+    @if (Session::has('modalEdit'))
+    <script>
+        $(document).ready(function () {
+            $('#modalEditMenu').modal('show')
+        });
+    </script>
+@endif
 </x-slot>
 
 </x-layouts.app>

@@ -18,31 +18,9 @@ class AbsenController extends Controller
 {
     public function index()
     {
-        // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
-        // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
-        //     ->where('user_id', auth()->user()->id)
-        //     ->whereYear('created_at', Carbon::now()->year)
-        //     ->whereMonth('created_at', Carbon::now()->month)
-        //     ->get();
-
-        // // Perulangan user izin
-        // foreach ($cekUserIzin as $item) {
-
-        //     if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
-        //         $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
-
-        //         $periode = array();
-
-        //         foreach ($periodeTanggal as $tgl) {
-        //             array_push($periode, $tgl->format('Y-m-d'));
-        //         }
-
-        //         dd($periode);
-
-        //     }
-        // }
-
-        return view('absen.index');
+        $countKehadiranPerBulan = count(Absen::whereMonth('tgl_masuk', Carbon::now()->format('m'))->get());
+        $this->cekAlfa();
+        return view('absen.index', compact('countKehadiranPerBulan'));
     }
 
     public function create()
@@ -65,6 +43,30 @@ class AbsenController extends Controller
     public function detail(){
         return view('absen.detail');
     }
+
+    // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
+        // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
+        //     ->where('user_id', auth()->user()->id)
+        //     ->whereYear('created_at', Carbon::now()->year)
+        //     ->whereMonth('created_at', Carbon::now()->month)
+        //     ->get();
+
+        // // Perulangan user izin
+        // foreach ($cekUserIzin as $item) {
+
+        //     if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
+        //         $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
+
+        //         $periode = array();
+
+        //         foreach ($periodeTanggal as $tgl) {
+        //             array_push($periode, $tgl->format('Y-m-d'));
+        //         }
+
+        //         dd($periode);
+
+        //     }
+        // }
 
     /*
     |--------------------------------------------
@@ -534,5 +536,18 @@ class AbsenController extends Controller
         }
 
         return 0;
+    }
+
+    private function cekAlfa()
+    {
+        $absen = Absen::where('jam_pulang', "00:00:00")->get();
+        foreach($absen as $item){
+            if (Carbon::parse($item->created_at)->diffInHours(Carbon::now()) > 12) {
+                $item->update([
+                    'status' => "Alfa",
+                    'keterangan' => $item->keterangan.", Belum Melakukan Absen Pulang"
+                ]);
+            }
+        }
     }
 }

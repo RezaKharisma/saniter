@@ -82,30 +82,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::put('lokasi/{id}', 'update')->name('lokasi.update');
         });
 
-        // Izin
-        Route::controller(IzinController::class)->group(function()
-        {
-            // Izin untuk tampilan Teknisi
-            Route::get('izin', 'index')->name('izin.index');
-            Route::get('izin/create', 'create')->name('izin.create');
-
-
-            // Izin untuk admin (setting)
-            Route::get('izin/setting', 'setting_index')->name('izin.setting');
-            Route::get('izin/setting-create', 'setting_create')->name('izin.setting-create');
-            Route::post('izin/setting-add', 'setting_izin_add')->name('izin.setting-add');
-            Route::delete('izin-setting/{id}/delete','setting_delete')->name('izin.setting-delete');
-
-
-            // Route::post('lokasi/add', 'lokasi_add')->name('lokasi.add');
-            // Route::delete('lokasi/{id}/delete','delete')->name('lokasi.delete');
-            // Route::put('lokasi/{id}', 'update')->name('lokasi.update');
-        });
-
-        Route::controller(AjaxIzinController::class)->group(function(){
-            Route::post('ajax/jumlah-izin', 'getJumlahIzin')->name('ajax.getJumlahIzin');
-        });
-
         // Menu
         Route::controller(MenuController::class)->group(function(){
             Route::get('/pengaturan/menu','index')->name('pengaturan.menu.index');
@@ -164,6 +140,34 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/ajax/assign-role','getUser')->name('ajax.getUser');
             Route::post('/ajax/tabel-add-role-user','getTabelRoleUser')->name('ajax.getTabelRoleUser');
         });
+    });
+
+    // Izin
+    Route::controller(IzinController::class)->group(function()
+    {
+        // Izin untuk tampilan Teknisi
+        Route::get('izin', 'index')->name('izin.index');
+        Route::get('izin/create', 'create')->name('izin.create');
+        Route::post('izin', 'store')->name('izin.store');
+        Route::get('izin/{id}/edit', 'edit')->name('izin.edit');
+        Route::put('izin/{id}', 'update')->name('izin.update');
+        Route::put('izin/{id}/validasi', 'updateValidasi')->name('izin.updateValidasi');
+        Route::delete('izin/{id}', 'delete')->name('izin.delete');
+
+        // Izin untuk admin (setting)
+        Route::get('pengaturan/izin', 'indexPengaturan')->name('pengaturan.izin.index');
+        Route::get('pengaturan/izin/create', 'createPengaturan')->name('pengaturan.izin.create');
+        Route::post('pengaturan/izin', 'storePengaturan')->name('pengaturan.izin.store');
+        Route::put('pengaturan/izin/{id}', 'updatePengaturan')->name('pengaturan.izin.update');
+        Route::delete('pengaturan/izin/{id}','deletePengaturan')->name('pengaturan.izin.delete');
+    });
+
+    Route::controller(AjaxIzinController::class)->group(function(){
+        Route::get('ajax/izin', 'getIzin')->name('ajax.getIzin');
+        Route::post('ajax/izin-valid', 'getValidIzin')->name('ajax.getValidIzin');
+        Route::post('ajax/jumlah-izin', 'getJumlahIzin')->name('ajax.getJumlahIzin');
+        Route::post('ajax/jumlah-izin-user', 'getJumlahIzinUser')->name('ajax.getJumlahIzinUser');
+        Route::post('ajax/jumlah-izin/edit', 'getJumlahIzinEdit')->name('ajax.getJumlahIzinEdit');
     });
 
     // Regional
@@ -253,5 +257,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(AjaxAbsenController::class)->group(function(){
         Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
         Route::get('/ajax/absen-log','getAbsenLog')->name('ajax.getAbsenLog');
+        Route::get('/ajax/absen-detail','getAbsenDetail')->name('ajax.getAbsenDetail');
     });
 });

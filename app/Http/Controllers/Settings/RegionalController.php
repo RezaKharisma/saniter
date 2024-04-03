@@ -79,7 +79,7 @@ class RegionalController extends Controller
         $regional->delete();
 
         toast('Data berhasil dihapus!', 'success');
-        return Redirect()->to('/regional'); // Redirect kembali
+        return Redirect::route('regional.index'); // Redirect kembali
     }
 
     // Untuk proses update data Regional

@@ -51,7 +51,7 @@
             </li>
 
             <li class="menu-item">
-                <a href="{{ route('izin.setting') }}" class="menu-link">
+                <a href="{{ route('pengaturan.izin.index') }}" class="menu-link">
                     {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
                     <div data-i18n="Analytics">Izin</div>
                 </a>

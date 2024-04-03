@@ -1,3 +1,3 @@
 @if ($text)
-    <div {{ $attributes->merge(['class'=> 'form-text mt-0']) }}>{{ $text }}</div>
+    <div {{ $attributes->merge(['class'=> 'form-text mt-1']) }}>{{ $text }}</div>
 @endif

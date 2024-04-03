@@ -3,12 +3,11 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi /</span> Absen</h4>
 
     <div class="row">
-        <div class="col-12">
-
-            <div class="card mb-3">
+        <div class="col-12 col-md-6">
+            <div class="card mb-3 ">
                 <div class="card-body mt-2">
                     <div class="row justify-content-center text-center">
-                        <div class="col-12 col-sm-12 col-md-6 col-lg-5">
+                        <div class="col-12">
                             <div class="alert alert-secondary p-5" role="alert">
                                 <h2 class="card-title">
                                     <div id="clock" class="text-primary"></div>
@@ -22,6 +21,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
+                                <div class="card-title">
+                                    <h5 class="text-nowrap mb-2">Sisa Cuti</h5>
+                                    <span class="badge bg-label-warning rounded-pill">Tahun {{ Carbon\Carbon::now()->format('Y') }}</span>
+                                </div>
+                                <div class="mt-sm-auto">
+                                    <h3 class="mb-0">50</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
+                                <div class="card-title">
+                                    <h5 class="text-nowrap mb-2">Total Kehadiran</h5>
+                                    <span class="badge bg-label-info rounded-pill">Bulan {{ Carbon\Carbon::now()->format('F') }}</span>
+                                </div>
+                                <div class="mt-sm-auto">
+                                    <h3 class="mb-0">{{ $countKehadiranPerBulan }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center mb-2">Pengajuan</h5>
+                            <p class="card-text text-center mb-4">Ajukan cuti ataupun izin.</p>
+                            <div class="d-block d-flex justify-content-center">
+                                <button class="btn btn-warning d-block w-100">Ajukan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
 
             <div class="card">
                 <h5 class="card-header d-flex justify-content-between align-items-center">
@@ -31,15 +80,15 @@
                 <div class="card-body">
                     <table class="table table-hover table-responsive" id="tabel-log-absen">
                         <thead>
-                            <th>No</th>
                             <th>Tanggal</th>
+                            <th>Shift</th>
                             <th>Jam Masuk</th>
                             <th>Jam Pulang</th>
                         </thead>
 
                         <tfoot>
-                            <th>No</th>
                             <th>Tanggal</th>
+                            <th>Shift</th>
                             <th>Jam Masuk</th>
                             <th>Jam Pulang</th>
                         </tfoot>
@@ -64,16 +113,16 @@
                     lengthChange: false,
                     paging: false,
                     info: false,
+                    ordering: false,
                     columns: [
-                        {data: 'id', name: 'id'},
                         {data: 'tanggalAbsen', name: 'tanggalAbsen'},
+                        {data: 'shift', name: 'shift'},
                         {data: 'jamMasuk', name: 'jamMasuk'},
                         {data: 'jamPulang', name: 'jamPulang'},
                     ],
                     columnDefs: [
                     {
                         target: 0,
-                        visible: false,
                         searchable: false
                     }],
                     order: [

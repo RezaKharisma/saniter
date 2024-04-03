@@ -22,6 +22,8 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/css/jquery-ui.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2-bootstrap-5-theme.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
@@ -103,6 +105,7 @@
         @include('sweetalert::alert')
 
         <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/select2/js/select2.min.js') }}"></script>
 
         <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
