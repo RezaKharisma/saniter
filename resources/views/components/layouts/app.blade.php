@@ -21,9 +21,13 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/css/jquery-ui.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2-bootstrap-5-theme.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
         <style>
             .swal2-container {
@@ -36,6 +40,17 @@
     </head>
 
     <body>
+        @php
+            if (Auth()->user()->is_active != 1) {
+                toast('Terjadi kesalahan!','error');
+                Auth::logout();
+                Redirect::route('login');
+            }
+
+            setlocale(LC_TIME, 'id_ID');
+            \Carbon\Carbon::setLocale('id');
+        @endphp
+
         <div class="layout-wrapper layout-content-navbar">
             <div class="layout-container">
                 {{-- Sidebar --}}
@@ -79,16 +94,21 @@
         <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
         <script src="{{ asset('assets/js/main.js') }}"></script>
+        <script src="{{ asset('assets/js/numberOnly.js') }}"></script>
         <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
+        {{-- <script src="{{ asset('assets/js/moment.js') }}"></script> --}}
+        <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 
         {{-- Sweet Alert --}}
         @include('sweetalert::alert')
 
         <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/select2/js/select2.min.js') }}"></script>
 
         <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

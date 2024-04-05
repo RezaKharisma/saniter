@@ -17,68 +17,29 @@
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
         <li class="menu-item">
-            <a href="index.html" class="menu-link">
+            <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="{{ route('user.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="Analytics">User</div>
-            </a>
-        </li>
-
-        
-
-        
-        <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div data-i18n="Misc">Regional & Lokasi</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('regional.index') }}" class="menu-link">
-                        {{-- <i class="menu-icon tf-icons bx bx-buildings"></i> --}}
-                        <div data-i18n="Analytics">Regional</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ route('lokasi.index') }}" class="menu-link">
-                        {{-- <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
-                        <div data-i18n="Analytics">Lokasi</div>
-                    </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Kehadiran</span></li>
-
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <i class="menu-icon tf-icons bx bxs-book-content"></i>
-                    <div data-i18n="Analytics">Absen</div>
-                </a>
-            </li>
-
-            <li class="menu-item">
-                <a href="{{ route('izin.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-task-x"></i>
-                    <div data-i18n="Analytics">Izin</div>
-                </a>
-            </li>
         @foreach (getMenu() as $group => $options)
 
-            <!-- {{ $group }} -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">{{ $group }}</span></li>
+            @php $first = true; @endphp
 
             @foreach ($options as $item)
 
+                @hasrole(getRoleAccessMenu($item))
+
+                @if ($first)
+                    <!-- {{ $group }} -->
+                    <li class='menu-header small text-uppercase'><span class='menu-header-text'>{{ $group }}</span></li>
+                    @php $first = false; @endphp
+                @endif
+
                 <!-- {{ $item->judul }} -->
                 <li class="menu-item">
-                    <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ $item->url }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
+                    <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ url($item->url) }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
                         <i class="menu-icon tf-icons bx bx-{{ $item->icon }}"></i>
                         <div data-i18n="Layouts">{{ $item->judul }}</div>
                     </a>
@@ -89,7 +50,7 @@
 
                             @foreach (getSubMenu($item->id) as $sm)
                             <li class="menu-item">
-                                <a href="{{ strval($item->url.'/'.$sm->url) }}" class="menu-link">
+                                <a href="{{ url(strval($item->url.'/'.$sm->url)) }}" class="menu-link">
                                     <div data-i18n="Without menu">{{ $sm->judul }}</div>
                                 </a>
                             </li>
@@ -100,6 +61,8 @@
                     @endif
 
                 </li>
+
+                @endhasrole
 
             @endforeach
 

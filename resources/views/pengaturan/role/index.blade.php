@@ -23,18 +23,18 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
+                {{-- Update Role --}}
                 <h5 class="card-header">Manajemen Role</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalRole" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Role</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <a href="{{ route('pengaturan.role.create') }}" class="btn btn-secondary me-0"><i class="bx bx-plus"></i>Tambah Role</a>
+                        </div>
                     </div>
 
-                </div>
-
-                <div class="card-body">
-
-                    <table id="role-table" class="table table-hover table-sm" width="100%">
+                    <table id="role-table" class="table table-hover" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -80,53 +80,27 @@
                         {{-- Input Judul --}}
                         <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3"/>
 
-                        {{-- Input Permisson --}}
-                        <x-partials.label title="Permission"/>
-                        <select id="choices-multiple-remove-button" name="permissions[]" placeholder="Pilih hak akses." multiple>
-                            @foreach ($permissions as $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-
-                        {{-- Button Submit --}}
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Edit Role --}}
-    <div class="modal fade" id="modalEditRole" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                {{-- Form Tambah Menu --}}
-                <form id="formEdit" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Edit Role</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    @csrf
-                    @method('PUT')
-
-                    <div class="modal-body">
-
-                        {{-- Input Judul --}}
-                        <x-input-text title="Role" name="name" id="nameEdit" placeholder="Masukkan role" margin="mb-3"/>
-
-
-                        {{-- Input Permisson --}}
-                        <x-partials.label title="Permission"/>
-                        <select id="choices-multiple-remove-button" name="permissions[]" placeholder="Pilih hak akses." multiple>
-                            @foreach ($permissions as $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        <table class="table">
+                            <thead>
+                                <th>Menu</th>
+                                <th>Permissions</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($permissions as $key => $items)
+                                <tr>
+                                    <td>{{ $key }}</td>
+                                    <td>
+                                        @foreach ($items as $item)
+                                        <div class="form-check form-check-inline mt-3">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                                            <label class="form-check-label" for="inlineCheckbox1">{{ $item->name }}</label>
+                                        </div>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
 
                     </div>
                     <div class="modal-footer">
@@ -155,12 +129,12 @@
                         {data: 'permissions', render: function (data, type, row) {
                             var result = '';
                             for (let index = 0; index < data.length; index++) {
-                                result = result + data[index].name + ', ';
+                                result = result + ' <span class="badge bg-label-dark">'+ data[index].name +'</span>';
                             }
                             return result;
-                        }},
+                        }, orderable: false, searchable: false},
                         {data: 'action', orderable: false, searchable: false},
-                    ]
+                    ],columnDefs: [{ width: '70%', targets: 2 }]
                 })
 
                 // Jika tombol delete diklik
@@ -181,47 +155,7 @@
                         }
                     });
                 });
-
-                var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
-                    removeItemButton: true,
-                });
             });
-
-            // Ketika tombol edit diklik
-            function editData(e){
-
-                resetFormValidation()
-
-                // Mengatur ajax csrf
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ajax.getRoleEdit') }}",
-                    data: {
-                        id: e.dataset.id // Mengambil id pada event
-                    },
-                    dataType: "json",
-                    success: function (response) { // Jika ajax sukses dan memberikan respon
-                        var data = response.data;
-                        var url = "{{ route('pengaturan.role.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', data.id );
-                        $("#formEdit")[0].reset();
-                        $('#formEdit').attr('action', url);
-                        $('#nameEdit').val(data.name);
-
-                        $('#choices-multiple-remove-button').append('Ayam')
-                        for (let index = 0; index < data.permissions.length; index++) {
-                            $('#choices-multiple-remove-button option[value='+data.permissions[index].name+']').attr('selected','selected');
-                            console.log(data.permissions[index].name);
-                        }
-                    }
-                });
-            }
 
             // Reset is-invalid form validation
             function resetFormValidation(){

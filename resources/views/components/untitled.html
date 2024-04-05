@@ -1,0 +1,79 @@
+<li class="menu-item">
+    <a href="{{ route('user.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-user"></i>
+        <div data-i18n="Analytics">User</div>
+    </a>
+</li>
+
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+        <div data-i18n="Misc">Setting</div>
+    </a>
+    <ul class="menu-sub">
+        <li class="menu-item">
+            <a href="{{ route('regional.index') }}" class="menu-link">
+                {{-- <i class="menu-icon tf-icons bx bx-buildings"></i> --}}
+                <div data-i18n="Analytics">Regional</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('lokasi.index') }}" class="menu-link">
+                {{--
+                <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
+                <div data-i18n="Analytics">Lokasi</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="{{ route('pengaturan.izin.index') }}" class="menu-link">
+                {{--
+                <i class="menu-icon tf-icons bx bx-current-location"></i> --}}
+                <div data-i18n="Analytics">Izin</div>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<li class="menu-header small text-uppercase">
+    <span class="menu-header-text">Kehadiran</span>
+</li>
+
+<li class="menu-item">
+    <a href="#" class="menu-link">
+        <i class="menu-icon tf-icons bx bxs-book-content"></i>
+        <div data-i18n="Analytics">Absen</div>
+    </a>
+</li>
+
+<li class="menu-item">
+    <a href="{{ route('izin.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-task-x"></i>
+        <div data-i18n="Analytics">Izin</div>
+    </a>
+</li>
+
+<!-- // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
+        // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
+        //     ->where('user_id', auth()->user()->id)
+        //     ->whereYear('created_at', Carbon::now()->year)
+        //     ->whereMonth('created_at', Carbon::now()->month)
+        //     ->get();
+
+        // // Perulangan user izin
+        // foreach ($cekUserIzin as $item) {
+
+        //     if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
+        //         $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
+
+        //         $periode = array();
+
+        //         foreach ($periodeTanggal as $tgl) {
+        //             array_push($periode, $tgl->format('Y-m-d'));
+        //         }
+
+        //         dd($periode);
+
+        //     }
+        // } -->

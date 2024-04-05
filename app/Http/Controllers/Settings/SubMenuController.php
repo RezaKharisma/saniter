@@ -22,7 +22,7 @@ class SubMenuController extends Controller
             'id_menu' => 'required',
             'judul' => 'required',
             'order' => 'required',
-            'url' => 'required'
+            'url' => 'required',
         ], ['id_menu.required' => 'menu wajib diisi.']);
 
 
@@ -38,7 +38,7 @@ class SubMenuController extends Controller
             'id_menu' => $request->id_menu, // Ambil request sesuai name input
             'judul' => $request->judul,
             'order' => $request->order,
-            'url' => trim($request->url)
+            'url' => trim($request->url),
         ]);
 
         toast('Data berhasil tersimpan!', 'success');

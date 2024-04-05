@@ -10,32 +10,48 @@ use Illuminate\Support\Facades\Redirect;
 
 class LokasiController extends Controller
 {
-    
-    // fungsi dibawah digunakan untuk menampilkan halaman index dari data lokasi
+
+    // Fungsi dibawah digunakan untuk menampilkan halaman index dari data lokasi
     public function index()
     {
+        // Ambil data lokasi
         $lokasi = Lokasi::Select('*','lokasi.id as lokasi_id', 'regional.nama as regional_name')
             ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')
             ->get();
 
+        // Ambil data regional
         $regional = Regional::select('*')
         ->get();
 
         return view('lokasi/index', compact('lokasi', 'regional'));
     }
 
-    // fungsi dibawah digunakan untuk menampilkan halaman form lokasi
+    // Fungsi dibawah digunakan untuk menampilkan halaman form lokasi
     public function create()
     {
+        // Ambil data Regional
         $regional = Regional::select('*')
             ->get();
 
         return view('lokasi.create', compact('regional'));
     }
 
-    // fungsi dibawah digunakan untuk menambahkan data Lokasi
-    public function lokasi_add(Request $request)
+    // Fungsi dibawah digunakan untuk menampilkan halaman form EDIT lokasi
+    public function edit($id)
     {
+        $lokasi = Lokasi::select('*','lokasi.longitude as lokasi_longitude','lokasi.latitude as lokasi_latitude','regional.id as regioanl_id')
+            ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')->find($id);
+
+        // Ambil data regional
+        $regional = Regional::select('*')->get();
+
+        return view('lokasi.edit', compact('lokasi','regional'));
+    }
+
+    // fungsi dibawah digunakan untuk menambahkan data Lokasi
+    public function store(Request $request)
+    {
+        // Validasi form
         $validator = Validator::make($request->all(), [
                 'regional_id' => 'required',
                 'nama_bandara' => 'required',
@@ -52,8 +68,8 @@ class LokasiController extends Controller
                 ->withErrors($validator)
                 ->withInput(); // Return kembali membawa error dan old input
         }
-        
-        // dd($request->all());
+
+        // Insert data lokasi baru dari input form
         Lokasi::create([
             'regional_id' => $request->regional_id,
             'nama_bandara' => $request->nama_bandara,
@@ -64,28 +80,27 @@ class LokasiController extends Controller
         ]);
 
         toast('Data Lokasi berhasil tersimpan!', 'success');
-        return Redirect()->to('/lokasi'); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 
     // fungsi dibawah digunakan untuk menghapus data lokasi
     public function delete($id)
     {
+        // Cari lokasi berdasarkan ID
         $lokasi = Lokasi::findOrFail($id);
 
+        // Delete lokasi tersebut
         $lokasi->delete();
 
         toast('Data berhasil dihapus!', 'success');
-        return Redirect()->to('/lokasi'); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 
     // Fungsi dibawah berguna untuk mengupdate data lokasi
     public function update(Request $request, $id)
     {
         // Mengambil request dari submit form
-        $validator = Validator::make(
-            $request->all(),
-            [
-                // Validasi & ambil semua request
+        $validator = Validator::make($request->all(),[
                 'regional_id' => 'required',
                 'nama_bandara' => 'required',
                 'lokasi_proyek' => 'required',
@@ -116,6 +131,6 @@ class LokasiController extends Controller
         $lokasi->update($data); // Update data
 
         toast('Data Lokasi berhasil tersimpan!', 'success');
-        return Redirect::back(); // Redirect kembali
+        return Redirect::route('lokasi.index'); // Redirect kembali
     }
 }

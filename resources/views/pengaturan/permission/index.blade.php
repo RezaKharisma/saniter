@@ -8,7 +8,7 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Role</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Permission</h4>
 
     <div class="row">
         <div class="col-md-12">
@@ -23,21 +23,21 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Permission</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="role-table" class="table table-hover table-sm" width="100%">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Menu</th>
                                 <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
@@ -49,6 +49,7 @@
                         <tfoot>
                             <tr>
                                 <th>#</th>
+                                <th>Menu</th>
                                 <th>Name</th>
                                 <th>Aksi</th>
                             </tr>
@@ -75,48 +76,45 @@
 
                     <div class="modal-body">
 
+                        {{-- Input Menu --}}
+                        <div class="mb-3">
+                            <x-partials.label title="Menu"/>
+                            <select name="id_menu" class="form-select @error('id_menu')is-invalid @enderror" id="id_menu">
+                                <option value="" selected disabled>Pilih Menu...</option>
+                                @foreach ($menu as $item)
+                                    <option @if(old('id_menu') == $item->id) selected @endif value="{{ $item->id }}">{{ $item->judul }}</option>
+                                @endforeach
+                            </select>
+                            <x-partials.error-message class="d-block" name="id_menu" />
+                        </div>
+
                         {{-- Input Judul --}}
-                        <x-input-text title="Permission" name="name" placeholder="Masukkan permission"/>
-                        <x-partials.input-desc text="Contoh user_index atau user_delete."/>
+                        <x-input-text title="Permission" name="name" placeholder="Masukkan permission" id="name"/>
+                        <x-partials.input-desc text="Contoh user_create, user_read, user_update, user_delete." class="mb-3"/>
+
+                        {{-- Input Otomatis CRUD --}}
+                        <div class="div">
+                            <div class="form-check form-check-inline mb-3">
+                                <input class="form-check-input" type="checkbox" name="otomatis" id="otomatis">
+                                <label class="form-check-label" for="defaultCheck1"> Otomatis permission CRUD. </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="custom" id="custom" disabled >
+                                <label class="form-check-label" for="defaultCheck1"> Custom nama CRUD. </label>
+                            </div>
+                        </div>
+
+                        <div id="customCRUD"></div>
 
                         {{-- Input Permisson --}}
-                        <x-partials.label title="Role" class="mt-3"/>
+                        <x-partials.label title="Role" />
                         <select id="choices-multiple-remove-button" name="role[]" placeholder="Pilih role." multiple>
                             @foreach ($roles as $item)
                                 <option value="{{ $item->name }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
-
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-
-                        {{-- Button Submit --}}
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Edit Role --}}
-    <div class="modal fade" id="modalEditRole" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                {{-- Form Tambah Menu --}}
-                <form id="formEdit" method="POST">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalCenterTitle">Edit Role</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    @csrf
-                    @method('PUT')
-
-                    <div class="modal-body">
-
-                        {{-- Input Judul --}}
-                        <x-input-text title="Role" name="name" id="nameEdit" placeholder="Masukkan role" margin="mb-3"/>
+                        <x-partials.input-desc text="Biarkan kosong jika tidak ingin menambah role." style="margin-top: -20px !important" />
+                        <x-partials.error-message class="d-block" name="role" style="margin-top: -24px" />
 
                     </div>
                     <div class="modal-footer">
@@ -141,9 +139,20 @@
                     responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'judul', name: 'judul'},
                         {data: 'name', name: 'name'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
-                    ]
+                    ],
+                    rowGroup: {
+                        dataSrc: 'judul'
+                    },
+                    columnDefs: [
+                    {
+                        target: 1,
+                        visible: false,
+                        searchable: false
+                    }
+                ]
                 })
 
                 var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
@@ -170,35 +179,37 @@
                 });
             });
 
-            // Ketika tombol edit diklik
-            function editData(e){
+            var namaPermission = "";
 
-                resetFormValidation()
+            // Jika menu dipilih
+            $('#id_menu').on('change', function(){
+                namaPermission = $(this).find(":selected").text().toLowerCase()+"_";
+                if ($('#otomatis').is(':not(:checked)')) {
+                    $('#name').val($(this).find(":selected").text().toLowerCase()+"_");
+                }
+            })
 
-                // Mengatur ajax csrf
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+            // Jika checkbox berubah
+            $('#otomatis').on('change', function (e) {
+                if (this.checked) { // Apakah ter check
+                    $('#name').attr('readonly', 'readonly'); // Set id name ke readonly
+                    $('#name').val('CRUD');
+                    $('#custom').prop('disabled', false);
+                }else{
+                    $('#name').removeAttr('readonly'); // Hapus readonly
+                    $('#name').val(namaPermission);
+                    $('#custom').prop('disabled', true);
+                }
+            })
 
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ajax.getRoleEdit') }}",
-                    data: {
-                        id: e.dataset.id // Mengambil id pada event
-                    },
-                    dataType: "json",
-                    success: function (response) { // Jika ajax sukses dan memberikan respon
-                        var data = response.data;
-                        var url = "{{ route('pengaturan.role.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', data.id );
-                        $("#formEdit")[0].reset();
-                        $('#formEdit').attr('action', url);
-                        $('#nameEdit').val(data.name);
-                    }
-                });
-            }
+            // Jika checkbox berubah
+            $('#custom').on('change', function (e) {
+                if (this.checked) { // Apakah ter check
+                    $('#customCRUD').html("<label class='form-label mt-3'>Custom Nama CRUD</label><input name='customCRUD' type='text' class='form-control' placeholder='Custom jika terdapat sub-menu di menu tersebut. Input tanpa underscore ( _ ).' /><div class='form-text mb-3'>Contoh user menginput proyek, akan menjadi proyek_create, proyek_read, proyek_update, proyek_delete. </div>");
+                }else{
+                    $('#customCRUD').html("");
+                }
+            })
 
             // Reset is-invalid form validation
             function resetFormValidation(){

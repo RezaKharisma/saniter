@@ -23,16 +23,15 @@
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
                 <h5 class="card-header">Manajemen Menu</h5>
+
                 <div class="card-body">
-                    <div class="d-flex align-items-start align-items-sm-center gap-2">
-                        <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start align-items-sm-center gap-2">
+                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card-body">
 
                     <table id="kategori-menu-table" class="table table-hover table-sm" width="100%">
                         <thead>
@@ -40,6 +39,7 @@
                                 <th>#</th>
                                 <th>Nama Kategori</th>
                                 <th>Order</th>
+                                <th>Show</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -52,6 +52,7 @@
                                 <th>#</th>
                                 <th>Nama Kategori</th>
                                 <th>Order</th>
+                                <th>Show</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -141,6 +142,7 @@
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'nama_kategori', name: 'nama_kategori'},
                         {data: 'order', name: 'order'},
+                        {data: 'show', name: 'show'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
                     ]
                 })
@@ -152,6 +154,25 @@
                     Swal.fire({ // SweetAlert
                         title: "Apa kamu yakin?",
                         text: "Data akan terhapus!",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yakin",
+                        cancelButtonText: "Batal",
+                    }).then((result) => {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                            form.submit();
+                        }
+                    });
+                });
+
+                // Jika tombol delete diklik
+                $(document).on("click", "button.confirm-edit-show", function () {
+                    var form = $(this).closest("form");
+                    event.preventDefault();
+                    Swal.fire({ // SweetAlert
+                        title: "Apa kamu yakin?",
+                        text: "Mengubah visible kategori!",
                         showCancelButton: true,
                         confirmButtonColor: "#3085d6",
                         cancelButtonColor: "#d33",

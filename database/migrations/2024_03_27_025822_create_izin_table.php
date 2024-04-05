@@ -19,10 +19,10 @@ return new class extends Migration
             $table->date('tgl_akhir_izin');
             $table->integer('total_izin');
             $table->string('foto', length: 250);
-            $table->integer('validasi_1');
-            $table->string('validasi_1_by');
-            $table->integer('validasi_2');
-            $table->string('validasi_2_by');
+            $table->boolean('validasi_1')->default(0)->nullable();
+            $table->string('validasi_1_by')->nullable();
+            $table->boolean('validasi_2')->default(0)->nullable();
+            $table->string('validasi_2_by')->nullable();
             $table->timestamps();
         });
     }

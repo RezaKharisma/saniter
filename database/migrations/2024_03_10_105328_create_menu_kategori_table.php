@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_kategori');
             $table->integer('order');
+            $table->boolean('show');
             $table->timestamps();
         });
     }
