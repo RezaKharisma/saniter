@@ -51,7 +51,7 @@
                     </li>
 
                     {{-- Menu Pengaturan Admin --}}
-                    @role('Admin')
+                    @role(['Admin|Administrator'])
                         <li>
                             <a class="dropdown-item" href="{{ route('pengaturan.index') }}">
                                 <i class="bx bx-cog me-2"></i>

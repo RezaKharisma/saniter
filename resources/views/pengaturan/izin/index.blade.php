@@ -1,5 +1,5 @@
 <x-layouts.app title="Pengaturan">
-<h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Izin /</span> Setting Jumlah Izin Teknisi</h5>
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / </span> Jumlah Izin</h4>
 
 <div class="row">
     <div class="col-md-12">

@@ -69,7 +69,7 @@ class AjaxMenuController extends Controller
 
             // Query menu join kategori
             $menu = SubMenu::join('menu', 'sub_menu.id_menu', '=', 'menu.id')
-                ->select('sub_menu.*','menu.judul AS judul_menu')
+                ->select('sub_menu.*','menu.judul AS judul_menu','sub_menu.id as subMenuId')
                 ->orderBy('sub_menu.order', 'ASC')
                 ->get();
 
@@ -77,8 +77,8 @@ class AjaxMenuController extends Controller
             return DataTables::of($menu)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalSubMenuEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
-                    $btn = $btn."<form action=".route('pengaturan.submenu.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                    $btn = "<button data-bs-toggle='modal' data-bs-target='#modalSubMenuEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->subMenuId."' onclick='editData(this)'>Ubah</button>";
+                    $btn = $btn."<form action=".route('pengaturan.submenu.delete', $row->subMenuId)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -102,7 +102,7 @@ class AjaxMenuController extends Controller
         if ($request->ajax()) {
 
             // Query menu join kategori
-            $menu = KategoriMenu::orderBy('id', 'DESC')->get();
+            $menu = KategoriMenu::orderBy('order', 'ASC')->get();
 
             // Return datatables
             return DataTables::of($menu)

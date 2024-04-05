@@ -15,7 +15,7 @@
         <h5 class="card-header">Data Regional</h5>
         <div class="card-body">
             @can('regional_create')
-                <a href="{{ route('regional.create') }}" class="mb-4 btn btn-secondary"><i class="bx bx-plus"></i> Tambah Regional</a>
+                <a href="{{ route('regional.create') }}" class="mb-4 btn btn-primary"><i class="bx bx-plus"></i> Tambah Regional</a>
             @endcan
 
                 <table class="table table-hover" id="tabel-regional">

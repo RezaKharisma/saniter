@@ -16,7 +16,9 @@ class AjaxRoleController extends Controller
         if ($request->ajax()) {
 
             // Query role join permissions
-            $roles = Role::with('permissions')->get();
+            $roles = Role::with('permissions')
+                ->orderBy('id','DESC')
+                ->get();
 
             // Return datatables
             return DataTables::of($roles)

@@ -1,12 +1,12 @@
-<x-layouts.app title="Pengaturan">
-    <h5 class="fw-bold py-3 mb-4">Regional & Lokasi >> Lokasi</h5>
+<x-layouts.app title="Lokasi">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / </span>Lokasi</h4>
 
     <!-- Striped Rows -->
     <div class="card">
         <h5 class="card-header">Data Lokasi</h5>
         <div class="card-body">
-            <a href="{{ route('lokasi.create') }}" class="mb-4 btn btn-primary">Tambah Lokasi</a>
-            <table class=" table-responsive table table-striped" id="lokasi-table">
+            <a href="{{ route('lokasi.create') }}" class="mb-4 btn btn-primary"><i class="bx bx-plus"></i> Tambah Lokasi</a>
+            <table class=" table-responsive table table-hover" id="lokasi-table">
                 <thead>
                     <tr>
                         <th>No</th>

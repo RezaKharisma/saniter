@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Ajax;
 use App\Http\Controllers\Controller;
 use App\Models\Absen;
 use App\Models\Shift;
-use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Yajra\DataTables\DataTables;
@@ -184,7 +183,7 @@ class AjaxAbsenController extends Controller
         $waktuShift = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamShift)->format('Y-m-d H:i:s');
         $waktuMasuk = Carbon::createFromFormat('Y-m-d H:i:s', Carbon::now()->format('Y-m-d') . " " . $jamUser)->format('Y-m-d H:i:s');
 
-        if ($waktuMasuk > $waktuShift) {
+        if ($waktuMasuk < $waktuShift) {
             return true;
         }else{
             return false;

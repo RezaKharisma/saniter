@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Ajax;
 
 use App\Models\Izin;
 use App\Models\JumlahIzin;
@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Controller;
 
 class AjaxIzinController extends Controller
 {

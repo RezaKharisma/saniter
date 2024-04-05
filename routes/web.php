@@ -2,16 +2,18 @@
 
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AbsenController;
+
+// Ajax
 use App\Http\Controllers\Ajax\AjaxAbsenController;
 use App\Http\Controllers\Ajax\AjaxLokasiController;
-use App\Http\Controllers\IzinController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
 use App\Http\Controllers\Ajax\AjaxShiftController;
 use App\Http\Controllers\Ajax\AjaxUserController;
-use App\Http\Controllers\AjaxIzinController;
+use App\Http\Controllers\Ajax\AjaxIzinController;
+
+// Settings
 use App\Http\Controllers\Settings\KategoriMenuController;
 use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\PengaturanController;
@@ -20,11 +22,19 @@ use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\Settings\RegionalController;
 use App\Http\Controllers\Settings\ShiftController;
+
+// All
+use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\Ajax\AjaxStokMaterialController;
+use App\Http\Controllers\IzinController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GuzzleController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LokasiController;
+
+// API
+use App\Http\Controllers\API\NamaMaterialController;
+use App\Http\Controllers\StokMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +68,7 @@ Route::group(['middleware' => ['auth']], function () {
     | Berikan untuk admin saja, seperti pengaturan dan yg berhubungan dengan inti website
     |
     */
-    Route::group(['middleware' => ['role:Admin']], function () {
+    Route::group(['middleware' => ['role:Admin|Administrator']], function () {
 
         // Pengaturan
         Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
@@ -298,5 +308,43 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
         Route::get('/ajax/absen-log','getAbsenLog')->name('ajax.getAbsenLog');
         Route::get('/ajax/absen-detail','getAbsenDetail')->name('ajax.getAbsenDetail');
+    });
+
+    /*
+    | Route Stok Material
+    | ----------------------
+    */
+    Route::controller(StokMaterialController::class)->group(function(){
+        Route::get('/material/stok-material', 'index')->name('stok-material.index')->middleware('permission:stok material_read');
+        Route::get('/material/stok-material/create', 'create')->name('stok-material.create')->middleware('permission:stok material_create');
+        Route::post('/material/stok-material/store', 'store')->name('stok-material.store')->middleware('permission:stok material_create');
+        // Route::get('/administrasi/absen/detail', 'detail')->name('absen.detail')->middleware('permission:absen_read');
+        // Route::get('/administrasi/absen/create', 'create')->name('absen.create')->middleware('permission:absen_create');
+        // Route::post('/administrasi/absen', 'store')->name('absen.store')->middleware('permission:absen_create');
+    });
+
+    /*
+    | Route Ajax Stok Material
+    | ----------------------
+    */
+    Route::controller(AjaxStokMaterialController::class)->group(function(){
+        Route::get('/ajax/getStokMaterial','getStokMaterial')->name('ajax.getStokMaterial');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Request Q-Tech
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    /*
+    | Route Nama Material API
+    | ----------------------
+    */
+    Route::controller(NamaMaterialController::class)->group(function(){
+        Route::get('/material/nama-material', 'index')->name('material.nama_material.index')->middleware('permission:nama material_read');
+        Route::get('/material/user', 'user')->name('material.user')->middleware('permission:nama material_read');
+        Route::post('/material/getNamaMaterial', 'getNamaMaterial')->name('material.getNamaMaterial')->middleware('permission:nama material_read');
     });
 });

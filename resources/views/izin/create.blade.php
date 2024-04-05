@@ -9,7 +9,7 @@
         </style>
     </x-slot>
 
-    <h5 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Izin / Data Izin / </span>Tambah Izin</h5>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / Izin / </span>Tambah Izin</h4>
 
     <div class="row">
         <div class="col-md-12">

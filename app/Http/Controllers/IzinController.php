@@ -57,7 +57,7 @@ class IzinController extends Controller
         $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
-            toast('Sisa cuti telah habis / tidak mencukupi!', 'success');
+            toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
             return Redirect::route('izin.index'); // Redirect kembali
         }else{
             $data = [
@@ -105,7 +105,7 @@ class IzinController extends Controller
         $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
-            toast('Sisa cuti telah habis / tidak mencukupi!', 'success');
+            toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
             return Redirect::route('izin.index'); // Redirect kembali
         }else{
             $izin = Izin::find($id);
@@ -228,6 +228,11 @@ class IzinController extends Controller
     private function cekSisaCuti($userId, $total_izin)
     {
         $jumlahIzin = JumlahIzin::where('user_id', $userId)->first();
+
+        if ($jumlahIzin == null) {
+            return true;
+        }
+
         if ($jumlahIzin->jumlah_izin < $total_izin) {
             return true;
         }

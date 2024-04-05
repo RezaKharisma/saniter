@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('ttd')->default('user-ttd/default.jpg');
             $table->boolean('is_active')->default(true);
-            $table->enum('status', ['?','??']);
+            $table->enum('status', ['Kontrak','Tetap','Training','Orientasi','Magang','PHK']);
             $table->timestamps();
             $table->rememberToken();
             $table->softDeletes();
