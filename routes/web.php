@@ -4,37 +4,38 @@ use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
 
 // Ajax
-use App\Http\Controllers\Ajax\AjaxAbsenController;
-use App\Http\Controllers\Ajax\AjaxLokasiController;
-use App\Http\Controllers\Ajax\AjaxMenuController;
-use App\Http\Controllers\Ajax\AjaxRegionalController;
-use App\Http\Controllers\Ajax\AjaxRoleController;
-use App\Http\Controllers\Ajax\AjaxShiftController;
-use App\Http\Controllers\Ajax\AjaxUserController;
-use App\Http\Controllers\Ajax\AjaxIzinController;
+use App\Http\Controllers\IzinController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PekerjaanController;
+use App\Http\Controllers\StokMaterialController;
 
 // Settings
-use App\Http\Controllers\Settings\KategoriMenuController;
+use App\Http\Controllers\Ajax\AjaxIzinController;
+use App\Http\Controllers\Ajax\AjaxMenuController;
+use App\Http\Controllers\Ajax\AjaxRoleController;
+use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\Settings\MenuController;
-use App\Http\Controllers\Settings\PengaturanController;
-use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Settings\RoleController;
-use App\Http\Controllers\Settings\SubMenuController;
-use App\Http\Controllers\Settings\RegionalController;
-use App\Http\Controllers\Settings\ShiftController;
+use App\Http\Controllers\Ajax\AjaxAbsenController;
+use App\Http\Controllers\Ajax\AjaxShiftController;
 
 // All
-use App\Http\Controllers\AbsenController;
-use App\Http\Controllers\Ajax\AjaxStokMaterialController;
-use App\Http\Controllers\IzinController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\Settings\ShiftController;
+use App\Http\Controllers\Ajax\AjaxLokasiController;
+use App\Http\Controllers\API\NamaMaterialController;
+use App\Http\Controllers\Settings\SubMenuController;
+use App\Http\Controllers\Ajax\AjaxRegionalController;
+use App\Http\Controllers\Settings\RegionalController;
+use App\Http\Controllers\Settings\PengaturanController;
 
 // API
-use App\Http\Controllers\API\NamaMaterialController;
-use App\Http\Controllers\StokMaterialController;
+use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Ajax\AjaxStokMaterialController;
+use App\Http\Controllers\Settings\KategoriMenuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -226,6 +227,24 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/ajax/regional/all-map','getAllRegionalMap')->name('ajax.getAllRegionalMap')->middleware('permission:regional_read');
         Route::post('/ajax/regional/edit','getRegionalEdit')->name('ajax.getRegionalEdit')->middleware('permission:user_update');
     });
+
+    /*
+    | Route Pekerjaan
+    | ----------------------
+    */
+    Route::controller(PekerjaanController::class)->group(function()
+    {
+        Route::get('/pengaturan/pekerjaan', 'index')->name('pengaturan.pekerjaan.index')->middleware('permission:pengaturan_pekerjaan_read');
+        Route::get('/pengaturan/pekerjaan/create', 'create')->name('pengaturan.pekerjaan.create')->middleware('permission:pengaturan_pekerjaan_create');
+    });
+
+    /*
+    | Route Ajax Pekerjaan (develop)
+    | ----------------------
+    */
+    // Route::controller(PekerjaanController::class)->group(function(){
+         
+    // });
 
     /*
     | Route Shift

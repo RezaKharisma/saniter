@@ -23,15 +23,7 @@
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">MENU ANJAY MABAR GAMING</div>
-            </a>
-        </li>
-
-
-
+        
         @foreach (getMenu() as $group => $options)
 
             @php $first = true; @endphp
