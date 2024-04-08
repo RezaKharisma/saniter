@@ -38,7 +38,7 @@
                 @endif
 
                 <!-- {{ $item->judul }} -->
-                <li class="menu-item">
+                <li class="menu-item {{ request()->is($item->url.'*') ? 'active' : '' }}">
                     <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ url($item->url) }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
                         <i class="menu-icon tf-icons bx bx-{{ $item->icon }}"></i>
                         <div data-i18n="Layouts">{{ $item->judul }}</div>
@@ -49,7 +49,8 @@
                         <ul class="menu-sub">
 
                             @foreach (getSubMenu($item->id) as $sm)
-                            <li class="menu-item">
+
+                            <li class="menu-item {{ request()->is($item->url.'/'.$sm->url.'*') ? 'active' : '' }}">
                                 <a href="{{ url(strval($item->url.'/'.$sm->url)) }}" class="menu-link">
                                     <div data-i18n="Without menu">{{ $sm->judul }}</div>
                                 </a>

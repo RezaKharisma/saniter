@@ -15,6 +15,7 @@ use App\Models\UserRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,6 +30,10 @@ class DatabaseSeeder extends Seeder
         DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[2, 'Tengah', '-7.245696806718458', '112.73892431229427', '2024-04-03 12:08:13', '2024-04-03 13:27:48', NULL]);
         DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[3, 'Pusat', '-8.661063', '115.214712', '2024-04-03 12:08:13', '2024-04-03 12:08:13', NULL]);
         DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[5, 'Pusat-BSD', '0', '0', '2024-04-04 07:30:33', '2024-04-04 07:30:33', NULL]);
+        DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[6, 'Pusat-Finance', '0', '0', '2024-04-04 07:30:33', '2024-04-04 07:30:33', NULL]);
+        DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[7, 'Pusat-Teknik', '0', '0', '2024-04-04 07:30:33', '2024-04-04 07:30:33', NULL]);
+        DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[8, 'Jakarta', '0', '0', '2024-04-04 07:30:33', '2024-04-04 07:30:33', NULL]);
+        DB::insert('insert into regional (id, nama, latitude, longitude, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?)',[9, 'Dirtek', '0', '0', '2024-04-04 07:30:33', '2024-04-04 07:30:33', NULL]);
 
         DB::insert('insert into lokasi (id, regional_id, nama_bandara, lokasi_proyek, latitude, longitude, radius, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[1, 3, 'Kantor Pusat', 'Kantor Pusat', '-8.661063', '115.214712', 150, '2024-04-03 13:33:21', '2024-04-03 13:33:21', NULL]);
         DB::insert('insert into lokasi (id, regional_id, nama_bandara, lokasi_proyek, latitude, longitude, radius, created_at, updated_at, deleted_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',[2, 3, 'Bandara I Gusti Ngurah Rai', 'Terminal 1', '-8.743818514032556', '115.16517094178465', 100, '2024-04-03 13:34:33', '2024-04-03 13:34:33', NULL]);
@@ -53,12 +58,119 @@ class DatabaseSeeder extends Seeder
         DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[1, 1, 'Menu', 2, 'menu', '2024-04-03 12:10:00', '2024-04-03 12:10:00']);
         DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[2, 1, 'Kategori', 1, 'kategori', '2024-04-03 12:10:11', '2024-04-03 12:10:11']);
         DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[3, 1, 'Sub Menu', 3, 'sub-menu', '2024-04-03 12:10:25', '2024-04-03 12:10:25']);
+        DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[4, 11, 'List', 1, 'list', '2024-04-07 00:57:23', '2024-04-07 00:57:23']);
+        DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[5, 11, 'Tambah Stok', 2, 'tambah-stok', '2024-04-07 00:57:36', '2024-04-07 00:57:36']);
+        DB::insert('insert into sub_menu (`id`, `id_menu`, `judul`, `order`, `url`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?, ?)',[6, 11, 'Retur', 3, 'retur', '2024-04-07 00:57:46', '2024-04-07 00:57:46']);
 
-        DB::insert('insert into roles (`id`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)',[1, 'Admin', 'web', '2024-04-03 12:08:14', '2024-04-03 12:08:14']);
-        DB::insert('insert into roles (`id`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)',[2, 'Teknisi', 'web', '2024-04-03 12:08:14', '2024-04-03 12:08:14']);
-        DB::insert('insert into roles (`id`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)',[3, 'Staff', 'web', '2024-04-03 12:08:14', '2024-04-03 12:08:14']);
-        DB::insert('insert into roles (`id`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)',[5, 'Administrator', 'web', '2024-04-04 07:10:46', '2024-04-04 07:10:46']);
-        DB::insert('insert into roles (`id`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?)',[6, 'Staff IT', 'web', '2024-04-04 07:30:33', '2024-04-04 07:30:33']);
+        User::create([
+            'regional_id' => 1,
+            'role_id' => 1,
+            'lokasi_id' => 1,
+            'name' => 'Admin Saniter',
+            'email' => 'admin@gmail.com',
+            'nik' => '5171012103010002',
+            'telp' => '0819034078903',
+            'password' => Hash::make('admin'),
+            'is_active' => 1
+        ]);
+
+        User::create([
+            'regional_id' => 3,
+            'role_id' => 3,
+            'lokasi_id' => 1,
+            'name' => 'Teknisi Saniter',
+            'email' => 'teknisi@gmail.com',
+            'nik' => '5171012103010002',
+            'telp' => '0819034078901',
+            'password' => Hash::make('teknisi'),
+            'is_active' => 1
+        ]);
+
+        User::create([
+            'regional_id' => 2,
+            'role_id' => 2,
+            'lokasi_id' => 1,
+            'name' => 'Staff Saniter',
+            'email' => 'staff@gmail.com',
+            'nik' => '5171012103010002',
+            'telp' => '0819034078902',
+            'password' => Hash::make('staff'),
+            'is_active' => 1
+        ]);
+
+        Shift::create([
+            'nama' => 'Pagi',
+            'server_time' => 1,
+            'jam_masuk' => "09:00:00",
+            'jam_pulang' => "17:00:00"
+        ]);
+
+        Shift::create([
+            'nama' => 'Sore',
+            'server_time' => 1,
+            'jam_masuk' => "15:00:00",
+            'jam_pulang' => "23:00:00"
+        ]);
+
+        Shift::create([
+            'nama' => 'Malam',
+            'server_time' => 1,
+            'jam_masuk' => "23:00:00",
+            'jam_pulang' => "07:00:00"
+        ]);
+
+        $role = [
+            0 => "Administrator",
+            1 => "Direktur Utama",
+            2 => "CO GM Reg.Barat",
+            3 => "GM. Reg.Barat",
+            4 => "Dir. Keuangan",
+            5 => "GM. Reg.Timur",
+            6 => "Dir. Teknik",
+            7 => "Project Manager (Reg.Timur)",
+            8 => "TA Dir. Keuangan",
+            9 => "Manajer IT",
+            10 => "Site Engineering Manager (Reg.Timur)",
+            11 => "TA. Dirtek",
+            12 => "Site Oprational Manager (Reg.Barat)",
+            13 => "Project Manager (Reg.Barat)",
+            14 => "Resign/PHK",
+            17 => "Manager Finance (Reg.Barat)",
+            18 => "Staff Finance (Reg.Timur)",
+            19 => "Manajer Logistik (Pusat)",
+            21 => "Site Engineering Manager (Reg.Barat)",
+            22 => "Site Oprational Manager (Reg.Timur)",
+            24 => "Driver (Reg.Timur)",
+            25 => "Logistik (Reg.Timur)",
+            28 => "Dir. Business Development",
+            32 => "Konsultan",
+            33 => "Staff Logistik (Reg.Timur)",
+            35 => "Staff Logistik (Reg.Barat)",
+            36 => "Manager Legal",
+            38 => "Staff HRD",
+            43 => "Staff Akunting (Reg.Timur)",
+            44 => "Staff Teknik (Reg.Timur)",
+            46 => "Intern Logistik",
+            47 => "Intern Finance",
+            48 => "Intern Teknik",
+            49 => "Cleaning Service",
+            55 => "Admin Project (Reg.Timur)",
+            56 => "Staff Sales (Reg.Barat)",
+            57 => "Admin Project (Reg.Barat)",
+            63 => "Project Manager (Reg.Tengah)",
+            64 => "Staff Sales (Reg.Timur)",
+            70 => "Staff Finance (Reg.Tengah)",
+            71 => "Supervisor (Reg.Timur)",
+            87 => "Staff IT",
+            89 => "Masa Orientasi Calon Karyawan"
+        ];
+
+        foreach($role as $item){
+            Role::create(['name' => $item]);
+        }
+
+        $user = User::find(1);
+        $user->assignRole(['Administrator']);
 
         DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[1, 1, 'menu_create', 'web', '2024-04-03 12:09:25', '2024-04-03 12:09:25']);
         DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[2, 1, 'menu_read', 'web', '2024-04-03 12:09:25', '2024-04-03 12:09:25']);
@@ -110,200 +222,76 @@ class DatabaseSeeder extends Seeder
         DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[48, 11, 'stok material_read', 'web', '2024-04-04 00:04:01', '2024-04-04 00:04:01']);
         DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[49, 11, 'stok material_update', 'web', '2024-04-04 00:04:01', '2024-04-04 00:04:01']);
         DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[50, 11, 'stok material_delete', 'web', '2024-04-04 00:04:01', '2024-04-04 00:04:01']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[55, 11, 'stok material pengajuan_create', 'web', '2024-04-07 00:59:13', '2024-04-07 00:59:13']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[56, 11, 'stok material pengajuan_read', 'web', '2024-04-07 00:59:13', '2024-04-07 00:59:13']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[57, 11, 'stok material pengajuan_update', 'web', '2024-04-07 00:59:13', '2024-04-07 00:59:13']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[58, 11, 'stok material pengajuan_delete', 'web', '2024-04-07 00:59:13', '2024-04-07 00:59:13']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[59, 11, 'validasi_pm_stok_material', 'web', '2024-04-07 01:00:35', '2024-04-07 01:00:35']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[60, 11, 'validasi_spv_stok_material', 'web', '2024-04-07 01:00:46', '2024-04-07 01:00:46']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[61, 11, 'stok material list_create', 'web', '2024-04-07 01:33:49', '2024-04-07 01:33:49']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[62, 11, 'stok material list_read', 'web', '2024-04-07 01:33:49', '2024-04-07 01:33:49']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[63, 11, 'stok material list_update', 'web', '2024-04-07 01:33:49', '2024-04-07 01:33:49']);
+        DB::insert('insert into permissions (`id`, `id_menu`, `name`, `guard_name`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)',[64, 11, 'stok material list_delete', 'web', '2024-04-07 01:33:49', '2024-04-07 01:33:49']);
 
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[1, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[1, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[2, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[2, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[3, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[3, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[4, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[4, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[5, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[5, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[6, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[6, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[7, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[7, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[8, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[8, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[9, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[9, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[10, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[10, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[11, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[11, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[12, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[12, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[13, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[13, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[13, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[14, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[14, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[14, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[15, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[15, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[15, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[16, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[16, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[16, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[17, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[17, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[17, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[17, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[18, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[18, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[18, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[18, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[19, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[19, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[19, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[20, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[20, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[20, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[21, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[21, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[21, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[21, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[22, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[22, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[22, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[22, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[23, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[23, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[23, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[23, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[24, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[24, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[24, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[24, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[25, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[25, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[26, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[26, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[27, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[27, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[28, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[28, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[29, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[29, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[29, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[30, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[30, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[30, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[31, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[31, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[32, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[32, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[33, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[33, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[34, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[34, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[35, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[35, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[36, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[36, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[37, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[37, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[37, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[38, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[38, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[38, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[39, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[39, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[39, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[40, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[40, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[40, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[41, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[41, 5]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[42, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[42, 5]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[42, 1]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[43, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[43, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[43, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[43, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[44, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[44, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[44, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[44, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[45, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[45, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[45, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[45, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[46, 1]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[46, 2]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[46, 3]);
-        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[46, 5]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[47, 1]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[48, 1]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[49, 1]);
         DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[50, 1]);
-
-        User::create([
-            'regional_id' => 1,
-            'role_id' => 1,
-            'lokasi_id' => 1,
-            'name' => 'Admin Saniter',
-            'email' => 'admin@gmail.com',
-            'nik' => '5171012103010002',
-            'telp' => '0819034078903',
-            'password' => Hash::make('admin'),
-            'is_active' => 1
-        ]);
-
-        User::create([
-            'regional_id' => 2,
-            'role_id' => 2,
-            'lokasi_id' => 1,
-            'name' => 'Staff Saniter',
-            'email' => 'staff@gmail.com',
-            'nik' => '5171012103010002',
-            'telp' => '0819034078902',
-            'password' => Hash::make('staff'),
-            'is_active' => 1
-        ]);
-
-        User::create([
-            'regional_id' => 3,
-            'role_id' => 3,
-            'lokasi_id' => 1,
-            'name' => 'Teknisi Saniter',
-            'email' => 'teknisi@gmail.com',
-            'nik' => '5171012103010002',
-            'telp' => '0819034078901',
-            'password' => Hash::make('teknisi'),
-            'is_active' => 1
-        ]);
-
-        Shift::create([
-            'nama' => 'Pagi',
-            'server_time' => 1,
-            'jam_masuk' => "09:00:00",
-            'jam_pulang' => "17:00:00"
-        ]);
-
-        Shift::create([
-            'nama' => 'Sore',
-            'server_time' => 1,
-            'jam_masuk' => "15:00:00",
-            'jam_pulang' => "23:00:00"
-        ]);
-
-        Shift::create([
-            'nama' => 'Malam',
-            'server_time' => 1,
-            'jam_masuk' => "23:00:00",
-            'jam_pulang' => "07:00:00"
-        ]);
-
-        $user = User::find(1);
-        $user->assignRole(['Admin']);
-
-        $user = User::find(2);
-        $user->assignRole(['Staff']);
-
-        $user = User::find(3);
-        $user->assignRole(['Teknisi']);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[55, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[56, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[57, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[58, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[59, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[60, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[61, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[62, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[63, 1]);
+        DB::insert('insert into role_has_permissions (`permission_id`, `role_id`) values (?, ?)',[64, 1]);
     }
 }

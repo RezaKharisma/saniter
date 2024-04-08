@@ -248,8 +248,8 @@
                     success: function (response) { // Jika ajax sukses dan memberikan respon
                         console.log(response);
                         var regional = response.data;
-                        $('#latitude').val(regional.latitude);
-                        $('#longitude').val(regional.longitude);
+                        // $('#latitude').val(regional.latitude);
+                        // $('#longitude').val(regional.longitude);
 
                         // Render map
                         getMapView(regional.latitude,regional.longitude,11);

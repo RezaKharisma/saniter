@@ -39,7 +39,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Permissions</th>
+                                {{-- <th>Permissions</th> --}}
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -51,7 +51,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
-                                <th>Permissions</th>
+                                {{-- <th>Permissions</th> --}}
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
@@ -134,7 +134,7 @@
                             return result;
                         }, orderable: false, searchable: false},
                         {data: 'action', orderable: false, searchable: false},
-                    ],columnDefs: [{ width: '70%', targets: 2 }]
+                    ],columnDefs: [{ width: '70%', targets: 2, visible:false }]
                 })
 
                 // Jika tombol delete diklik

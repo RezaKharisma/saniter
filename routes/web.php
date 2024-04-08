@@ -25,6 +25,7 @@ use App\Http\Controllers\Settings\ShiftController;
 
 // All
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\Ajax\AjaxReturController;
 use App\Http\Controllers\Ajax\AjaxStokMaterialController;
 use App\Http\Controllers\IzinController;
 use App\Http\Controllers\DashboardController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\LokasiController;
 
 // API
 use App\Http\Controllers\API\NamaMaterialController;
+use App\Http\Controllers\ReturController;
 use App\Http\Controllers\StokMaterialController;
 
 /*
@@ -173,6 +175,9 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(IzinController::class)->group(function()
     {
+        // Izin tampilan all
+        Route::get('administrasi/izin/all', 'indexAll')->name('all.izin.index')->middleware('permission:all_izin');
+
         // Izin untuk tampilan Teknisi
         Route::get('administrasi/izin', 'index')->name('izin.index')->middleware('permission:izin_read');
         Route::get('administrasi/izin/create', 'create')->name('izin.create')->middleware('permission:izin_create');
@@ -195,11 +200,12 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(AjaxIzinController::class)->group(function(){
-        Route::get('ajax/izin', 'getIzin')->name('ajax.getIzin');
-        Route::post('ajax/izin-valid', 'getValidIzin')->name('ajax.getValidIzin');
-        Route::post('ajax/jumlah-izin', 'getJumlahIzin')->name('ajax.getJumlahIzin');
-        Route::post('ajax/jumlah-izin-user', 'getJumlahIzinUser')->name('ajax.getJumlahIzinUser');
-        Route::post('ajax/jumlah-izin/edit', 'getJumlahIzinEdit')->name('ajax.getJumlahIzinEdit');
+        Route::get('ajax/izin/all', 'getAllIzin')->name('ajax.getAllIzin')->middleware('permission:all_izin');
+        Route::get('ajax/izin', 'getIzin')->name('ajax.getIzin')->middleware('permission:izin_read');
+        Route::post('ajax/izin-valid', 'getValidIzin')->name('ajax.getValidIzin')->middleware('permission:izin_read');
+        Route::post('ajax/jumlah-izin', 'getJumlahIzin')->name('ajax.getJumlahIzin')->middleware('permission:izin_read');
+        Route::post('ajax/jumlah-izin-user', 'getJumlahIzinUser')->name('ajax.getJumlahIzinUser')->middleware('permission:izin_read');
+        Route::post('ajax/jumlah-izin/edit', 'getJumlahIzinEdit')->name('ajax.getJumlahIzinEdit')->middleware('permission:izin_read');
     });
 
     /*
@@ -294,6 +300,10 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(AbsenController::class)->group(function(){
+        // All Absen
+        Route::get('/administrasi/absen/detail/all', 'allDetail')->name('absen.all.index')->middleware('permission:absen_detail_all');
+
+        // User Absen
         Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
         Route::get('/administrasi/absen/detail', 'detail')->name('absen.detail')->middleware('permission:absen_read');
         Route::get('/administrasi/absen/create', 'create')->name('absen.create')->middleware('permission:absen_create');
@@ -305,9 +315,10 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(AjaxAbsenController::class)->group(function(){
-        Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift');
-        Route::get('/ajax/absen-log','getAbsenLog')->name('ajax.getAbsenLog');
-        Route::get('/ajax/absen-detail','getAbsenDetail')->name('ajax.getAbsenDetail');
+        Route::post('/ajax/absen-shift','getAbsenShift')->name('ajax.getAbsenShift')->middleware('permission:absen_read');
+        Route::get('/ajax/absen-log','getAbsenLog')->name('ajax.getAbsenLog')->middleware('permission:absen_read');
+        Route::get('/ajax/absen-detail','getAbsenDetail')->name('ajax.getAbsenDetail')->middleware('permission:absen_read');
+        Route::get('/ajax/absen-all-detail','getAbsenAllDetail')->name('ajax.getAbsenAllDetail')->middleware('permission:absen_detail_all');
     });
 
     /*
@@ -315,12 +326,16 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(StokMaterialController::class)->group(function(){
-        Route::get('/material/stok-material', 'index')->name('stok-material.index')->middleware('permission:stok material_read');
-        Route::get('/material/stok-material/create', 'create')->name('stok-material.create')->middleware('permission:stok material_create');
-        Route::post('/material/stok-material/store', 'store')->name('stok-material.store')->middleware('permission:stok material_create');
-        // Route::get('/administrasi/absen/detail', 'detail')->name('absen.detail')->middleware('permission:absen_read');
-        // Route::get('/administrasi/absen/create', 'create')->name('absen.create')->middleware('permission:absen_create');
-        // Route::post('/administrasi/absen', 'store')->name('absen.store')->middleware('permission:absen_create');
+        // Route List
+        Route::get('/material/stok-material/list', 'indexList')->name('stok-material.list.index')->middleware('permission:stok material list_read');
+
+        // Route Pengajuan / Tambah
+        Route::get('/material/stok-material/tambah-stok', 'indexPengajuan')->name('stok-material.pengajuan.index')->middleware('permission:stok material pengajuan_read');
+        Route::get('/material/stok-material/tambah-stok/create', 'createPengajuan')->name('stok-material.pengajuan.create')->middleware('permission:stok material pengajuan_create');
+        Route::post('/material/stok-material/tambah-stok/store', 'storePengajuan')->name('stok-material.pengajuan.store')->middleware('permission:stok material pengajuan_create');
+        Route::get('/material/stok-material/tambah-stok/{id}/detail', 'detailPengajuan')->name('stok-material.pengajuan.detailPengajuan')->middleware('permission:stok material pengajuan_update');
+        Route::put('/material/stok-material/tambah-stok/{id}/update', 'updatePengajuan')->name('stok-material.pengajuan.update')->middleware('permission:stok material pengajuan_update');
+        Route::delete('/material/stok-material/tambah-stok/{id}/delete', 'deletePengajuan')->name('stok-material.pengajuan.delete')->middleware('permission:stok material pengajuan_delete');
     });
 
     /*
@@ -328,7 +343,28 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(AjaxStokMaterialController::class)->group(function(){
-        Route::get('/ajax/getStokMaterial','getStokMaterial')->name('ajax.getStokMaterial');
+        Route::get('/ajax/getListStokMaterial','getListStokMaterial')->name('ajax.getListStokMaterial')->middleware('permission:stok material list_read');
+        Route::get('/ajax/getPengajuanStokMaterial','getPengajuanStokMaterial')->name('ajax.getPengajuanStokMaterial')->middleware('permission:stok material pengajuan_read');
+    });
+
+    /*
+    | Route Stok Material
+    | ----------------------
+    */
+    Route::controller(ReturController::class)->group(function(){
+        // Route Pengajuan / Tambah
+        Route::get('/material/stok-material/retur', 'index')->name('stok-material.retur.index')->middleware('permission:stok material retur_read');
+        Route::get('/material/stok-material/retur/{kode_material}/detail', 'detail')->name('stok-material.retur.detail')->middleware('permission:stok material retur_update');
+        Route::put('/material/stok-material/retur/{kode_material}/update', 'update')->name('stok-material.retur.update')->middleware('permission:stok material retur_update');
+        Route::delete('/material/stok-material/retur/{kode_material}/delete', 'delete')->name('stok-material.retur.delete')->middleware('permission:stok material retur_delete');
+    });
+
+    /*
+    | Route Ajax Stok Material
+    | ----------------------
+    */
+    Route::controller(AjaxReturController::class)->group(function(){
+        Route::get('/ajax/getRetur','getRetur')->name('ajax.getRetur')->middleware('permission:stok material retur_read');
     });
 
     /*

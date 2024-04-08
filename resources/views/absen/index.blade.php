@@ -75,10 +75,15 @@
             <div class="card">
                 <h5 class="card-header d-flex justify-content-between align-items-center">
                     Log Absen
-                    <a class="btn btn-info btn-sm" href="{{ route('absen.detail') }}">Detail</a>
+                    <div>
+                        <a class="btn btn-info btn-sm" href="{{ route('absen.detail') }}">Detail</a>
+                        @can('absen_detail_all')
+                            <a class="btn btn-secondary btn-sm" href="{{ route('absen.all.index') }}">All Detail</a>
+                        @endcan
+                    </div>
                 </h5>
                 <div class="card-body">
-                    <table class="table table-hover table-responsive" id="tabel-log-absen">
+                    <table class="table table-hover table-responsive" id="tabel-log-absen" width="100%">
                         <thead>
                             <th>Tanggal</th>
                             <th>Shift</th>

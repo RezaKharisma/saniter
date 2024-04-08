@@ -14,7 +14,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Form Lokasi Baru</h5>
         </div>
-        <form method="post" action="{{ route('lokasi.update', $lokasi->id) }}" enctype="multipart/form-data">
+        <form method="post" action="{{ route('lokasi.update', $lokasi->lokasi_id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="card-body">

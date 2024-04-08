@@ -1,4 +1,4 @@
-<x-layouts.app title="Izin">
+<x-layouts.app title="Semua Izin">
 
     <x-slot name="style">
         <style>
@@ -8,7 +8,7 @@
         </style>
     </x-slot>
 
-<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / </span>Izin</h4>
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / </span>Semua Izin</h4>
 
 <div class="row">
     <div class="col-md-12">
@@ -33,7 +33,7 @@
 
         <div class="card mb-4">
             <h5 class="card-header">
-                Data Izin
+                Data Semua Izin
             </h5>
             <div class="card-body">
                 <table class="table table-hover table-responsive
@@ -134,7 +134,7 @@
         $(document).ready(function () {
             // Datatables
             $('#tabel-izin').DataTable({
-                ajax: "{{ route('ajax.getIzin') }}",
+                ajax: "{{ route('ajax.getAllIzin') }}",
                 processing: true,
                 serverSide: true,
                 responsive: true,

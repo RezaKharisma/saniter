@@ -16,7 +16,7 @@
                     <label class="form-label" for="basic-icon-default-company">Tahun</label>
                     <div class="input-group input-group-merge">
                         <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bxs-calendar"></i></span>
-                        <input type="text" name="tahun" id="basic-icon-default-company" class="form-control" placeholder="20.." />
+                        <input type="text" name="tahun" id="basic-icon-default-company" class="form-control" placeholder="20.." onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57" />
                     </div>
                 </div>
 
@@ -24,7 +24,7 @@
                     <label class="form-label" for="basic-icon-default-company">Jumlah Izin</label>
                     <div class="input-group input-group-merge">
                         <span id="basic-icon-default-company2" class="input-group-text"><i class="bx bx-plus-circle"></i></span>
-                        <input type="text" name="jumlah_izin" id="basic-icon-default-company" class="form-control" placeholder="12" />
+                        <input type="text" name="jumlah_izin" id="basic-icon-default-company" class="form-control" placeholder="12" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57" />
                     </div>
                 </div>
             </div>

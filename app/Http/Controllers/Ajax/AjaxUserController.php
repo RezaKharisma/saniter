@@ -22,7 +22,7 @@ class AjaxUserController extends Controller
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('is_active', function($row){ // Tambah kolom action untuk button edit dan delete
-                    if ($row->roles_name == 'Admin') {
+                    if ($row->roles_name == 'Administrator') {
                         return "<button type='button' class='btn btn-success btn-sm' disabled >Aktif</button>";
                     }else{
                         if (auth()->user()->can('user_update')) {
@@ -54,7 +54,7 @@ class AjaxUserController extends Controller
                         $btn = $btn."<a href='".route('user.edit', $row->id)."' class='btn btn-warning btn-sm'>Ubah</button></a>";
                     }
                     if (auth()->user()->can('user_delete')) {
-                        if($row->roles_name != 'Admin'){
+                        if($row->roles_name != 'Administrator'){
                             $btn = $btn."<form action=".route('user.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                         }
                     }

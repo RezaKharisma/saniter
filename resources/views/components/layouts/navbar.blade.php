@@ -35,7 +35,13 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block">{{ Auth()->user()->name }}</span>
-                                    <small class="text-muted">{{ auth()->user()->getRoleNames()[0] }}</small>
+                                    <small class="text-muted">
+                                        @if (isset(auth()->user()->getRoleNames()[0]))
+                                            {{ auth()->user()->getRoleNames()[0] }}
+                                        @else
+                                            Belum Memiliki Hak Akses
+                                        @endif
+                                    </small>
                                 </div>
                             </div>
                         </a>

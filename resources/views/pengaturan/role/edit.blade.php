@@ -35,7 +35,7 @@
                         @endif
 
                         <div class="table-responsive">
-                        <table class="table table-bordered mt-4">
+                        <table class="table table-bordered table-striped mt-4">
                             <thead>
                                 <th>Menu</th>
                                 <th>Permissions</th>

@@ -16,9 +16,6 @@ class NamaMaterial extends Model
 
     private $stokmaterial = array();
 
-    // protected $table = 'nama_material';
-    // protected $guarded = ['id'];
-
     public function __construct()
     {
         $this->_client = new Client([

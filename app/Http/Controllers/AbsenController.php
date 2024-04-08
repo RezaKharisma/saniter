@@ -46,6 +46,10 @@ class AbsenController extends Controller
         return view('absen.detail');
     }
 
+    public function allDetail(){
+        return view('absen.all-detail');
+    }
+
     // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
         // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
         //     ->where('user_id', auth()->user()->id)

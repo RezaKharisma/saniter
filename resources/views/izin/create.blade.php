@@ -194,7 +194,7 @@
                         if (data.jumlah_izin != undefined ) {
                             $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Sisa Jumlah Izin : <span id="jumlah">'+data.jumlah_izin+'</span></div>')
                         }else{
-                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Belum memiliki hak cuti / belum ditambahkan</div>')
+                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Belum memiliki hak cuti / belum ditambahkan. Tambahkan <a href="{{ route('pengaturan.izin.create') }}">Disini.</a></div>')
                         }
                     }
                 });

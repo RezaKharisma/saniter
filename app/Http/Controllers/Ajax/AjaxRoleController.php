@@ -17,14 +17,14 @@ class AjaxRoleController extends Controller
 
             // Query role join permissions
             $roles = Role::with('permissions')
-                ->orderBy('id','DESC')
+                ->orderBy('name','ASC')
                 ->get();
 
             // Return datatables
             return DataTables::of($roles)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.role.edit', $row->id)."'>Info</a>";
+                    $btn = "<a class='btn btn-info btn-sm d-inline me-1' href='".route('pengaturan.role.edit', $row->id)."' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Info</a>";
                     if ($row['name'] != 'Admin') {
                         $btn = $btn."<form action=".route('pengaturan.role.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
                     }

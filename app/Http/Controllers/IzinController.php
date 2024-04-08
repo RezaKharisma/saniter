@@ -28,6 +28,11 @@ class IzinController extends Controller
         return view('izin.index');
     }
 
+    public function indexAll()
+    {
+        return view('izin.all-index');
+    }
+
     public function create()
     {
         $user = User::whereNot('role_id',1)->get();
