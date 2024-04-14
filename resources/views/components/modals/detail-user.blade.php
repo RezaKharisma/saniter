@@ -1,23 +1,33 @@
 <div class="modal fade" id="detailUser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl " role="document">
+    <div class="modal-dialog " role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel1">Detail User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-auto col-sm-12 col-md-auto mb-3">
-                        <label class="form-label" for="basic-icon-default-phone">Foto</label>
+
+                <div class="customer-avatar-section mb-4">
+                    <div class="d-flex align-items-center flex-column">
+
                         {{-- Foto Profile --}}
-                        <img src="{{ asset('storage/'. $user->foto) }}" alt="user-avatar" class="d-block img-fluid mx-auto d-block" style="max-height: 250px"/>
+                        <img class="img-fluid rounded my-4" src="{{ asset('storage/'. $user->foto) }}" height="110" width="110" alt="User avatar">
+
+                        {{-- Nama Role --}}
+                        <div class="customer-info text-center">
+                            <h4 class="mb-1">{{ $user->name }}</h4>
+                            <small><span class="badge bg-info">{{ $user->roles_name }}</span></small>
+                        </div>
+
                     </div>
-                    <div class="col-sm-12 col-md">
-                        <table class="table table-striped ">
-                            <tr>
-                                <td>Role</td>
-                                <td colspan="2">: <span class="badge bg-info">{{ $user->roles_name }}</span></td>
-                            </tr>
+                </div>
+
+                <div class="info-container">
+                    <small class="d-block pt-4 border-top fw-normal text-uppercase text-muted my-3">DETAIL</small>
+
+                    {{-- All Detail --}}
+                    <div class="table-responsive">
+                        <table class="table table-striped text-nowrap">
                             <tr>
                                 <td>Nama</td>
                                 <td>: {{ $user->name }}</td>
@@ -66,7 +76,7 @@
             </div>
             <div class="modal-footer mt-0">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    Close
+                    Tutup
                 </button>
             </div>
         </div>

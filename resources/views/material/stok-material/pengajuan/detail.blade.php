@@ -13,7 +13,9 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / Stok Material / </span>Tambah Stok Material</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Tambah Stok Material</h4>
+
+    <a class="btn btn-secondary mb-3" href="{{ route('stok-material.pengajuan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="row">
         <div class="col-md-12">
@@ -33,29 +35,26 @@
                             <x-input-text title="Nama Material" name='displayNamaMaterial' value="{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}" readonly/>
                         </div>
 
-                        <div class="mb-3">
-                            <div class="row">
+                        <div class="row">
+                            {{-- Jenis Pekerjaan --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan' id="jenis_pekerjaan" value="{{ $namaMaterial['jenis_pekerjaan'] }}" readonly />
+                            </div>
 
-                                {{-- Jenis Pekerjaan --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                    <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan' id="jenis_pekerjaan" value="{{ $namaMaterial['jenis_pekerjaan'] }}" readonly />
-                                </div>
+                            {{-- Jenis Material --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <x-input-text title="Jenis Material" name='jenis_material' id="jenis_material" value="{{ $namaMaterial['jenis_material'] }}" readonly />
+                            </div>
 
-                                {{-- Jenis Material --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                    <x-input-text title="Jenis Material" name='jenis_material' id="jenis_material" value="{{ $namaMaterial['jenis_material'] }}" readonly />
-                                </div>
+                            {{-- Stok Logistik (qty) --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <x-input-text title="Stok Gudang Logistik" name='qty' id="qty" value="{{ $namaMaterial['qty'] }}" readonly />
+                            </div>
 
-                                {{-- Stok Logistik (qty) --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
-                                    <x-input-text title="Stok Gudang Logistik" name='qty' id="qty" value="{{ $namaMaterial['qty'] }}" readonly />
-                                </div>
-
-                                {{-- Harga --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
-                                    <input type="hidden" name="harga" id="hargaSubmit" value="{{ $namaMaterial['harga_beli'] }}">
-                                    <x-input-text title="Harga" name="display" id="harga" value="Rp. {{ $namaMaterial['harga_beli'] }}" readonly/>
-                                </div>
+                            {{-- Harga --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <input type="hidden" name="harga" id="hargaSubmit" value="{{ $namaMaterial['harga_beli'] }}">
+                                <x-input-text title="Harga" name="display" id="harga" value="Rp. {{ $namaMaterial['harga_beli'] }}" readonly/>
                             </div>
                         </div>
 
@@ -72,11 +71,6 @@
 
                         <div>
                             <div class="row mt-4">
-                                {{-- <div class="col-12 mt-3">
-                                    @if ($stokMaterial->diterima_pm == 0 || $stokMaterial->diterima_spv == 0)
-                                        <div class="alert alert-warning" role="alert">Tidak dapat diubah setelah validasi!</div>
-                                    @endif
-                                </div> --}}
                                 <div class="col-12 col-sm-12 col-md-6 mb-3">
                                     <div class="card shadow w-100">
                                         <div class="card-body">
@@ -91,9 +85,14 @@
                                                         <label class="form-check-label" for="defaultCheck1">Validasi PM</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-12justify-content-center d-flex">
+                                                <div class="col-12 justify-content-center d-flex">
                                                     @if($stokMaterial->diterima_pm == 1)
-                                                        <span class="badge bg-label-secondary w-100">Oleh : {{ $stokMaterial->diterima_pm_by }} | Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_pm)->format('d F Y') }}</span>
+                                                        <span class="badge bg-label-secondary pt-3 pb-3 w-100">
+                                                            <div class="row">
+                                                                <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">Oleh : {{ $stokMaterial->diterima_pm_by }}</div>
+                                                                <div class="col-12 col-sm-12 col-md-6">Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_pm)->format('d F Y') }}</div>
+                                                            </div>
+                                                        </span>
                                                     @else
                                                         <span class="badge bg-label-secondary w-100">Belum Divalidasi</span>
                                                     @endif
@@ -112,24 +111,23 @@
                                                         <x-partials.error-message name="jumlahSebagian" class="d-block" />
                                                         <textarea name="keterangan" id="keterangan" rows="3" class="form-control mt-2" placeholder="Keterangan" required>{{ old('keterangan') }}</textarea>
                                                     @else
-                                                        <div class="row mb-2 mt-3">
-                                                            <label class="col-sm-5 col-form-label" for="basic-default-name">Status</label>
-                                                            <div class="col-sm-auto">
-                                                                <p>: {{ $stokMaterial->status_validasi_pm }}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2 ">
-                                                            <label class="col-sm-5 col-form-label" for="basic-default-name">Jumlah</label>
-                                                            <div class="col-sm-auto">
-                                                                <p>: {{ $stokMaterial->sebagian != 0 ? $stokMaterial->sebagian : $stokMaterial->masuk}}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <label class="col-sm-5 col-form-label" for="basic-default-name">Keterangan</label>
-                                                            <div class="col-sm-auto">
-                                                                <p>: {{ $stokMaterial->keterangan }}</p>
-                                                            </div>
-                                                        </div>
+                                                        <table>
+                                                            <tr height="50px">
+                                                                <td>Status</td>
+                                                                <td>:</td>
+                                                                <td>{{ $stokMaterial->status_validasi_pm }}</td>
+                                                            </tr>
+                                                            <tr height="50px">
+                                                                <td>Jumlah</td>
+                                                                <td>:</td>
+                                                                <td>{{ $stokMaterial->sebagian != 0 ? $stokMaterial->sebagian : $stokMaterial->masuk}}</td>
+                                                            </tr>
+                                                            <tr height="50px">
+                                                                <td>Keterangan</td>
+                                                                <td>:</td>
+                                                                <td>{{ $stokMaterial->keterangan }}</td>
+                                                            </tr>
+                                                        </table>
                                                     @endif
                                                 </div>
                                             </div>
@@ -153,9 +151,21 @@
                                                                 <label class="form-check-label" for="defaultCheck1">Validasi SPV</label>
                                                             </div>
                                                         </div>
+                                                        @can('validasi_spv_stok_material')
+                                                            @if($stokMaterial->diterima_pm == 0)
+                                                                <div class="col-12">
+                                                                    <div class="alert alert-warning" role="alert">Mohon menunggu validasi PM</div>
+                                                                </div>
+                                                            @endif
+                                                        @endcan
                                                         <div class="col-12 justify-content-center d-flex">
                                                             @if($stokMaterial->diterima_spv == 1)
-                                                                <span class="badge bg-label-secondary w-100">Oleh : {{ $stokMaterial->diterima_spv_by }} | Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_spv)->format('d F Y') }}</span>
+                                                                <span class="badge bg-label-secondary w-100">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">Oleh : {{ $stokMaterial->diterima_spv_by }}</div>
+                                                                        <div class="col-12 col-sm-12 col-md-6">Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_spv)->format('d F Y') }}</div>
+                                                                    </div>
+                                                                </span>
                                                             @else
                                                                 <span class="badge bg-label-secondary w-100">Belum Divalidasi</span>
                                                             @endif
@@ -174,7 +184,7 @@
                                                 <div class="row">
                                                     <div class="col-12 justify-content-center d-flex mb-3">
                                                         <h5 >
-                                                            Form Detail
+                                                            Detail
                                                         </h5>
                                                     </div>
                                                     <div class="col-12 justify-content-center">
@@ -196,31 +206,33 @@
                                                             </tr>
                                                         </table>
 
-                                                        <table class="table table-bordered" width="100%">
-                                                            @php $no=0; @endphp
-                                                            <tr>
-                                                                <td>#</td>
-                                                                <td>Material</td>
-                                                                <td>Status</td>
-                                                                <td>Jumlah</td>
-                                                            </tr>
-                                                            @if (!empty($diterima))
+                                                        <div class="table-responsive text-nowrap">
+                                                            <table class="table table-bordered" width="100%">
+                                                                @php $no=0; @endphp
                                                                 <tr>
-                                                                    <td>{{ $no+=1; }}</td>
-                                                                    <td>{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}</td>
-                                                                    <td><span class="badge bg-success">Diterima</span></td>
-                                                                    <td>{{ $stokMaterial->sebagian != 0 ? $stokMaterial->sebagian : $stokMaterial->masuk}}</td>
+                                                                    <td>#</td>
+                                                                    <td>Material</td>
+                                                                    <td>Status</td>
+                                                                    <td>Jumlah</td>
                                                                 </tr>
-                                                            @endif
-                                                            @if (!empty($retur))
-                                                                <tr>
-                                                                    <td>{{ $no+=1; }}</td>
-                                                                    <td>{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}</td>
-                                                                    <td><span class="badge bg-danger">Retur</span></td>
-                                                                    <td>{{ $retur->jumlah }}</td>
-                                                                </tr>
-                                                            @endif
-                                                        </table>
+                                                                @if (!empty($diterima))
+                                                                    <tr>
+                                                                        <td>{{ $no+=1; }}</td>
+                                                                        <td>{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}</td>
+                                                                        <td><span class="badge bg-success">Diterima</span></td>
+                                                                        <td>{{ $stokMaterial->sebagian != 0 ? $stokMaterial->sebagian : $stokMaterial->masuk}}</td>
+                                                                    </tr>
+                                                                @endif
+                                                                @if (!empty($retur))
+                                                                    <tr>
+                                                                        <td>{{ $no+=1; }}</td>
+                                                                        <td>{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}</td>
+                                                                        <td><span class="badge bg-danger">Retur</span></td>
+                                                                        <td>{{ $retur->jumlah }}</td>
+                                                                    </tr>
+                                                                @endif
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -402,6 +414,15 @@
                 $('#inputanStatusValidasi').addClass('d-block');
                 $('#jumlahSebagian').removeClass('d-none');
                 $('#jumlahSebagian').addClass('d-block');
+            });
+            </script>
+        @endif
+
+        @if (Session::has('statusValidasi'))
+        <script>
+            $(document).ready(function () {
+                $('#inputanStatusValidasi').removeClass('d-none');
+                $('#inputanStatusValidasi').addClass('d-block');
             });
             </script>
         @endif

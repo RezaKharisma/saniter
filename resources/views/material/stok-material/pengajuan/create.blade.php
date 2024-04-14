@@ -9,7 +9,9 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / Stok Material / </span>Tambah Stok Material</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Tambah Stok Material</h4>
+
+    <a class="btn btn-secondary" href="{{ route('stok-material.pengajuan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="row">
         <div class="col-md-12">
@@ -20,6 +22,7 @@
                 <form method="post" action="{{ route('stok-material.pengajuan.store') }}" enctype="multipart/form-data" id="formSubmit">
                     @csrf
                     <input type="hidden" name="kode_material" id="kode_material">
+                    <input type="hidden" name="nama_material" id="nama_material">
 
                     <div class="card-body">
 
@@ -144,8 +147,10 @@
                         $("#stokMasuk").prop('disabled', false);
                     },
                     success: function (response) {
+                        console.log(response);
                         var data = response.data;
                         $('#kode_material').val(data.kode_material);
+                        $('#nama_material').val(data.nama_material);
                         $('#jenis_pekerjaan').val(data.jenis_pekerjaan);
                         $('#jenis_material').val(data.jenis_material);
                         $('#qty').val(data.qty);

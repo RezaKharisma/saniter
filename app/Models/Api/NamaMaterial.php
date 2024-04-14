@@ -30,7 +30,7 @@ class NamaMaterial extends Model
             ]
         ]);
 
-        $result = json_decode($response->getBody()->getContents(), true);
+        $result = json_decode($response->getBody()->getContents(),true);
         $this->stokmaterial = $result['stokmaterial'];
     }
 
@@ -42,7 +42,17 @@ class NamaMaterial extends Model
         $data = array();
         foreach ($this->stokmaterial as $row) {
             if ($row['id'] == $id) {
-                array_push($data, $row);
+                $dataRow['id'] = $row['id'];
+                $dataRow['brand'] = $row['brand'];
+                $dataRow['harga_beli'] = $row['harga_beli'];
+                $dataRow['harga_modal'] = $row['harga_modal'];
+                $dataRow['jenis_material'] = $row['jenis_material'];
+                $dataRow['jenis_pekerjaan'] = $row['jenis_pekerjaan'];
+                $dataRow['kode_material'] = $row['kode_material'];
+                $dataRow['nama_material'] = $row['nama_material'];
+                $dataRow['nama_perusahaan'] = $row['nama_perusahaan'];
+                $dataRow['qty'] = $row['qty'];
+                array_push($data, $dataRow);
                 break;
             }
         }

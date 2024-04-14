@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lokasi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,13 +15,26 @@ class AjaxUserController extends Controller
         if ($request->ajax()) {
             $users = User::join('regional', 'users.regional_id', '=', 'regional.id')
                 ->join('roles', 'users.role_id', '=', 'roles.id')
-                ->select('users.id','users.name', 'regional.nama as regional_name', 'email', 'is_active', 'roles.name as roles_name')
+                ->select('users.id','users.name', 'regional.nama as regional_name', 'email', 'is_active', 'roles.name as roles_name','foto')
                 ->orderBy('id', 'DESC')
                 ->get(); // Ambil semua user
 
             // Return datatables
             return DataTables::of($users)
                 ->addIndexColumn()
+                ->addColumn('name', function($row){
+                    $return = "<div class='d-flex justify-content-start align-items-center user-name'>
+                                <div class='avatar-wrapper'>
+                                    <div class='avatar avatar-sm me-3'><img src='".asset('storage/'.$row->foto)."' class='rounded-circle' /></div>
+                                </div>
+                                <div class='d-flex flex-column'>
+                                    <span class='fw-medium'>".$row->name."</span>
+                                    <small class='text-muted'>".$row->email."</small>
+                                </div>
+                            </div>
+                            ";
+                    return $return;
+                })
                 ->addColumn('is_active', function($row){ // Tambah kolom action untuk button edit dan delete
                     if ($row->roles_name == 'Administrator') {
                         return "<button type='button' class='btn btn-success btn-sm' disabled >Aktif</button>";
@@ -49,18 +63,18 @@ class AjaxUserController extends Controller
                     }
                 })
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete
-                    $btn = "<button type='button' class='btn btn-info btn-sm me-1' data-id='".$row->id."' onclick='detailData(this)'> Detail </button>";
+                    $btn = "<button type='button' class='btn btn-info btn-sm me-1' data-id='".$row->id."' onclick='detailData(this)'><i class='bx bx-detail'></i></button>";
                     if (auth()->user()->can('user_update')) {
-                        $btn = $btn."<a href='".route('user.edit', $row->id)."' class='btn btn-warning btn-sm'>Ubah</button></a>";
+                        $btn = $btn."<a href='".route('user.edit', $row->id)."' class='btn btn-warning btn-sm'><i class='bx bx-edit'></i></button></a>";
                     }
                     if (auth()->user()->can('user_delete')) {
                         if($row->roles_name != 'Administrator'){
-                            $btn = $btn."<form action=".route('user.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                            $btn = $btn."<form action=".route('user.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                         }
                     }
                     return $btn;
                 })
-                ->rawColumns(['action','is_active'])
+                ->rawColumns(['action','is_active','name'])
                 ->make(true);
         }
     }
@@ -81,6 +95,16 @@ class AjaxUserController extends Controller
                 'status' => 'success',
                 'data' => $user,
                 'modal' => $modal
+            ]);
+        }
+    }
+
+    public function getLokasiKerja(Request $request){
+        if ($request->ajax()) {
+            $lokasi = Lokasi::select('id','nama_bandara','lokasi_proyek')->where('regional_id', $request->id)->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $lokasi,
             ]);
         }
     }

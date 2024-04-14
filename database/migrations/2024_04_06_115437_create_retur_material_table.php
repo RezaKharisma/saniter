@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('stok_material_id');
             $table->unsignedBigInteger('diterima_id');
             $table->string('kode_material');
+            $table->string('nama_material');
             $table->date('tgl_retur')->nullable();
             $table->string('status');
             $table->string('keterangan');
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->string('retur_to')->nullable();
             $table->string('validasi_to')->nullable()->default(0);
             $table->string('jumlah');
-            $table->enum('hasil_retur',['Diterima','Menunggu Validasi','Pending','Proses'])->nullable()->default('?');
+            $table->enum('hasil_retur',['Diterima','Menunggu Validasi','Pending','Proses'])->nullable()->default('Menunggu Validasi');
             $table->string('created_by');
             $table->timestamps();
         });

@@ -15,27 +15,17 @@ class AjaxStokMaterialController extends Controller
 
     public function getListStokMaterial(Request $request){
         if ($request->ajax()) {
-            $stokMaterial = StokMaterial::select('material_id','kode_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
+            $stokMaterial = StokMaterial::select('material_id','kode_material','nama_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
                 ->where('diterima_pm', 1)
                 ->where('diterima_spv', 1)
                 ->where('status_validasi_pm', 'ACC')
                 ->whereNot('status_validasi_pm', 'Tolak')
+                ->orderBy('id','DESC')
                 ->get();
-
-            $namaMaterial = new NamaMaterial();
-            $this->namaMaterial = $namaMaterial->getAllMaterial();
 
             // Return datatables
             return DataTables::of($stokMaterial)
             ->addIndexColumn()
-            ->addColumn('nama_material', function($row){
-                foreach ($this->namaMaterial as $item) {
-                    if ($item['id'] == $row->material_id) {
-                        return $item['nama_material'];
-                        break;
-                    }
-                }
-            })
             ->addColumn('tgl_input', function($row){
                 return Carbon::parse($row->created_at)->format('d F Y');
             })
@@ -52,7 +42,7 @@ class AjaxStokMaterialController extends Controller
                 // }
                 // return $btn;
             })
-            ->rawColumns(['action','nama_material','harga'])
+            ->rawColumns(['action','harga'])
             ->make(true);
         }
     }
@@ -103,14 +93,6 @@ class AjaxStokMaterialController extends Controller
                     }
                 }
             })
-            ->addColumn('nama_material', function($row){
-                foreach ($this->namaMaterial as $item) {
-                    if ($item['id'] == $row->material_id) {
-                        return $item['nama_material'];
-                        break;
-                    }
-                }
-            })
             ->addColumn('oleh', function($row){
                 return $row->created_by."<p class='text-muted mb-0'>".Carbon::parse($row->created_at)->diffForHumans()."</p>";
             })
@@ -128,6 +110,10 @@ class AjaxStokMaterialController extends Controller
 
                 if ($row->status_validasi_pm == "ACC Sebagian") {
                     return "<span class='badge bg-warning'>ACC Sebagian</span>";
+                }
+
+                if ($row->status_validasi_pm == "Belum Validasi") {
+                    return "<span class='badge bg-secondary'>Belum Validasi</span>";
                 }
             })
             ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
@@ -153,7 +139,7 @@ class AjaxStokMaterialController extends Controller
                 $btn = $btn."<a href=".route('stok-material.pengajuan.detailPengajuan', $row->id)." class='btn btn-info btn-sm'>Detail</a>";
                 return $btn;
             })
-            ->rawColumns(['action','nama_material','oleh','kode_material','status'])
+            ->rawColumns(['action','oleh','kode_material','status'])
             ->make(true);
         }
     }

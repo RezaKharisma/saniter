@@ -9,38 +9,35 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi /</span> User</h4>
 
+    @can('user_create')
+        <a href="{{ route('user.create') }}" class="mb-3 btn btn-primary"><i class="bx bx-plus"></i> Tambah User</a>
+    @endcan
+
     <div class="card">
-        <h5 class="card-header">Data Akun Saniter</h5>
-        <div class="card-body">
-            @can('user_create')
-                <a href="{{ route('user.create') }}" class="mb-4 btn btn-secondary"><i class="bx bx-plus"></i> Tambah User</a>
-            @endcan
+        <h5 class="card-header mb-3">Data User</h5>
 
-            <table class="table table-hover" id="user-table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="1">No</th>
-                        <th>Nama</th>
-                        <th width="1">Regional</th>
-                        <th width="1">Email</th>
-                        <th width="auto">Aktif</th>
-                        <th>Role</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-
-                <tfoot>
-                    <tr>
+        <div style="position: relative">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover nowrap" id="user-table" width="100%">
+                    <thead>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Regional</th>
-                        <th>Email</th>
-                        <th>Aktif</th>
                         <th>Role</th>
+                        <th>Regional</th>
+                        <th>Status</th>
                         <th>Aksi</th>
-                    </tr>
-                </tfoot>
-            </table>
+                    </thead>
+
+                    <tfoot>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Role</th>
+                        <th>Regional</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -49,19 +46,26 @@
     <x-slot name="script">
         <script>
             $(document).ready(function () {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
                 // Datatables
                 $('#user-table').DataTable({
-                    ajax: "{{ route('ajax.getUser') }}",
+                    ajax: {
+                        method: "POST",
+                        url: "{{ route('ajax.getUser') }}"
+                    },
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'name', name: 'name'},
-                        {data: 'regional_name', name: 'regional_name'},
-                        {data: 'email', name: 'email'},
-                        {data: 'is_active', name: 'is_active'},
                         {data: 'roles_name', name: 'roles_name'},
+                        {data: 'regional_name', name: 'regional_name'},
+                        {data: 'is_active', name: 'is_active'},
                         {data: 'action', name: 'action'},
                     ],
                 })

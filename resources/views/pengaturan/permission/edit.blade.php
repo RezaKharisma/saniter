@@ -2,6 +2,8 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / Permissions /</span> Ubah Permissions</h4>
 
+    <a class="btn btn-secondary mb-3" href="{{ route('pengaturan.permission.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+
     <div class="row mb-4">
         <div class="col-md-12">
 

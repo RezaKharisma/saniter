@@ -13,58 +13,49 @@
     <div class="row">
         <div class="col-md-12">
 
-            {{-- Menu --}}
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                    <a class="nav-link active" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                </li>
-            </ul>
+            <div class="mb-3">
+                <a class="btn btn-secondary" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+                <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Menu</button>
+            </div>
 
             <div class="card mb-4">
 
-                {{-- Update Profile --}}
-                <h5 class="card-header">Manajemen Menu</h5>
+                <h5 class="card-header mb-3">Manajemen Menu</h5>
 
-                <div class="card-body">
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="menu-table" class="table table-hover table-sm" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Judul</th>
+                                    <th>Order</th>
+                                    <th>Url</th>
+                                    <th>Icon</th>
+                                    <th>Kategori</th>
+                                    <th>Show</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2">
-                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Menu</button>
-                        </div>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Judul</th>
+                                    <th>Order</th>
+                                    <th>Url</th>
+                                    <th>Icon</th>
+                                    <th>Kategori</th>
+                                    <th>Show</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+
                     </div>
-
-                    <table id="menu-table" class="table table-hover table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Judul</th>
-                                <th>Order</th>
-                                <th>Url</th>
-                                <th>Icon</th>
-                                <th>Kategori</th>
-                                <th>Show</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Judul</th>
-                                <th>Order</th>
-                                <th>Url</th>
-                                <th>Icon</th>
-                                <th>Kategori</th>
-                                <th>Show</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
 
             </div>
@@ -88,10 +79,10 @@
                         <x-input-text title="Judul" name="judul" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" value="{{ old('judul') }}"/>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Kategori --}}
-                                <div class="mb-3">
+                                <div class="">
                                     <x-partials.label title="Kategori"/>
                                     <select id="id_kategori" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'url')">
                                         <option value="" selected disabled>Pilih Kategori...</option>
@@ -103,7 +94,7 @@
                                 </div>
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6  mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input URL --}}
                                 <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" value="{{ old('url') }}" />
@@ -112,14 +103,14 @@
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-6  mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Order --}}
                                 <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" value="{{ old('order') }}" />
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6  mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Icon --}}
                                 <x-input-text title="Icon" name="icon" placeholder="Masukkan icon dari box-icon" value="{{ old('icon') }}" />
@@ -127,7 +118,6 @@
 
                             </div>
                         </div>
-
 
                     </div>
                     <div class="modal-footer">
@@ -159,10 +149,10 @@
                         <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul menu" margin="mb-3" onkeyup="convertToSlug2(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6  mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Kategori --}}
-                                <div class="mb-3">
+                                <div class="">
                                     <x-partials.label title="Kategori"/>
                                     <select id="id_kategoriEdit" name="id_kategori" class="form-select @error('id_kategori')is-invalid @enderror" onchange="selectKategori(this,'urlEdit')">
                                         <option value="" disabled>Pilih Kategori...</option>
@@ -174,7 +164,7 @@
                                 </div>
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6  mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input URL --}}
                                 <x-input-text title="Url" name="url" id="urlEdit" placeholder="Masukkan url menu" value="{{ old('url') }}" />
@@ -183,14 +173,14 @@
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Order --}}
                                 <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" value="{{ old('order') }}"/>
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Icon --}}
                                 <x-input-text title="Icon" name="icon" id="iconEdit" placeholder="Masukkan icon dari box-icon" value="{{ old('icon') }}" />
@@ -219,7 +209,6 @@
                     ajax: "{{ route('ajax.getMenu') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul', name: 'judul'},

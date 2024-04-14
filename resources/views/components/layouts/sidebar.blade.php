@@ -1,5 +1,5 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
+    <div class="app-brand demo mb-3">
         <a href="index.html" class="app-brand-link">
             <span class="app-brand-logo demo">
                <img src="{{ asset('assets/img/logo/logo-qinar.png') }}" alt="Logo Qinar" width="50px">
@@ -16,7 +16,7 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
             <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
@@ -36,6 +36,7 @@
                     <li class='menu-header small text-uppercase'><span class='menu-header-text'>{{ $group }}</span></li>
                     @php $first = false; @endphp
                 @endif
+
 
                 <!-- {{ $item->judul }} -->
                 <li class="menu-item {{ request()->is($item->url.'*') ? 'active' : '' }}">

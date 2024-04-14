@@ -80,6 +80,7 @@ class StokMaterialController extends Controller
         $stok = StokMaterial::create([
             'material_id' => $request->material_id,
             'kode_material' => $this->cekKodeMaterial($request->kode_material),
+            'nama_material' => $request->nama_material,
             'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $request->harga)),
             'masuk' => $request->masuk,
             'stok_update' => 0,
@@ -113,6 +114,7 @@ class StokMaterialController extends Controller
 
                 // Jika validasi gagal
                 if ($validator->fails()) {
+                    Session::flash('statusValidasi', 'error');
                     toast('Mohon periksa form kembali!', 'error'); // Toast
                     return Redirect::back()
                     ->withErrors($validator)
@@ -194,6 +196,7 @@ class StokMaterialController extends Controller
                     $diterima = StokMaterial::create([
                         'material_id' => $stok->material_id,
                         'kode_material' => $stok->kode_material,
+                        'nama_material' => $stok->nama_material,
                         'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $stok->harga)),
                         'masuk' => $stok->sebagian,
                         'created_by' => 'System',
@@ -212,6 +215,7 @@ class StokMaterialController extends Controller
                         'stok_material_id' => $stok->id,
                         'diterima_id' => $diterima->id,
                         'kode_material' => $stok->kode_material,
+                        'nama_material' => $stok->nama_material,
                         'tgl_retur' => null,
                         'status' => $stok->status_validasi_pm,
                         'keterangan' => $stok->keterangan,
@@ -235,6 +239,7 @@ class StokMaterialController extends Controller
                         'stok_material_id' => $stok->id,
                         'diterima_id' => $stok->id,
                         'kode_material' => $stok->kode_material,
+                        'nama_material' => $stok->nama_material,
                         'tgl_retur' => null,
                         'status' => $stok->status_validasi_pm,
                         'keterangan' => $stok->keterangan,

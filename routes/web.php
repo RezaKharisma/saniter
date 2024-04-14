@@ -25,8 +25,13 @@ use App\Http\Controllers\Settings\ShiftController;
 
 // All
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\Ajax\AjaxAreaController;
+use App\Http\Controllers\Ajax\AjaxAreaListController;
+use App\Http\Controllers\Ajax\AjaxDetailTglKerjaController;
+use App\Http\Controllers\Ajax\AjaxJenisKerusakanController;
 use App\Http\Controllers\Ajax\AjaxReturController;
 use App\Http\Controllers\Ajax\AjaxStokMaterialController;
+use App\Http\Controllers\Ajax\AjaxTglKerjaController;
 use App\Http\Controllers\IzinController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfilController;
@@ -35,8 +40,13 @@ use App\Http\Controllers\LokasiController;
 
 // API
 use App\Http\Controllers\API\NamaMaterialController;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\AreaListController;
+use App\Http\Controllers\DetailTglKerjaController;
+use App\Http\Controllers\JenisKerusakanController;
 use App\Http\Controllers\ReturController;
 use App\Http\Controllers\StokMaterialController;
+use App\Http\Controllers\TglKerjaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -237,7 +247,7 @@ Route::group(['middleware' => ['auth']], function () {
     | Route Shift
     | ----------------------
     */
-    Route::resource('/pengaturan/shift',ShiftController::class);
+    Route::resource('/pengaturan/shift',ShiftController::class)->middleware('permission:shift_read');
 
     /*
     | Route Ajax Shift
@@ -272,6 +282,47 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     /*
+    | Route Area
+    | ----------------------
+    */
+    Route::controller(AreaController::class)->group(function(){
+        Route::get('/pengaturan/area', 'index')->name('area.index')->middleware('permission:area_read');
+        Route::post('/pengaturan/area', 'store')->name('area.store')->middleware('permission:area_update');
+        Route::put('/pengaturan/area/{id}/update', 'update')->name('area.update')->middleware('permission:area_update');
+        Route::delete('/pengaturan/area/{id}/delete', 'delete')->name('area.delete')->middleware('permission:area_delete');
+    });
+
+    /*
+    | Route Ajax Area
+    | ----------------------
+    */
+    Route::controller(AjaxAreaController::class)->group(function(){
+        Route::get('/ajax/getArea','getArea')->name('ajax.getArea')->middleware('permission:area_read');
+        Route::post('/ajax/getAreaEdit','getAreaEdit')->name('ajax.getAreaEdit')->middleware('permission:area_read');
+    });
+
+    /*
+    | Route Area List
+    | ----------------------
+    */
+    Route::controller(AreaListController::class)->group(function(){
+        Route::get('/pengaturan/list-area', 'index')->name('list-area.index')->middleware('permission:area list_read');
+        Route::post('/pengaturan/list-area', 'store')->name('list-area.store')->middleware('permission:area list_update');
+        Route::put('/pengaturan/list-area/{id}/update', 'update')->name('list-area.update')->middleware('permission:area list_update');
+        Route::delete('/pengaturan/list-area/{id}/delete', 'delete')->name('list-area.delete')->middleware('permission:area list_delete');
+    });
+
+    /*
+    | Route Ajax Area List
+    | ----------------------
+    */
+    Route::controller(AjaxAreaListController::class)->group(function(){
+        Route::get('/ajax/getAreaList','getAreaList')->name('ajax.getAreaList')->middleware('permission:area list_read');
+        Route::post('/ajax/getAreaListRegional','getAreaListRegional')->name('ajax.getAreaListRegional')->middleware('permission:area list_read');
+        Route::post('/ajax/getAreaListEdit','getAreaListEdit')->name('ajax.getAreaListEdit')->middleware('permission:area list_read');
+    });
+
+    /*
     | Route User
     | ----------------------
     */
@@ -291,8 +342,9 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(AjaxUserController::class)->group(function(){
-        Route::get('/ajax/user','getUser')->name('ajax.getUser')->middleware('permission:user_read');
-        Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_read');
+        Route::post('/ajax/user','getUser')->name('ajax.getUser')->middleware('permission:user_ajax');
+        Route::post('/ajax/user/detail','getUserDetail')->name('ajax.getUserDetail')->middleware('permission:user_ajax');
+        Route::post('/ajax/user/getLokasiKerja','getLokasiKerja')->name('ajax.getLokasiKerja')->middleware('permission:user_ajax');
     });
 
     /*
@@ -352,7 +404,6 @@ Route::group(['middleware' => ['auth']], function () {
     | ----------------------
     */
     Route::controller(ReturController::class)->group(function(){
-        // Route Pengajuan / Tambah
         Route::get('/material/stok-material/retur', 'index')->name('stok-material.retur.index')->middleware('permission:stok material retur_read');
         Route::get('/material/stok-material/retur/{kode_material}/detail', 'detail')->name('stok-material.retur.detail')->middleware('permission:stok material retur_update');
         Route::put('/material/stok-material/retur/{kode_material}/update', 'update')->name('stok-material.retur.update')->middleware('permission:stok material retur_update');
@@ -365,6 +416,65 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(AjaxReturController::class)->group(function(){
         Route::get('/ajax/getRetur','getRetur')->name('ajax.getRetur')->middleware('permission:stok material retur_read');
+    });
+
+    /*
+    | Route Tanggal Proyek
+    | ----------------------
+    */
+    Route::controller(TglKerjaController::class)->group(function(){
+        Route::get('/proyek/data-proyek', 'index')->name('data-proyek.index')->middleware('permission:data proyek_read');
+    });
+
+    /*
+    | Route Ajax Tanggal Proyek
+    | ----------------------
+    */
+    Route::controller(AjaxTglKerjaController::class)->group(function(){
+        Route::get('/ajax/getTglKerja','getTglKerja')->name('ajax.getTglKerja')->middleware('permission:data proyek_read');
+    });
+
+    /*
+    | Route Detail Tanggal Proyek
+    | ----------------------
+    */
+    Route::controller(DetailTglKerjaController::class)->group(function(){
+        Route::get('/proyek/data-proyek/{id}/detail', 'index')->name('detail-data-proyek.index')->middleware('permission:detail data proyek_read');
+        Route::post('/proyek/data-proyek/detail', 'store')->name('detail-data-proyek.store')->middleware('permission:detail data proyek_create');
+        Route::put('/proyek/data-proyek/detail/{id}/update', 'update')->name('detail-data-proyek.update')->middleware('permission:detail data proyek_update');
+        Route::delete('/proyek/data-proyek/detail/{id}/delete', 'delete')->name('detail-data-proyek.delete')->middleware('permission:detail data proyek_delete');
+    });
+
+    /*
+    | Route Ajax Detail Tanggal Proyek
+    | ----------------------
+    */
+    Route::controller(AjaxDetailTglKerjaController::class)->group(function(){
+        Route::get('/ajax/getDetailTglKerja','getDetailTglKerja')->name('ajax.getDetailTglKerja')->middleware('permission:detail data proyek_read');
+        Route::get('/ajax/getLokasiKerusakan','getLokasiKerusakan')->name('ajax.getLokasiKerusakan')->middleware('permission:detail data proyek_read');
+        Route::post('/ajax/getDenahLokasi','getDenahLokasi')->name('ajax.getDenahLokasi')->middleware('permission:detail data proyek_read');
+    });
+
+    /*
+    | Route Jenis Kerusakan
+    | ----------------------
+    */
+    Route::controller(JenisKerusakanController::class)->group(function(){
+        Route::get('/proyek/data-proyek/{id}/jenis-kerusakan', 'index')->name('jenis-kerusakan.index')->middleware('permission:jenis kerusakan_read');
+        Route::get('/proyek/data-proyek/jenis-kerusakan/{id}/create', 'create')->name('jenis-kerusakan.create')->middleware('permission:jenis kerusakan_create');
+        Route::post('/proyek/data-proyek/jenis-kerusakan/store', 'store')->name('jenis-kerusakan.store')->middleware('permission:jenis kerusakan_create');
+        // Route::put('/proyek/data-proyek/detail/{id}/update', 'update')->name('detail-data-proyek.update')->middleware('permission:jenis kerusakan_update');
+        // Route::delete('/proyek/data-proyek/detail/{id}/delete', 'delete')->name('detail-data-proyek.delete')->middleware('permission:jenis kerusakan_delete');
+    });
+
+    /*
+    | Route Ajax Jenis Kerusakan
+    | ----------------------
+    */
+    Route::controller(AjaxJenisKerusakanController::class)->group(function(){
+        Route::get('/ajax/getListHtml','getListHtml')->name('ajax.getListHtml')->middleware('permission:jenis kerusakan_read');
+        // Route::get('/ajax/getLokasiKerusakan','getLokasiKerusakan')->name('ajax.getLokasiKerusakan')->middleware('permission:stok material retur_read');
+        // Route::post('/ajax/getDenahLokasi','getDenahLokasi')->name('ajax.getDenahLokasi')->middleware('permission:stok material retur_read');
     });
 
     /*

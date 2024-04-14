@@ -25,10 +25,10 @@ class AjaxLokasiController extends Controller
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('lokasi_update')) {
-                        $btn = "<a class='btn btn-warning btn-sm d-inline me-1' href='".route('lokasi.edit', $row->lokasi_id)."' >Ubah</a>";
+                        $btn = "<a class='btn btn-warning btn-sm me-1' href='".route('lokasi.edit', $row->lokasi_id)."' ><i class='bx bx-detail'></i></a>";
                     }
                     if (auth()->user()->can('lokasi_delete')) {
-                        $btn = $btn."<form action=".route('lokasi.delete', $row->lokasi_id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn."<form action=".route('lokasi.delete', $row->lokasi_id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })

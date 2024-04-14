@@ -1,8 +1,8 @@
 @props(['required' => false,'title'=> null])
 
-<label {{ $attributes->merge(['class' => 'form-label']) }} for="{{ str_replace(' ','-',strtolower($title)) }}">
+<label {{ $attributes->merge(['class' => 'form-label']) }} for='{{ str_replace(' ','-',strtolower($title)) }}'>
     {{ $title }}
     @if($required)
-        <span style="color: red">*</span>
+        <span style='color: red'>*</span>
     @endif
 </label>

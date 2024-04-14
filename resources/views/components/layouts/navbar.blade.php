@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="fw-semibold d-block">{{ Auth()->user()->name }}</span>
+                                    <span class="fw-semibold d-block">{{ Str::limit(Auth()->user()->name, 20) }}</span>
                                     <small class="text-muted">
                                         @if (isset(auth()->user()->getRoleNames()[0]))
                                             {{ auth()->user()->getRoleNames()[0] }}

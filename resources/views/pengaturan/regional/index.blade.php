@@ -10,35 +10,41 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Regional</h4>
 
+    <div class="mb-3">
+        {{-- <a href="{{ route('pengaturan.izin.index') }}" class="btn btn-secondary">Kembali</a> --}}
+        @can('regional_create')
+            <a href="{{ route('regional.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Tambah Regional</a>
+        @endcan
+    </div>
+
     <!-- Striped Rows -->
     <div class="card">
         <h5 class="card-header">Data Regional</h5>
-        <div class="card-body">
-            @can('regional_create')
-                <a href="{{ route('regional.create') }}" class="mb-4 btn btn-primary"><i class="bx bx-plus"></i> Tambah Regional</a>
-            @endcan
 
-                <table class="table table-hover" id="tabel-regional">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            @if(auth()->user()->can('regional_update') || auth()->user()->can('regional_update'))
-                                <th>Aksi</th>
-                            @endif
-                        </tr>
-                    </thead>
+        <div style="position: relative">
+            <div class="table-responsive text-nowrap">
+                    <table class="table table-hover" id="tabel-regional" width="100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                @if(auth()->user()->can('regional_update') || auth()->user()->can('regional_update'))
+                                    <th>Aksi</th>
+                                @endif
+                            </tr>
+                        </thead>
 
-                    <tfoot>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            @if(auth()->user()->can('regional_update') || auth()->user()->can('regional_update'))
-                                <th>Aksi</th>
-                            @endif
-                        </tr>
-                    </tfoot>
-                </table>
+                        <tfoot>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                @if(auth()->user()->can('regional_update') || auth()->user()->can('regional_update'))
+                                    <th>Aksi</th>
+                                @endif
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -86,7 +92,6 @@
                         ajax: "{{ route('ajax.getRegional') }}",
                         processing: true,
                         serverSide: true,
-                        responsive: true,
                         columns:[
                             {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                             {data: 'nama', name: 'nama'},

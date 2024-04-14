@@ -10,6 +10,10 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Tambah Role</h4>
 
+    <div class="mb-3">
+        <a class="btn btn-secondary" href="{{ route('pengaturan.role.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
 
@@ -41,18 +45,19 @@
                                 <th>Permissions</th>
                             </thead>
                             <tbody>
+                                @php $n=0; @endphp
                                 @forelse ($permissions as $key => $items)
                                 <tr>
                                     <td>
                                         <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input {{ $key }}-All" type="checkbox" id="checkBox{{ $key }}" data-judul="{{ $key }}" onchange="checkAll(this)">
-                                            <label class="form-check-label" for="inlineCheckbox1">{{ $key }}</label>
+                                            <input class="form-check-input {{ str_replace(' ', '', $key) }}-All" type="checkbox" id="checkBox{{ str_replace(' ', '', $key) }}" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkAll(this)">
+                                            <label class="form-check-label" for="inlineCheckbox1">{{ str_replace(' ', '', $key) }}</label>
                                         </div>
                                     </td>
                                     <td>
                                         @foreach ($items as $item)
                                         <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input {{ $key }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ $key }}" onchange="checkJudul(this)">
+                                            <input class="form-check-input {{ str_replace(' ', '', $key) }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkJudul(this)">
                                             <label class="form-check-label" for="inlineCheckbox1">{{ $item->name }}</label>
                                         </div>
                                         @endforeach

@@ -111,7 +111,11 @@ class AjaxIzinController extends Controller
         if ($request->ajax()) {
 
             // Mengambil user sesuai regional
-            $userSesuaiRegional = User::select('id','name')->where('regional_id', $request->id)->where('role_id', 2)->get();
+            $userSesuaiRegional = User::select('users.id','users.name')
+                ->join('roles','users.role_id','=','roles.id')
+                ->where('regional_id', $request->id)
+                ->where('roles.name', 'Teknisi')
+                ->get();
 
             // Variable array
             $jumlahIzin = array();

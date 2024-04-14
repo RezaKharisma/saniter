@@ -1,4 +1,4 @@
-<x-layouts.app title="Pengaturan">
+<x-layouts.app title="Ubah Lokasi">
 
     <x-slot name="style">
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/leaflet/leaflet.css') }}">
@@ -9,6 +9,10 @@
             }
         </style>
     </x-slot>
+
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / </span>Ubah Lokasi</h4>
+
+    <a class="btn btn-secondary mb-3" href="{{ route('lokasi.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="card mb-12">
         <div class="card-header d-flex justify-content-between align-items-center">

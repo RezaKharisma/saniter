@@ -1,4 +1,4 @@
-<x-layouts.app title="Detail Stok Material">
+<x-layouts.app title="Detail Retur">
 
     <x-slot name="style">
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/jquery-ui/jquery-ui.css') }}">
@@ -13,7 +13,7 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / Stok Material / </span>Retur Stok Material</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Detail Retur Stok Material</h4>
 
     <div class="row">
         <div class="col-md-12">
@@ -33,29 +33,27 @@
                             <x-input-text title="Nama Material" name='displayNamaMaterial' value="{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}" readonly/>
                         </div>
 
-                        <div class="mb-3">
-                            <div class="row">
+                        <div class="row">
 
-                                {{-- Jenis Pekerjaan --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                    <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan' id="jenis_pekerjaan" value="{{ $namaMaterial['jenis_pekerjaan'] }}" readonly />
-                                </div>
+                            {{-- Jenis Pekerjaan --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan' id="jenis_pekerjaan" value="{{ $namaMaterial['jenis_pekerjaan'] }}" readonly />
+                            </div>
 
-                                {{-- Jenis Material --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                    <x-input-text title="Jenis Material" name='jenis_material' id="jenis_material" value="{{ $namaMaterial['jenis_material'] }}" readonly />
-                                </div>
+                            {{-- Jenis Material --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                <x-input-text title="Jenis Material" name='jenis_material' id="jenis_material" value="{{ $namaMaterial['jenis_material'] }}" readonly />
+                            </div>
 
-                                {{-- Stok Logistik (qty) --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
-                                    <x-input-text title="Stok Gudang Logistik" name='qty' id="qty" value="{{ $namaMaterial['qty'] }}" readonly />
-                                </div>
+                            {{-- Stok Logistik (qty) --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
+                                <x-input-text title="Stok Gudang Logistik" name='qty' id="qty" value="{{ $namaMaterial['qty'] }}" readonly />
+                            </div>
 
-                                {{-- Harga --}}
-                                <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
-                                    <input type="hidden" name="harga" id="hargaSubmit" value="{{ $namaMaterial['harga_beli'] }}">
-                                    <x-input-text title="Harga" name="display" id="harga" value="Rp. {{ $namaMaterial['harga_beli'] }}" readonly/>
-                                </div>
+                            {{-- Harga --}}
+                            <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-3 mb-md-0">
+                                <input type="hidden" name="harga" id="hargaSubmit" value="{{ $namaMaterial['harga_beli'] }}">
+                                <x-input-text title="Harga" name="display" id="harga" value="Rp. {{ $namaMaterial['harga_beli'] }}" readonly/>
                             </div>
                         </div>
 
@@ -79,14 +77,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-12 col-sm-12 col-md-6 mb-sm-3">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
                                 <x-partials.label title="Tanggal Retur" required/>
-                                <input type="text" class="form-control" id="tgl_retur" name="tgl_retur" placeholder="Tanggal Retur" value="{{ \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') == "0000-00-00" ? '' : \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') }}" required autocomplete="off" @if($retur->hasil_retur == 'Diterima') readonly @endif/>
+                                <input type="text" class="form-control" id="tgl_retur" name="tgl_retur" placeholder="Tanggal Retur" value="{{ \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') == "0000-00-00" ? '' : \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') }}" required autocomplete="off" @if($retur->hasil_retur == 'Diterima') disabled @endif/>
                                 <x-partials.error-message name="tgl_mulai_izin" class="d-block" />
                             </div>
                             <div class="col-12 col-sm-12 col-md-6">
                                 <x-partials.label title="Hasil Retur" required/>
-                                <select class="form-control" name="hasil_retur" @if($retur->hasil_retur == 'Diterima') readonly @endif>
+                                <select class="form-control" name="hasil_retur" @if($retur->hasil_retur == 'Diterima') disabled @endif>
                                     <option value="" disabled selected>Pilih hasil retur...</option>
                                     <option @if($retur->hasil_retur == "Diterima") selected @endif value="Diterima">Diterima</option>
                                     <option @if($retur->hasil_retur == "Ditolak") selected @endif value="Ditolak">Ditolak</option>

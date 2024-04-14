@@ -3,33 +3,37 @@
 
     <!-- Striped Rows -->
     <div class="card">
-        <h5 class="card-header">Data Retur Material</h5>
-        <div class="card-body">
-            <table class=" table-responsive table table-hover" id="retur-table" width="100%">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Kode Material</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
-                        <th>Jumlah</th>
-                        <th>Dibuat Oleh</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+        <h5 class="card-header mb-3">Data Retur Material</h5>
+        <div style="position: relative">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover" id="retur-table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode Material</th>
+                            <th>Nama Material</th>
+                            <th>Status</th>
+                            <th>Keterangan</th>
+                            <th>Jumlah</th>
+                            <th>Dibuat Oleh</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <tr>
-                        <th>#</th>
-                        <th>Kode Material</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
-                        <th>Jumlah</th>
-                        <th>Dibuat Oleh</th>
-                        <th>Aksi</th>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode Material</th>
+                            <th>Nama Material</th>
+                            <th>Status</th>
+                            <th>Keterangan</th>
+                            <th>Jumlah</th>
+                            <th>Dibuat Oleh</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -41,10 +45,10 @@
                     ajax: "{{ route('ajax.getRetur') }}",
                     processing: true,
                     // serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'kode_material', name: 'kode_material'},
+                        {data: 'nama_material', name: 'nama_material'},
                         {data: 'status', name: 'status'},
                         {data: 'keterangan', name: 'keterangan'},
                         {data: 'jumlah', name: 'jumlah'},

@@ -5,6 +5,17 @@
             input[type=checkbox]:checked{
                 background-color: #71dd37 !important;
             }
+
+            .btnPrimary{
+                color: #696cff !important;
+                border-color: rgba(0, 0, 0, 0) !important;
+                background: #e7e7ff !important;
+            }
+
+            .btnPrimary:hover{
+                color: #e7e7ff !important;
+                background: #696cff !important;
+            }
         </style>
     </x-slot>
 
@@ -14,52 +25,53 @@
     <div class="col-md-12">
 
         @can('izin_create')
-        <ul class="nav nav-pills flex-md-row mb-3">
-            <li class="nav-item me-2">
-                <a class="nav-link active" href="{{ route('izin.create') }}"><i class="bx bx-plus-circle me-1"></i> Buat Izin</a>
-            </li>
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div class="d-flex flex-column justify-content-center">
+                    <div class="me-2">
+                        <a class="btn btn-primary" href="{{ route('izin.create') }}"><i class="bx bx-plus me-1"></i> Tambah Izin</a>
+                    </div>
+                </div>
+                <div class="d-flex align-content-center flex-wrap gap-2 mt-3 mt-sm-3 mt-md-0">
+                    <a class="btn btn-primary" href="javascript:void(0);"><i class="bx bx-task me-1"></i> Izin</a>
 
-            <li class="nav-item me-2">
-                <a class="nav-link {{ request()->is('administrasi/izin') ? 'active' : '' }}" href="{{ route('izin.index') }}"><i class="bx bx-task me-1"></i> Izin</a>
-            </li>
-
-            @can('all_izin')
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->is('administrasi/izin/all') ? 'active' : '' }}" href="{{ route('all.izin.index') }}"><i class="bx bx-task me-1"></i> Semua Izin</a>
-                </li>
-            @endcan
-        </ul>
+                    @can('all_izin')
+                        <a class="btn {{ request()->is('administrasi/izin/all') ? 'active' : '' }} btnPrimary" href="{{ route('all.izin.index') }}"><i class="bx bx-task me-1"></i> Semua Izin</a>
+                    @endcan
+                </div>
+            </div>
         @endcan
 
         <div class="card mb-4">
-            <h5 class="card-header">
+            <h5 class="card-header mb-3">
                 Data Izin
             </h5>
-            <div class="card-body">
-                <table class="table table-hover table-responsive
-                " id="tabel-izin">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Jenis</th>
-                            <th>Tanggal</th>
-                            <th>File</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
 
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Jenis</th>
-                            <th>Tanggal</th>
-                            <th>File</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                </table>
+            <div style="position: relative">
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-hover table-responsive" id="tabel-izin">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Jenis</th>
+                                <th>Tanggal</th>
+                                <th>Dokumen Pendukung</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Jenis</th>
+                                <th>Tanggal</th>
+                                <th>Dokumen Pendukung</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
 
         </div>
@@ -119,9 +131,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    Tutup
-                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
@@ -137,7 +147,6 @@
                 ajax: "{{ route('ajax.getIzin') }}",
                 processing: true,
                 serverSide: true,
-                responsive: true,
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                     {data: 'userName', name: 'userName'},

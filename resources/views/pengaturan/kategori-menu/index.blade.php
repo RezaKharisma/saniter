@@ -13,53 +13,43 @@
     <div class="row">
         <div class="col-md-12">
 
-            {{-- Menu --}}
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                    <a class="nav-link active" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                </li>
-            </ul>
+            <div class="mb-3">
+                <a class="btn btn-secondary me-2" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
+            </div>
 
             <div class="card mb-4">
 
-                <h5 class="card-header">Manajemen Menu</h5>
+                <h5 class="card-header mb-3">Manajemen Menu</h5>
 
-                <div class="card-body">
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="kategori-menu-table" class="table table-hover table-sm" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nama Kategori</th>
+                                    <th>Order</th>
+                                    <th>Show</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2">
-                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalKategoriMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Kategori Menu</button>
-                        </div>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nama Kategori</th>
+                                    <th>Order</th>
+                                    <th>Show</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-
-                    <table id="kategori-menu-table" class="table table-hover table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nama Kategori</th>
-                                <th>Order</th>
-                                <th>Show</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Nama Kategori</th>
-                                <th>Order</th>
-                                <th>Show</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -137,7 +127,6 @@
                     ajax: "{{ route('ajax.getKategoriMenu') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'nama_kategori', name: 'nama_kategori'},

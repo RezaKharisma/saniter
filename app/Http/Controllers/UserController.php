@@ -180,19 +180,23 @@ class UserController extends Controller
     // Fungsi View Edit Data
     public function edit($id)
     {
-        $user = User::find($id);
+        if(request()->server('HTTP_REFERER')){
+            $user = User::find($id);
 
-        $lokasi = Lokasi::select('lokasi.id','regional.nama','nama_bandara','lokasi_proyek')
-            ->join('regional','lokasi.regional_id','=','regional.id')
-            ->get();
+            $lokasi = Lokasi::select('lokasi.id','regional.nama','nama_bandara','lokasi_proyek')
+                ->join('regional','lokasi.regional_id','=','regional.id')
+                ->get();
 
-        $regional = Regional::select('id','nama')
-            ->get();
+            $regional = Regional::select('id','nama')
+                ->get();
 
-        $roles = Role::select('id','name')
-            ->get();
+            $roles = Role::select('id','name')
+                ->get();
 
-        return view('user.edit', compact('user','lokasi','regional','roles'));
+            return view('user.edit', compact('user','lokasi','regional','roles'));
+        }else{
+            return abort(404);
+        }
     }
 
     // Fungsi Delete Data

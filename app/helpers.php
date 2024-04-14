@@ -29,7 +29,7 @@ if (! function_exists('getRoleAccessMenu')) {
                 }
             }
         }
-        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode(array_unique($roleMenu)))));
+        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode(array_values(array_unique(($roleMenu)))))));
     }
 }
 

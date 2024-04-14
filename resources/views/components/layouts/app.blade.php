@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
@@ -13,7 +13,8 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo/logo-qinar.ico') }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+        {{-- <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" /> --}}
+        <link rel="stylesheet" href="{{ asset('assets/css/publicsans.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
@@ -26,8 +27,10 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2-bootstrap-5-theme.min.css') }}" />
         <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
         <script src="{{ asset('assets/js/config.js') }}"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/choices/choices.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/css/custom-datatables.css') }}" />
 
         <style>
             .swal2-container {
@@ -97,8 +100,6 @@
         <script src="{{ asset('assets/js/numberOnly.js') }}"></script>
         <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
-        {{-- <script src="{{ asset('assets/js/moment.js') }}"></script> --}}
-        <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 
         {{-- Sweet Alert --}}
@@ -106,9 +107,10 @@
 
         <script src="{{ asset('vendor/sweetalert/sweetalert.all.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/select2/js/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/js/extended-ui-perfect-scrollbar.js') }}"></script>
 
-        <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="{{ asset('assets/vendor/libs/choices/choices.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

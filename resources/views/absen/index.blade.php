@@ -82,22 +82,24 @@
                         @endcan
                     </div>
                 </h5>
-                <div class="card-body">
-                    <table class="table table-hover table-responsive" id="tabel-log-absen" width="100%">
-                        <thead>
-                            <th>Tanggal</th>
-                            <th>Shift</th>
-                            <th>Jam Masuk</th>
-                            <th>Jam Pulang</th>
-                        </thead>
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover" id="tabel-log-absen" width="100%" style="margin-top: -40px !important;margin-bottom: -20px !important">
+                            <thead>
+                                <th>Tanggal</th>
+                                <th>Shift</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Pulang</th>
+                            </thead>
 
-                        <tfoot>
-                            <th>Tanggal</th>
-                            <th>Shift</th>
-                            <th>Jam Masuk</th>
-                            <th>Jam Pulang</th>
-                        </tfoot>
-                    </table>
+                            <tfoot>
+                                <th>Tanggal</th>
+                                <th>Shift</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Pulang</th>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,7 +115,6 @@
                     ajax: "{{ route('ajax.getAbsenLog') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     searching: false,
                     lengthChange: false,
                     paging: false,
