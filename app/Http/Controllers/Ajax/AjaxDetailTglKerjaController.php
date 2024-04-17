@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\AreaList;
 use App\Models\DetailTglKerja;
+use App\Models\JenisKerusakan;
 use App\Models\Lokasi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,8 +41,16 @@ class AjaxDetailTglKerjaController extends Controller
                 // if (auth()->user()->can('detail data proyek_update')) {
                 //     $btn = $btn."<a class='btn btn-warning btn-sm  me-1' href='".route('detail-data-proyek.delete', $row->id)."' >Ubah</a>";
                 // }
-                if (auth()->user()->can('detail data proyek_update')) {
-                    $btn = $btn."<form action=".route('detail-data-proyek.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')."<input type='hidden' value='$this->tglKerjaId' name='tgl_kerja_id'> <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+
+                // $jenisKerusakan = JenisKerusakan::join('detail_tgl_kerja','jenis_kerusakan.detail_tgl_kerja_id','=','detail_tgl_kerja.id')
+                //     ->where('detail_tgl_kerja.tgl_kerja_id', $tglKerja->id)->get();
+
+                $jenisKerusakan = JenisKerusakan::where('detail_tgl_kerja_id', $row->id)->get();
+
+                if (count($jenisKerusakan) == 0) {
+                    if (auth()->user()->can('detail data proyek_update')) {
+                        $btn = $btn."<form action=".route('detail-data-proyek.delete', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')."<input type='hidden' value='$this->tglKerjaId' name='tgl_kerja_id'> <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                    }
                 }
                 return $btn;
             })

@@ -31,6 +31,7 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/custom-datatables.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css') }}" />
 
         <style>
             .swal2-container {
@@ -111,6 +112,7 @@
 
         <script src="{{ asset('assets/vendor/libs/choices/choices.min.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/dropzone/dropzone-min.js') }}"></script>
 
         {{-- Custom script (jika ada) --}}
         {{ $script ?? null }}

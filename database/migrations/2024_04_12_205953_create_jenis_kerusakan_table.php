@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('jenis_kerusakan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('detail_tgl_kerja_id');
+            $table->unsignedBigInteger('dikerjakan_oleh');
+            $table->string('nama_kerusakan')->nullable();
             $table->string('foto');
-            $table->text('deskripsi');
-            $table->string('jangka_waktu');
+            $table->text('deskripsi')->default('-');
+            $table->string('nomor_denah');
+            $table->date('tgl_selesai_pekerjaan');
             $table->enum('status_kerusakan',['Penggantian','Dengan Material','Tanpa Material']);
-            $table->string('dikerjakan_oleh');
-            $table->bigInteger('created_by');
+            $table->string('created_by');
             $table->timestamps();
         });
     }

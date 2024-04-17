@@ -21,95 +21,109 @@
         <div class="col-md-12">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                 <div class="d-flex flex-column justify-content-center">
-                    <h4 class="mb-1 mt-3">{{ $area->areaNama }}</h4>
-                    <p class="text-muted">{{ $area->lantai }} - {{ $area->listNama }}</p>
+                    <h4 class="mb-1 mt-3">{{ $area->lantai }} - {{ $area->listNama }}</h4>
+                    <p class="text-muted">{{ $area->areaNama }}</p>
                 </div>
                 <div class="d-flex align-content-center flex-wrap gap-2">
                     <a href="{{ route('detail-data-proyek.index', $detailKerja->tgl_kerja_id) }}" class="btn btn-secondary"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalDenah" >Denah</button>
-                    <a href="{{ route('jenis-kerusakan.create', $detailKerja->id) }}" class="btn btn-primary"><i class="bx bx-plus"></i> Tambah</a>
+                    <button type="button" class="btn @if (Carbon\Carbon::now()->format('Y-m-d') == Carbon\Carbon::parse($detailKerja->created_at)->format('Y-m-d')) btn-secondary @else btn-primary @endif" data-bs-toggle="modal" data-bs-target="#modalDenah" >Denah</button>
+                    @if (Carbon\Carbon::now()->format('Y-m-d') == Carbon\Carbon::parse($detailKerja->created_at)->format('Y-m-d'))
+                        <a href="{{ route('jenis-kerusakan.create', $detailKerja->id) }}" class="btn btn-primary"><i class="bx bx-plus"></i> Tambah</a>
+                    @endif
                 </div>
             </div>
 
-            @forelse ($jenisKerusakan as $item)
-                <div class="col-md-6 col-xl-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header flex-grow-0">
-                            <div class="d-flex">
-                                <div class="avatar flex-shrink-0 me-3">
-                                    <img src="../../assets/img/avatars/20.png" alt="User" class="rounded-circle" />
-                                </div>
-                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-1">
-                                    <div class="me-2">
-                                        <h5 class="mb-0">Olivia Shared Event</h5>
-                                        <small class="text-muted">07 Sep 2020 at 10:30 AM</small>
+            <div class="row">
+                @forelse ($jenisKerusakan as $item)
+                    <div class="col-12 col-sm-6 col-md-6 col-xl-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header flex-grow-0">
+                                <div class="d-flex">
+                                    <div class="avatar flex-shrink-0 me-3">
+                                        <img src="{{ asset('storage/'.$item->userFoto) }}" alt="{{ $item->name }}" class="rounded-circle" />
                                     </div>
-                                    <div class="dropdown d-none d-sm-block">
-                                        <button class="btn p-0" type="button" id="eventList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="bx bx-chevron-down"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="eventList">
-                                            <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
+                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-1">
+                                        <div class="me-2">
+                                            <h5 class="mb-0">{{ $item->name }}</h5>
+                                            <small class="text-muted">{{ Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <img class="img-fluid" src="../../assets/img/backgrounds/event.jpg" alt="Card image cap" />
-                        <div class="featured-date mt-n4 ms-4 bg-white rounded w-px-50 shadow text-center p-1">
-                            <h5 class="mb-0 text-dark">21</h5>
-                            <span class="text-primary">May</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="text-truncate">How To Excel In A Technical Terminology?</h5>
-                            <div class="d-flex gap-2">
-                                <span class="badge bg-label-primary">Technical</span>
-                                <span class="badge bg-label-primary">Account</span>
-                                <span class="badge bg-label-primary">Excel</span>
+                            <img class="img-fluid" src="{{ asset('storage/'.$item->foto) }}" alt="Card image cap" style="max-height: 300px; object-fit: cover;background-position: center"/>
+                            <div class="featured-date mt-n4 ms-4 bg-white rounded w-px-50 shadow text-center p-1">
+                                <h5 class="mb-0 text-dark">{{ Carbon\Carbon::parse($item->created_at)->format('d') }}</h5>
+                                <span class="text-primary">{{ Carbon\Carbon::parse($item->created_at)->format('M') }}</span>
                             </div>
-                            <div class="d-flex my-3">
-                                <ul class="list-unstyled m-0 d-flex align-items-center avatar-group">
-                                    <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="Vinnie Mostowy" data-bs-original-title="Vinnie Mostowy">
-                                        <img class="rounded-circle" src="../../assets/img/avatars/5.png" alt="Avatar" />
-                                    </li>
-                                    <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="Allen Rieske" data-bs-original-title="Allen Rieske">
-                                        <img class="rounded-circle" src="../../assets/img/avatars/12.png" alt="Avatar" />
-                                    </li>
-                                    <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="Julee Rossignol" data-bs-original-title="Julee Rossignol">
-                                        <img class="rounded-circle" src="../../assets/img/avatars/6.png" alt="Avatar" />
-                                    </li>
-                                    <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="Darcey Nooner" data-bs-original-title="Darcey Nooner">
-                                        <img class="rounded-circle" src="../../assets/img/avatars/10.png" alt="Avatar" />
-                                    </li>
-                                </ul>
-                                <a href="javascript:;" class="btn btn-primary ms-auto" role="button">Join Now</a>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="card-actions">
-                                    <a href="javascript:;" class="text-muted me-3"><i class="bx bx-heart me-1"></i> 236</a>
-                                    <a href="javascript:;" class="text-muted"><i class="bx bx-message me-1"></i> 12</a>
+                            <div class="card-body mb-0">
+                                <h5 class="text-truncate">Perbaikan {{ $item->nama_kerusakan }}</h5>
+                                <div class="d-flex gap-2">
+                                    @if ($item->tgl_selesai_pekerjaan != null)
+                                        <span class="badge bg-success">Selesai</span>
+                                    @endif
+                                    @if ($item->status_kerusakan == "Perbaikan")
+                                        <span class="badge bg-label-primary">{{ $item->status_kerusakan }}</span>
+                                    @elseif($item->status_kerusakan == "Dengan Material")
+                                        <span class="badge bg-label-primary">{{ $item->status_kerusakan }}</span>
+                                    @else
+                                        <span class="badge bg-label-primary">{{ $item->status_kerusakan }}</span>
+                                    @endif
                                 </div>
-                                <div class="dropup d-none d-sm-block">
-                                    <button class="btn p-0" type="button" id="sharedList" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="sharedList">
-                                        <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
+                                <div class="d-flex mt-3 mb-0" style="height: 40px">
+                                    <p class="small" style="text-align: justify">{{ Str::limit($item->deskripsi, 100) }}@if($item->deskripsi != "-").@endif</p>
+                                </div>
+                            </div>
+                            <div class="card-body border-top">
+                                <div class="d-flex flex-wrap gap-2 mb-4">
+                                    <div class="d-flex flex-column w-50 me-2">
+                                        <small class="text-muted text-nowrap d-block mb-2">Tanggal Selesai</small>
+                                        @if ($item->tgl_selesai_pekerjaan == null)
+                                            <h6 class="mb-0">-</h6>
+                                        @else
+                                            <h6 class="mb-0">{{ Carbon\Carbon::parse($item->tgl_selesai_pekerjaan)->isoFormat('dddd, D MMMM Y') }}</h6>
+                                        @endif
                                     </div>
+                                    <div class="d-flex flex-column">
+                                        <small class="text-muted text-nowrap d-block mb-2">Jangka Waktu</small>
+                                        @if ($item->tgl_selesai_pekerjaan == null)
+                                            <h6 class="mb-0">-</h6>
+                                        @else
+                                            @php
+                                                $startDate = Carbon\Carbon::parse($item->created_at);
+                                                $endDate = Carbon\Carbon::parse($item->tgl_selesai_pekerjaan)
+
+                                                // if ($startDate->diffInDays($endDate) != 0) {
+                                                //     $jangkaWaktu = $startDate->diffInDays($endDate).' Hari';
+                                                // }else if($startDate->diffInHours($endDate) != 0){
+                                                //     $jangkaWaktu = $startDate->diffInHours($endDate).' Jam';
+                                                // }else{
+                                                //     $jangkaWaktu = $startDate->diffInMinutes($endDate).' Menit';
+                                                // }
+                                            @endphp
+                                            <h6 class="mb-0">{{ $startDate->diffInDays($endDate) != 0 ? $startDate->diffInDays($endDate).' Hari' : $startDate->diffInHours($endDate).' Jam' }}</h6>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <a href="{{ route('jenis-kerusakan.detail', $item->id) }}" class="btn btn-primary w-100 d-grid me-2">Detail</a>
+                                    @if ($item->tgl_selesai_pekerjaan == null)
+                                        <form action="{{ route('jenis-kerusakan.delete', $item->id) }}" method="POST" class="w-100 d-grid">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="hidden" value="{{ $detailKerja->id }}" name="detail_tgl_kerusakan_id">
+                                            <button type="submit" class="btn btn-danger">Hapus</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col-12">
-                    <div class="alert alert-warning" role="alert">Belum ada kerusakan ditambahkan!</div>
-                </div>
-            @endforelse
+                @empty
+                    <div class="col-12">
+                        <div class="alert alert-warning" role="alert">Belum ada kerusakan ditambahkan!</div>
+                    </div>
+                @endforelse
+            </div>
 
         </div>
     </div>

@@ -51,7 +51,7 @@
                                     <td>
                                         <div class="form-check form-check-inline mt-3">
                                             <input class="form-check-input {{ str_replace(' ', '', $key) }}-All" type="checkbox" id="checkBox{{ str_replace(' ', '', $key) }}" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkAll(this)">
-                                            <label class="form-check-label" for="inlineCheckbox1">{{ str_replace(' ', '', $key) }}</label>
+                                            <label class="form-check-label" for="inlineCheckbox1">{{ $key }}</label>
                                         </div>
                                     </td>
                                     <td>

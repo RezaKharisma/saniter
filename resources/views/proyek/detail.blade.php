@@ -7,10 +7,12 @@
             {{-- Jika request url adalah url yg di tentukan, set class active --}}
             <a class="btn btn-secondary d-block" href="{{ route('data-proyek.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
         </li>
-        <li class="nav-item ms-0 ms-sm-0 ms-md-2 mt-2 mt-sm-2 mt-md-0">
-            {{-- Jika request url adalah url yg di tentukan, set class active --}}
-            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalAdd" onclick="setLokasi(this)"><i class="bx bx-plus"></i>Tambah Lokasi Kerusakan</button>
-        </li>
+        @if (Carbon\Carbon::now()->format('Y-m-d') == Carbon\Carbon::parse($tglKerja->tanggal)->format('Y-m-d'))
+            <li class="nav-item ms-0 ms-sm-0 ms-md-2 mt-2 mt-sm-2 mt-md-0">
+                {{-- Jika request url adalah url yg di tentukan, set class active --}}
+                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalAdd" onclick="setLokasi(this)"><i class="bx bx-plus"></i>Tambah Lokasi Kerusakan</button>
+            </li>
+        @endif
     </ul>
 
     <div class="row">
@@ -120,6 +122,26 @@
                     $('#imagePreviewAdd').removeClass('d-block');
                     $('#imagePreviewAdd').addClass('d-none');
                 })
+
+                // Jika tombol delete diklik
+                $(document).on("click", "button.confirm-delete", function () {
+                    var form = $(this).closest("form");
+                    event.preventDefault();
+                    Swal.fire({ // SweetAlert
+                        title: "Apa kamu yakin?",
+                        text: "Data akan terhapus!",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yakin",
+                        cancelButtonText: "Batal",
+                    }).then((result) => {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                            form.submit();
+                        }
+                    });
+                });
+
             });
 
             function setLokasi(){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailTglKerja;
+use App\Models\JenisKerusakan;
 use App\Models\TglKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -48,6 +49,7 @@ class DetailTglKerjaController extends Controller
     public function delete(Request $request,$id){
         $detail = DetailTglKerja::find($id);
         $detail->delete();
+
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('detail-data-proyek.index', $request->tgl_kerja_id);
     }

@@ -61,6 +61,10 @@ use App\Http\Controllers\TglKerjaController;
 
 // Route::get('/guzzle', [GuzzleController::class, 'index']);
 
+Route::get('/mail', function(){
+    return view('vendor.mail.html.layout');
+});
+
 // Login
 Route::get('/', function(){Fortify::loginView(function () {return view('auth.login');});});
 Fortify::loginView(function () {return view('auth.login');});
@@ -461,10 +465,11 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(JenisKerusakanController::class)->group(function(){
         Route::get('/proyek/data-proyek/{id}/jenis-kerusakan', 'index')->name('jenis-kerusakan.index')->middleware('permission:jenis kerusakan_read');
+        Route::get('/proyek/data-proyek/jenis-kerusakan/{id}/detail', 'detail')->name('jenis-kerusakan.detail')->middleware('permission:jenis kerusakan_read');
         Route::get('/proyek/data-proyek/jenis-kerusakan/{id}/create', 'create')->name('jenis-kerusakan.create')->middleware('permission:jenis kerusakan_create');
         Route::post('/proyek/data-proyek/jenis-kerusakan/store', 'store')->name('jenis-kerusakan.store')->middleware('permission:jenis kerusakan_create');
-        // Route::put('/proyek/data-proyek/detail/{id}/update', 'update')->name('detail-data-proyek.update')->middleware('permission:jenis kerusakan_update');
-        // Route::delete('/proyek/data-proyek/detail/{id}/delete', 'delete')->name('detail-data-proyek.delete')->middleware('permission:jenis kerusakan_delete');
+        Route::put('/proyek/data-proyek/jenis-kerusakan/{id}/update', 'update')->name('jenis-kerusakan.update')->middleware('permission:jenis kerusakan_update');
+        Route::delete('/proyek/data-proyek/jenis-kerusakan/{id}/delete', 'delete')->name('jenis-kerusakan.delete')->middleware('permission:jenis kerusakan_delete');
     });
 
     /*
@@ -473,6 +478,9 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(AjaxJenisKerusakanController::class)->group(function(){
         Route::get('/ajax/getListHtml','getListHtml')->name('ajax.getListHtml')->middleware('permission:jenis kerusakan_read');
+        Route::post('/ajax/uploadFotoJenisKerusakan','uploadFotoJenisKerusakan')->name('ajax.uploadFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
+        Route::post('/ajax/getFotoJenisKerusakan','getFotoJenisKerusakan')->name('ajax.getFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
+        Route::post('/ajax/deleteFotoJenisKerusakan','deleteFotoJenisKerusakan')->name('ajax.deleteFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
         // Route::get('/ajax/getLokasiKerusakan','getLokasiKerusakan')->name('ajax.getLokasiKerusakan')->middleware('permission:stok material retur_read');
         // Route::post('/ajax/getDenahLokasi','getDenahLokasi')->name('ajax.getDenahLokasi')->middleware('permission:stok material retur_read');
     });
