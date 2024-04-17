@@ -16,13 +16,13 @@
                     <p class="mb-4 d-flex justify-content-center">Silahkan masukkan akun anda.</p>
 
                     {{-- Form --}}
-                    <form class="mb-3" action="{{ route('login') }}" method="POST">
+                    <form class="mb-3" action="{{ route('login') }}" method="POST" id="formSubmit">
                         @csrf
 
                         {{-- Input Email --}}
                         <div class="mb-3">
                             <x-partials.label title="Email" />
-                            <x-partials.input-text name="email" placeholder="Masukkan email" />
+                            <x-partials.input-text name="email" placeholder="Masukkan email" autofocus/>
                             <x-partials.error-message name="email" />
                         </div>
 
@@ -42,7 +42,7 @@
 
                         {{-- Submit Button --}}
                         <div class="mb-3">
-                            <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                            <button class="btn btn-primary d-grid w-100" type="submit" onclick="btnSubmit(this)">Masuk</button>
                         </div>
                     </form>
 
@@ -50,5 +50,25 @@
             </div>
         </div>
     </div>
+
+    <x-slot name="script">
+
+        @if (session('status'))
+            <script>
+                Swal.fire({
+                    title: "Informasi",
+                    text: "{{ session('status') }}",
+                    icon: "info"
+                });
+            </script>
+        @endif
+
+        <script>
+            function btnSubmit(e){
+                $(e).prop('disabled', true);
+                $('#formSubmit').submit();
+            }
+        </script>
+    </x-slot>
 
 </x-layouts.auth.app>

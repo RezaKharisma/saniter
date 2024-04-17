@@ -39,7 +39,7 @@ class LokasiController extends Controller
     // Fungsi dibawah digunakan untuk menampilkan halaman form EDIT lokasi
     public function edit($id)
     {
-        $lokasi = Lokasi::select('*','lokasi.longitude as lokasi_longitude','lokasi.latitude as lokasi_latitude','regional.id as regioanl_id')
+        $lokasi = Lokasi::select('*','lokasi.id as lokasi_id','lokasi.longitude as lokasi_longitude','lokasi.latitude as lokasi_latitude','regional.id as regioanl_id')
             ->leftjoin('regional', 'regional.id', '=', 'lokasi.regional_id')->find($id);
 
         // Ambil data regional

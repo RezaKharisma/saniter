@@ -11,13 +11,14 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / Shift /</span> Tambah Shift</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Tambah Shift</h4>
+
+    <a href="{{ route('shift.index') }}" class="btn btn-secondary mb-3"><i class="bx bx-arrow-back me-1"></i> Kembali</a>
 
 <!-- Striped Rows -->
 <div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">Form Tambah Shift</h5>
-    </div>
+    <h5 class="card-header">Form Tambah Shift</h5>
+
     <form method="post" action="{{ route('shift.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
@@ -59,7 +60,6 @@
 
                 </div>
             </div>
-
 
         </div>
         <div class="card-footer">

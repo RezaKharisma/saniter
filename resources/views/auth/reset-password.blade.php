@@ -21,7 +21,7 @@
 
                         <input type="hidden" name="token" value="{{ request()->route('token') }}">
 
-                        <x-input-text title="Email" name="email" placeholder="Masukkan email" margin="mb-3" />
+                        <x-input-text title="Email" name="email" placeholder="Masukkan email" margin="mb-3" value="{{ request()->input('email') }}" readonly/>
 
                         <x-input-password title="Password Baru" name="password" placeholder="Masukkan password baru" margin="mb-3" />
 

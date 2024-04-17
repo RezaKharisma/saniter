@@ -6,42 +6,46 @@
 
     <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu untuk melihat data!</div>
 
-    <ul class="nav nav-pills flex-md-row mb-3">
-        @foreach ($regional as $item)
-            <li class="nav-item">
-                <a class="nav-link btn-regional" href="#" data-id="{{ $item->id }}" onclick="getIzin(this)"><i class="bx bx-plus-circle me-1"></i> Regional {{ $item->nama }}</a>
-            </li>
-        @endforeach
-    </ul>
+        <ul class="nav nav-pills flex-md-row mb-3">
+            @foreach ($regional as $item)
+                <li class="nav-item">
+                    <a class="nav-link btn-regional" href="#" data-id="{{ $item->id }}" onclick="getIzin(this)"><i class="bx bx-plus-circle me-1"></i> Regional {{ $item->nama }}</a>
+                </li>
+            @endforeach
+        </ul>
+
+        <a href="{{ route('pengaturan.izin.create') }}" class="btn btn-primary mb-3">
+            <i class="bx bx-plus"></i> Tambah Jumlah Izin
+        </a>
+
         <div class="card mb-4">
             <h5 class="card-header">
                 Jumlah Izin
             </h5>
 
-            <div class="card-body">
-            <a href="{{ route('pengaturan.izin.create') }}" class="mb-4 btn btn-primary">
-                <i class="bx bx-plus"></i> Tambah Jumlah Izin
-            </a>
-                <table class="table table-hover" id="izin-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Jumlah Izin</th>
-                            <th>aksi</th>
-                        </tr>
-                    </thead>
+            <div style="position: relative">
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-hover" id="izin-table" width="100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Jumlah Izin</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
 
-                    <tfoot>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Jumlah Izin</th>
-                            <th>aksi</th>
-                        </tr>
-                    </tfoot>
+                        <tfoot>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Jumlah Izin</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </tfoot>
 
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -108,6 +112,9 @@
                 },
                 dataType: "json",
                 success: function (response) { // Jika ajax sukses dan memberikan respon
+
+                    console.log(response);
+
                     // Reload table
                     if (tableIzin != undefined) {
                         tableIzin.clear().destroy();
@@ -115,7 +122,6 @@
 
                     // Datatables
                     tableIzin = $('#izin-table').DataTable({
-                        responsive: true,
                         data: response.data,
                         columns: [
                             {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },

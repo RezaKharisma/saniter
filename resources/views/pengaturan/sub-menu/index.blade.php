@@ -14,52 +14,45 @@
         <div class="col-md-12">
 
             {{-- Menu --}}
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                    <a class="nav-link active" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                </li>
-            </ul>
+            <div class="mb-3">
+                <a class="btn btn-secondary" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+                <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalSubMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
+            </div>
 
             <div class="card mb-4">
 
-                <h5 class="card-header">Manajemen Sub Menu</h5>
+                <h5 class="card-header mb-3">Manajemen Sub Menu</h5>
 
-                <div class="card-body">
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="sub-menu-table" class="table table-hover table-sm" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Menu</th>
+                                    <th>Judul</th>
+                                    <th>Order</th>
+                                    <th>Url</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2">
-                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalSubMenu" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Sub Menu</button>
-                        </div>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Menu</th>
+                                    <th>Judul</th>
+                                    <th>Order</th>
+                                    <th>Url</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+
                     </div>
-
-                    <table id="sub-menu-table" class="table table-hover table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Menu</th>
-                                <th>Judul</th>
-                                <th>Order</th>
-                                <th>Url</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Menu</th>
-                                <th>Judul</th>
-                                <th>Order</th>
-                                <th>Url</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
 
             </div>
@@ -83,10 +76,10 @@
                         <x-input-text title="Judul" name="judul" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'url')" value="{{ old('judul') }}"/>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Menu --}}
-                                <div class="mb-3">
+                                <div class="">
                                     <x-partials.label title="Menu"/>
                                     <select id="id_menu" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror" onchange="setRouteNameVal(this)">
                                         <option value="" selected disabled>Pilih Menu...</option>
@@ -98,7 +91,7 @@
                                 </div>
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input URL --}}
                                 <x-input-text title="Url" name="url" id="url" placeholder="Masukkan url menu" :value="old('url')" value="{{ old('url') }}" onkeyup="setRouteNameVal2(this)"/>
@@ -108,7 +101,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
                                 {{-- Input Order --}}
                                 <x-input-number title="Urutan Order" name="order" placeholder="Masukkan order" :value="old('order')" />
                             </div>
@@ -144,10 +137,10 @@
                         <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Kategori --}}
-                                <div class="mb-3">
+                                <div class="">
                                     <x-partials.label title="Menu"/>
                                     <select id="id_menuEdit" name="id_menu" class="form-select @error('id_menu')is-invalid @enderror">
                                         <option value="" selected disabled>Pilih Menu...</option>
@@ -159,7 +152,7 @@
                                 </div>
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input URL --}}
                                 <x-input-text title="Url" name="url" id="urlEdit" placeholder="Masukkan url menu" :value="old('url')"/>
@@ -168,7 +161,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
                                 {{-- Input Order --}}
                                 <x-input-number title="Urutan Order" name="order" id="orderEdit" placeholder="Masukkan order" :value="old('order')" />
                             </div>
@@ -193,7 +186,6 @@
                     ajax: "{{ route('ajax.getSubMenu') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         { data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul_menu', name: 'judul_menu'},

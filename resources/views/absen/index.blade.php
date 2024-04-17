@@ -75,24 +75,31 @@
             <div class="card">
                 <h5 class="card-header d-flex justify-content-between align-items-center">
                     Log Absen
-                    <a class="btn btn-info btn-sm" href="{{ route('absen.detail') }}">Detail</a>
+                    <div>
+                        <a class="btn btn-info btn-sm" href="{{ route('absen.detail') }}">Detail</a>
+                        @can('absen_detail_all')
+                            <a class="btn btn-secondary btn-sm" href="{{ route('absen.all.index') }}">All Detail</a>
+                        @endcan
+                    </div>
                 </h5>
-                <div class="card-body">
-                    <table class="table table-hover table-responsive" id="tabel-log-absen">
-                        <thead>
-                            <th>Tanggal</th>
-                            <th>Shift</th>
-                            <th>Jam Masuk</th>
-                            <th>Jam Pulang</th>
-                        </thead>
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover" id="tabel-log-absen" width="100%" style="margin-top: -40px !important;margin-bottom: -20px !important">
+                            <thead>
+                                <th>Tanggal</th>
+                                <th>Shift</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Pulang</th>
+                            </thead>
 
-                        <tfoot>
-                            <th>Tanggal</th>
-                            <th>Shift</th>
-                            <th>Jam Masuk</th>
-                            <th>Jam Pulang</th>
-                        </tfoot>
-                    </table>
+                            <tfoot>
+                                <th>Tanggal</th>
+                                <th>Shift</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Pulang</th>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,7 +115,6 @@
                     ajax: "{{ route('ajax.getAbsenLog') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     searching: false,
                     lengthChange: false,
                     paging: false,

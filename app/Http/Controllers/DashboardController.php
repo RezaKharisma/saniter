@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Api\KaryawanTetap;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 

@@ -102,8 +102,10 @@ class MenuController extends Controller
         $roles = Role::all();
         $permissions = Permission::where('id_menu', $id)->get();
 
-        $roles->revokePermissionTo($permissions);
-        $permissions->delete();
+        if (count($permissions) > 0) {
+            $roles->revokePermissionTo($permissions);
+            $permissions->delete();
+        }
 
         // Delete menu tersebut dan sub menu
         $menu->delete();

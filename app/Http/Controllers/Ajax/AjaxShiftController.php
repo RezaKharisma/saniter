@@ -22,10 +22,10 @@ class AjaxShiftController extends Controller
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('shift_update')) {
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditShift' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'>Ubah</button>";
+                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditShift' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'><i class='bx bx-edit'></i></button>";
                     }
                     if (auth()->user()->can('shift_delete')) {
-                        $btn = $btn."<form action=".route('shift.destroy', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn."<form action=".route('shift.destroy', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })

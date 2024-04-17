@@ -5,6 +5,12 @@
             .table th {
                 text-align: left !important;
             }
+
+            .btnBackTransparent{
+                color: #ebeef0;
+                border-color: rgba(0, 0, 0, 0);
+                background: #03c3ec;
+            }
         </style>
     </x-slot>
 
@@ -13,61 +19,66 @@
     <div class="row">
         <div class="col-md-12">
 
-            <div class="card mb-4">
+            <div class="card">
 
-                <h5 class="card-header mb-3">Data Nama Material</h5>
+                <h5 class="card-header mb-2">Data Nama Material</h5>
 
-                <div class="card-body">
-
-                    <div class="alert alert-info alert-dismissible" role="alert">
-                        Data nama material sinkron dengan Q-tech.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="card-body mb-0">
+                    <div class="alert alert-info d-flex" role="alert">
+                        <span class="badge badge-center rounded-pill bg-info border-label-info p-3 me-2"><i class="bx bx-info-circle fs-6"></i></span>
+                        <div class="d-flex flex-column ps-1">
+                            <h6 class="alert-heading d-flex align-items-center mb-1">Info!</h6>
+                            <span>Data nama material sinkron dengan Q-tech.</span>
+                        </div>
                     </div>
-
-                    <table id="nama-material-table" class="table table-hover table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Kode Material</th>
-                                <th>Jenis Pekerjaan</th>
-                                <th>Nama Material</th>
-                                <th>Jenis Material</th>
-                                <th>Stok</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @php
-                                $no=1;
-                            @endphp
-                            @foreach ($namaMaterial as $item)
-                            <tr>
-                                <td>{{ $no; }}</td>
-                                <td>{{ $item['kode_material'] }}</td>
-                                <td>{{ $item['jenis_pekerjaan'] }}</td>
-                                <td>{{ $item['nama_material'] }}</td>
-                                <td>{{ $item['jenis_material'] }}</td>
-                                <td class="text-center">{{ $item['qty'] }}</td>
-                            </tr>
-                            @php
-                                $no++;
-                            @endphp
-                            @endforeach
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Kode Material</th>
-                                <th>Nama Material</th>
-                                <th>Jenis Material</th>
-                                <th>Stok</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
 
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="nama-material-table" class="table table-hover table-sm" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kode Material</th>
+                                    <th>Jenis Pekerjaan</th>
+                                    <th>Nama Material</th>
+                                    <th>Jenis Material</th>
+                                    <th>Stok</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @php
+                                    $no=1;
+                                @endphp
+                                @foreach ($namaMaterial as $item)
+                                <tr>
+                                    <td>{{ $no; }}</td>
+                                    <td>{{ $item['kode_material'] }}</td>
+                                    <td>{{ $item['jenis_pekerjaan'] }}</td>
+                                    <td>{{ $item['nama_material'] }}</td>
+                                    <td>{{ $item['jenis_material'] }}</td>
+                                    <td class="text-center">{{ $item['qty'] }}</td>
+                                </tr>
+                                @php
+                                    $no++;
+                                @endphp
+                                @endforeach
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kode Material</th>
+                                    <th>Jenis Pekerjaan</th>
+                                    <th>Nama Material</th>
+                                    <th>Jenis Material</th>
+                                    <th>Stok</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,17 +88,7 @@
             $(document).ready(function () {
                 // Datatables
                 $('#nama-material-table').DataTable({
-                    // ajax: "{{ route('material.getNamaMaterial') }}",
-                    // processing: true,
-                    // serverSide: true,
-                    // responsive: true,
-                    // columns: [
-                    //     {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
-                    //     {data: 'kode_material', name: 'kode_material'},
-                    //     {data: 'nama_material', name: 'nama_material'},
-                    //     {data: 'jenis_material', name: 'jenis_material'},
-                    //     {data: 'qty', name: 'qty'},
-                    // ],
+                    pagingType: 'first_last_numbers'
                 })
             })
         </script>

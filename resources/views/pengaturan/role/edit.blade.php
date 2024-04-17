@@ -10,6 +10,8 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan /</span> Ubah Role</h4>
 
+    <a class="btn btn-secondary mb-3" href="{{ route('pengaturan.role.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+
     <div class="row">
         <div class="col-md-12">
 
@@ -28,14 +30,14 @@
                     <div class="card-body">
 
                         {{-- Input Judul --}}
-                        @if($role->name == 'Admin')
+                        @if($role->name == 'Administrator')
                             <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3" value="{{ $role->name ?? old('name') }}" readonly/>
                         @else
                             <x-input-text title="Role" name="name" placeholder="Masukkan role" margin="mb-3" value="{{ $role->name ?? old('name') }}" />
                         @endif
 
                         <div class="table-responsive">
-                        <table class="table table-bordered mt-4">
+                        <table class="table table-bordered table-striped mt-4">
                             <thead>
                                 <th>Menu</th>
                                 <th>Permissions</th>
@@ -46,7 +48,7 @@
                                 <tr>
                                     <td>
                                         <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input {{ $key }}-All" type="checkbox" id="checkBox{{ $key }}" data-judul="{{ $key }}" onchange="checkAll(this)" @if(getCheckedMenu($role->permissions, $key) > 0) checked @endif>
+                                            <input class="form-check-input {{ str_replace(' ', '', $key) }}-All" type="checkbox" id="checkBox{{ str_replace(' ', '', $key) }}" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkAll(this)" @if(getCheckedMenu($role->permissions, $key) > 0) checked @endif>
                                             <label class="form-check-label" for="inlineCheckbox1">{{ $key }}</label>
                                         </div>
                                     </td>
@@ -59,7 +61,7 @@
 
                                                     @if ($role->permissions[$i]->name === $item->name)
                                                         <div class="form-check form-check-inline mt-3">
-                                                            <input class="form-check-input {{ $key }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ $key }}" onchange="checkJudul(this)" checked>
+                                                            <input class="form-check-input {{ str_replace(' ', '', $key) }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkJudul(this)" checked>
                                                             <label class="form-check-label" for="inlineCheckbox1">{{ $item->name }}</label>
                                                         </div>
                                                         @php $print = false; @endphp
@@ -69,7 +71,7 @@
 
                                         @if ($print == true)
                                             <div class="form-check form-check-inline mt-3">
-                                                <input class="form-check-input {{ $key }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ $key }}" onchange="checkJudul(this)" >
+                                                <input class="form-check-input {{ str_replace(' ', '', $key) }}" type="checkbox" value="{{ $item->name }}" name="checkBox[]" data-judul="{{ str_replace(' ', '', $key) }}" onchange="checkJudul(this)" >
                                                 <label class="form-check-label" for="inlineCheckbox1">{{ $item->name }}</label>
                                             </div>
                                         @endif

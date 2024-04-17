@@ -1,0 +1,259 @@
+/*
+| Custom Datatables Style
+*/
+
+.table th {
+    text-align: left !important;
+}
+
+.dt-container {
+    margin-top: 80px;
+    margin-bottom: 100px;
+}
+
+.dt-length {
+    top: 0px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+}
+
+.dt-search {
+    top: 45px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+}
+
+.dt-info {
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+}
+
+.dt-paging {
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+}
+
+.dt-paging {
+    margin-top: 0px !important;
+    padding-right: 25px !important;
+    margin-bottom: 25px !important;
+}
+
+table.dataTable thead > th {
+    text-align: left;
+}
+
+table.dataTable tfoot {
+    text-align: left;
+}
+
+table.dataTable thead > tr > th {
+    padding-left: 30px !important;
+}
+
+table.dataTable tbody > tr > td {
+    text-align: left;
+    padding-left: 30px !important;
+}
+
+table.dataTable tbody > .dtrg-group > th {
+    padding-left: 30px !important;
+}
+
+table.dataTable tfoot > tr > th {
+    padding-left: 30px !important;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media only screen and (min-width: 576px) {
+    .dt-container {
+        margin-top: 80px;
+        margin-bottom: 100px;
+    }
+
+    .dt-length {
+        top: 0px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        position: absolute;
+    }
+
+    .dt-search {
+        top: 45px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        position: absolute;
+    }
+
+    .dt-info {
+        bottom: 80px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        position: absolute;
+    }
+
+    .dt-paging {
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        position: absolute;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media only screen and (min-width: 767px) {
+    .dt-container {
+        margin-top: 40px;
+        margin-bottom: 75px;
+    }
+
+    .dt-length {
+        top: 0px;
+        left: 25px;
+        position: absolute;
+    }
+
+    .dt-search {
+        top: 0px;
+        right: 25px;
+        text-align: right;
+        position: absolute;
+    }
+
+    .dt-info {
+        left: 20px;
+        bottom: 25px;
+        position: absolute;
+    }
+
+    .dt-paging {
+        bottom: -5px;
+        display: flex;
+        justify-content: end;
+        position: absolute;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .dt-container {
+        margin-top: 40px;
+        margin-bottom: 75px;
+    }
+
+    .dt-length {
+        top: 0px;
+        left: 25px;
+        position: absolute;
+    }
+
+    .dt-search {
+        top: 0px;
+        right: 25px;
+        text-align: right;
+        position: absolute;
+    }
+
+    .dt-info {
+        left: 20px;
+        bottom: 25px;
+        position: absolute;
+    }
+
+    .dt-paging {
+        bottom: -5px;
+        display: flex;
+        justify-content: end;
+        position: absolute;
+    }
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    .dt-container {
+        margin-top: 40px;
+        margin-bottom: 75px;
+    }
+
+    .dt-length {
+        top: 0px;
+        left: 25px;
+        position: absolute;
+    }
+
+    .dt-search {
+        top: 0px;
+        right: 25px;
+        text-align: right;
+        position: absolute;
+    }
+
+    .dt-info {
+        left: 25px;
+        bottom: 25px;
+        position: absolute;
+    }
+
+    .dt-paging {
+        bottom: -5px;
+        display: flex;
+        justify-content: end;
+        position: absolute;
+    }
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media only screen and (min-width: 1400px) {
+    .dt-container {
+        margin-top: 40px;
+        margin-bottom: 75px;
+    }
+
+    .dt-length {
+        top: 0px;
+        left: 25px;
+        position: absolute;
+    }
+
+    .dt-search {
+        top: 0px;
+        right: 25px;
+        text-align: right;
+        position: absolute;
+    }
+
+    .dt-info {
+        left: 25px;
+        bottom: 25px;
+        position: absolute;
+    }
+
+    .dt-paging {
+        bottom: -5px;
+        display: flex;
+        justify-content: end;
+        position: absolute;
+    }
+}

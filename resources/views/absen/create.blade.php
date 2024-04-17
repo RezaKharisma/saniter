@@ -84,7 +84,8 @@
         <script src="{{ asset('assets/js/webcam.js') }}"></script>
 
         <script>
-            $(document).ready(function(){
+                $(document).ready(function(){
+
                 // Disable button pada awal load
                 $('input[name=shiftChecked]').prop('disabled', true);
                 $('#btnAbsenMasuk').prop('disabled', true);
@@ -118,15 +119,27 @@
                 $('#latitudeUser').val(lat);
                 $('#longitudeUser').val(long);
 
-                // Pemanggilan fungsi distance untuk menghitung radius dari longitude latitude
-                // Kemudian dikondisikan sesuai radius yang ditentukan
-                if (distance() <= $('#radius').val()){
-                    alertAbsen();
-                    propDisabled();
-                } else {
-                    // Jika diluar radius
-                    sweetAlertMessage('Anda diluar radius!', 'Pastikan absen pada lokasi yang ditentukan.', 'warning');
-                }
+                // fetch('http://www.geoplugin.net/json.gp')
+                //     .then((resp) => {
+                //     if(!resp.ok) {
+                //         sweetAlertMessage('Terjadi Kesalahan!', 'Pastikan absen pada lokasi yang ditentukan dan aktifkan akses lokasi.', 'warning');
+                //         return
+                //     }
+                //     return resp.json()
+                // }).then((data) => {
+                //     console.log(position);
+                //     if(Math.abs(lat - data.geoplugin_latitude) < 1 && Math.abs(long - data.geoplugin_longitude) < 1) {
+                        if (distance() <= $('#radius').val()){
+                            alertAbsen();
+                            propDisabled();
+                        } else {
+                            // Jika diluar radius
+                            sweetAlertMessage('Anda diluar radius!', 'Pastikan absen pada lokasi yang ditentukan.', 'warning');
+                        }
+                //     } else {
+                //         sweetAlertMessage('Peringatan!', 'Sistem mendeteksi adanya anomali.', 'warning');
+                //     }
+                // })
             }
 
             // Fungsi pemberian lokasi pada input hidden

@@ -13,50 +13,41 @@
     <div class="row">
         <div class="col-md-12">
 
-            {{-- Menu --}}
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                    <a class="nav-link active" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                </li>
-            </ul>
+            <div class="mb-3">
+                <a class="btn btn-secondary" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+                <a href="{{ route('pengaturan.role.create') }}" class="btn btn-primary me-0"><i class="bx bx-plus"></i>Tambah Role</a>
+            </div>
 
             <div class="card mb-4">
 
                 {{-- Update Role --}}
-                <h5 class="card-header">Manajemen Role</h5>
+                <h5 class="card-header mb-3">Manajemen Role</h5>
 
-                <div class="card-body">
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="role-table" class="table table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Permissions</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2">
-                            <a href="{{ route('pengaturan.role.create') }}" class="btn btn-secondary me-0"><i class="bx bx-plus"></i>Tambah Role</a>
-                        </div>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Permissions</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-
-                    <table id="role-table" class="table table-hover" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Permissions</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Permissions</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
 
             </div>
@@ -122,19 +113,15 @@
                     ajax: "{{ route('ajax.getRole') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', searchable: false },
                         {data: 'name'},
-                        {data: 'permissions', render: function (data, type, row) {
-                            var result = '';
-                            for (let index = 0; index < data.length; index++) {
-                                result = result + ' <span class="badge bg-label-dark">'+ data[index].name +'</span>';
-                            }
-                            return result;
-                        }, orderable: false, searchable: false},
+                        {data: 'total_permission'},
                         {data: 'action', orderable: false, searchable: false},
-                    ],columnDefs: [{ width: '70%', targets: 2 }]
+                    ],
+                    columnDefs: [
+                        {targets: [2], className: 'text-center'}
+                    ]
                 })
 
                 // Jika tombol delete diklik

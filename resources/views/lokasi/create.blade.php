@@ -1,4 +1,4 @@
-<x-layouts.app title="Pengaturan">
+<x-layouts.app title="Tambah Lokasi">
 
     <x-slot name="style">
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/leaflet/leaflet.css') }}">
@@ -9,6 +9,10 @@
             }
         </style>
     </x-slot>
+
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / </span>Tambah Lokasi</h4>
+
+    <a class="btn btn-secondary mb-3" href="{{ route('lokasi.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="card mb-12">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -59,30 +63,26 @@
                     </div>
                     <div class="col">
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Latitude --}}
-                                <div class="mb-3">
-                                    <x-partials.label title="Latitude"/>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text" @error('latitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
-                                        <input type="number" name="latitude" id="latitude" class="form-control @error('latitude') is-invalid @enderror" placeholder="-8.6605651" step="any"/>
-                                    </div>
-                                    <x-partials.error-message class="d-block" name="latitude" />
+                                <x-partials.label title="Latitude"/>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text" @error('latitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
+                                    <input type="number" name="latitude" id="latitude" class="form-control @error('latitude') is-invalid @enderror" placeholder="-8.6605651" step="any"/>
                                 </div>
+                                <x-partials.error-message class="d-block" name="latitude" />
 
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Longitude --}}
-                                <div class="mb-3">
-                                    <x-partials.label title="Longitude"/>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text" @error('longitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
-                                        <input type="number" name="longitude" id="longitude" class="form-control @error('longitude') is-invalid @enderror" placeholder="115.2154872" step="any"/>
-                                    </div>
-                                    <x-partials.error-message class="d-block" name="longitude" />
+                                <x-partials.label title="Longitude"/>
+                                <div class="input-group input-group-merge">
+                                    <span class="input-group-text" @error('longitude') style="border: solid red 1px;" @enderror><i class="bx bx-area"></i></span>
+                                    <input type="number" name="longitude" id="longitude" class="form-control @error('longitude') is-invalid @enderror" placeholder="115.2154872" step="any"/>
                                 </div>
+                                <x-partials.error-message class="d-block" name="longitude" />
 
                             </div>
                         </div>
@@ -114,6 +114,11 @@
         <script src="{{ asset('assets/vendor/libs/leaflet/leaflet.js') }}"></script>
         <script>
             $(document).ready(function () {
+
+                $('#regional_id').select2({
+                    theme: 'bootstrap-5'
+                });
+
                 getGeo();
             });
 
@@ -248,8 +253,8 @@
                     success: function (response) { // Jika ajax sukses dan memberikan respon
                         console.log(response);
                         var regional = response.data;
-                        $('#latitude').val(regional.latitude);
-                        $('#longitude').val(regional.longitude);
+                        // $('#latitude').val(regional.latitude);
+                        // $('#longitude').val(regional.longitude);
 
                         // Render map
                         getMapView(regional.latitude,regional.longitude,11);

@@ -22,10 +22,10 @@ class AjaxRegionalController extends Controller
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('regional_update')) {
-                        $btn = "<a class='btn btn-warning btn-sm d-inline me-1' href='".route('regional.edit', $row->id)."' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                        $btn = "<a class='btn btn-warning btn-sm d-inline me-1' href='".route('regional.edit', $row->id)."' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' ><i class='bx bx-detail'></i></a>";
                     }
                     if (auth()->user()->can('regional_delete')) {
-                        $btn = $btn."<form action=".route('regional.delete', $row->id)." method='POST' class='d-inline' style='margin-top: -12px !important'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn."<form action=".route('regional.delete', $row->id)." method='POST' class='d-inline' style='margin-top: -12px !important'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })

@@ -9,7 +9,9 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / Stok Material / </span>Tambah Stok Material</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Tambah Stok Material</h4>
+
+    <a class="btn btn-secondary" href="{{ route('stok-material.pengajuan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="row">
         <div class="col-md-12">
@@ -17,9 +19,10 @@
                 <h5 class="card-header">
                     Form Stok Material
                 </h5>
-                <form method="post" action="{{ route('stok-material.store') }}" enctype="multipart/form-data" id="formSubmit">
+                <form method="post" action="{{ route('stok-material.pengajuan.store') }}" enctype="multipart/form-data" id="formSubmit">
                     @csrf
                     <input type="hidden" name="kode_material" id="kode_material">
+                    <input type="hidden" name="nama_material" id="nama_material">
 
                     <div class="card-body">
 
@@ -29,7 +32,7 @@
                             <select name="material_id" class="form-control @error('material_id')is-invalid @enderror" id="select-field" required data-placeholder="Pilih nama..." onchange="getNamaMaterial(this)">
                                 <option></option>
                                 @foreach ($namaMaterial as $item)
-                                    <option @if(old('material_id') == $item['id']) selected  @endif  value="{{ $item['id'] }}">{{ $item['kode_material'] }} | {{ $item['nama_material'] }}</option>
+                                    <option value="{{ $item['id'] }}">{{ $item['kode_material'] }} | {{ $item['nama_material'] }}</option>
                                 @endforeach
                             </select>
                             <x-partials.error-message name="material_id" class="d-block" />
@@ -56,19 +59,20 @@
                                 {{-- Harga --}}
                                 <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
                                     <input type="hidden" name="harga" id="hargaSubmit">
-                                    <x-input-text title="Harga" name="display" id="harga" readonly />
+                                    <x-input-text title="Harga" name="display" id="harga" readonly/>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Stok Input --}}
                         <div class="">
-                            <x-input-text title="Jumlah Stok Masuk" name="masuk" id="stokMasuk"/>
+                            <x-partials.label title="Jumlah Stok Masuk" required />
+                            <x-partials.input-text name="masuk" id="stokMasuk" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57"/>
                         </div>
 
                     </div>
                     <div class="card-footer">
-                        <a href="{{ route('izin.index') }}" class="btn btn-secondary">Kembali</a>
+                        <a href="{{ route('stok-material.pengajuan.index') }}" class="btn btn-secondary">Kembali</a>
                         <button type="button" class="btn btn-primary" id="submitForm">Submit</button>
                     </div>
                 </form>
@@ -114,21 +118,39 @@
                                 popup: 'colored-toast',
                             },
                             showConfirmButton: false,
-                            timer: 1000,
                         })
 
                         ;(async () => {
                         await Toast.fire({
                             icon: 'info',
-                            title: 'Proses!',
+                            title: 'Memuat...',
                         })})()
                     },
                     complete: function(){
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'center',
+                            icon: 'info',
+                            customClass: {
+                                popup: 'colored-toast',
+                            },
+                            showConfirmButton: false,
+                            timer: 900
+                        })
+
+                        ;(async () => {
+                        await Toast.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                        })})()
+
                         $("#stokMasuk").prop('disabled', false);
                     },
                     success: function (response) {
+                        console.log(response);
                         var data = response.data;
                         $('#kode_material').val(data.kode_material);
+                        $('#nama_material').val(data.nama_material);
                         $('#jenis_pekerjaan').val(data.jenis_pekerjaan);
                         $('#jenis_material').val(data.jenis_material);
                         $('#qty').val(data.qty);
@@ -167,14 +189,13 @@
                             popup: 'colored-toast',
                         },
                         showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true,
+                        timer: 1000,
                     })
 
                     ;(async () => {
                     await Toast.fire({
                         icon: 'error',
-                        title: 'Stok Masuk Tidak Mencukupi!',
+                        title: 'Stok Gudang Logistik Tidak Mencukupi!',
                     })})()
                 }else{
                     $('#formSubmit').submit();

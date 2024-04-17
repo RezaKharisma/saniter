@@ -28,6 +28,11 @@ class IzinController extends Controller
         return view('izin.index');
     }
 
+    public function indexAll()
+    {
+        return view('izin.all-index');
+    }
+
     public function create()
     {
         $user = User::whereNot('role_id',1)->get();
@@ -54,7 +59,7 @@ class IzinController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
-        $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
+        $total_izin = count(CarbonPeriod::create(Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
@@ -63,8 +68,8 @@ class IzinController extends Controller
             $data = [
                 'user_id' => $request->name,
                 'jenis_izin' => $request->jenis_izin,
-                'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
-                'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
+                'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
+                'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
                 'foto' => $this->fileStore($request->file('foto'))
             ];
@@ -102,7 +107,7 @@ class IzinController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
-        $total_izin = count(CarbonPeriod::create(Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'), Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m')));
+        $total_izin = count(CarbonPeriod::create(Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
@@ -112,8 +117,8 @@ class IzinController extends Controller
             $data = [
                 'user_id' => $request->name,
                 'jenis_izin' => $request->jenis_izin,
-                'tgl_mulai_izin' => Carbon::parse($request->tgl_mulai_izin)->format('Y-d-m'),
-                'tgl_akhir_izin' => Carbon::parse($request->tgl_akhir_izin)->format('Y-d-m'),
+                'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
+                'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
                 'foto' => $this->fileStore($request->file('foto'), $izin) ?? $request->oldFoto
             ];
@@ -259,8 +264,8 @@ class IzinController extends Controller
     public function createPengaturan()
     {
         $user = User::select('*','users.name as user_name', 'roles.name as role_name','users.id as user_id')
-            ->from('users')->where('users.role_id', '=', '2')
             ->leftjoin('roles', 'roles.id', '=', 'users.role_id')
+            ->where('roles.name', '=', 'Teknisi')
             ->get();
         return view('pengaturan.izin.create', compact('user'));
     }

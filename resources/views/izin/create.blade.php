@@ -9,7 +9,14 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / Izin / </span>Tambah Izin</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / </span>Tambah Izin</h4>
+
+    {{-- Menu --}}
+    <ul class="nav nav-pills flex-column flex-md-row mb-3">
+        <li class="nav-item">
+            <a class="btn btn-secondary d-block" href="{{ route('izin.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+        </li>
+    </ul>
 
     <div class="row">
         <div class="col-md-12">
@@ -194,7 +201,7 @@
                         if (data.jumlah_izin != undefined ) {
                             $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Sisa Jumlah Izin : <span id="jumlah">'+data.jumlah_izin+'</span></div>')
                         }else{
-                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Belum memiliki hak cuti / belum ditambahkan</div>')
+                            $('#alertSisaJumlahIzin').html('<div class="alert alert-warning" role="alert">Belum memiliki hak cuti / belum ditambahkan. Tambahkan <a href="{{ route('pengaturan.izin.create') }}">Disini.</a></div>')
                         }
                     }
                 });

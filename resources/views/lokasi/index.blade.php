@@ -1,32 +1,35 @@
 <x-layouts.app title="Lokasi">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / </span>Lokasi</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Pengaturan / </span>Lokasi</h4>
+
+    <a href="{{ route('lokasi.create') }}" class="mb-3 btn btn-primary"><i class="bx bx-plus"></i> Tambah Lokasi</a>
 
     <!-- Striped Rows -->
     <div class="card">
         <h5 class="card-header">Data Lokasi</h5>
-        <div class="card-body">
-            <a href="{{ route('lokasi.create') }}" class="mb-4 btn btn-primary"><i class="bx bx-plus"></i> Tambah Lokasi</a>
-            <table class=" table-responsive table table-hover" id="lokasi-table">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Regional</th>
-                        <th>Nama Bandara</th>
-                        <th>Lokasi</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+        <div style="position: relative">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover" id="lokasi-table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Regional</th>
+                            <th>Nama Bandara</th>
+                            <th>Lokasi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    <tr>
-                        <th>No</th>
-                        <th>Regional</th>
-                        <th>Nama Bandara</th>
-                        <th>Lokasi</th>
-                        <th>Aksi</th>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody>
+                        <tr>
+                            <th>No</th>
+                            <th>Regional</th>
+                            <th>Nama Bandara</th>
+                            <th>Lokasi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -38,7 +41,6 @@
                     ajax: "{{ route('ajax.getLokasi') }}",
                     processing: true,
                 serverSide: true,
-                responsive: true,
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                     {data: 'regional_name', name: 'regional_name'},

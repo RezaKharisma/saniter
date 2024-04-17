@@ -12,52 +12,38 @@
 
     <div class="row">
         <div class="col-md-12">
-
-            {{-- Menu --}}
-            <ul class="nav nav-pills flex-column flex-md-row mb-3">
-                <li class="nav-item">
-                    {{-- Jika request url adalah url yg di tentukan, set class active --}}
-                    <a class="nav-link active" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
-                </li>
-            </ul>
-
+            <div class="mb-3">
+                <a class="btn btn-secondary me-2" href="{{ route('pengaturan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+                <button type="button" class="btn btn-primary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
+            </div>
             <div class="card mb-4">
+                <h5 class="card-header mb-3">Manajemen Permission</h5>
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table id="role-table" class="table table-hover table-sm" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Menu</th>
+                                    <th>Name</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                <h5 class="card-header">Manajemen Permission</h5>
+                            </tbody>
 
-                <div class="card-body">
-
-                    <div class="mb-4">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2">
-                            <button type="button" class="btn btn-secondary me-0" data-bs-toggle="modal" data-bs-target="#modalPermission" onclick="resetFormValidation()"><i class="bx bx-plus"></i>Tambah Permission</button>
-                        </div>
+                            <tfoot>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Menu</th>
+                                    <th>Name</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-
-                    <table id="role-table" class="table table-hover table-sm" width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Menu</th>
-                                <th>Name</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-
-                        <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>Menu</th>
-                                <th>Name</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -131,12 +117,16 @@
     <x-slot name="script">
         <script>
             $(document).ready(function () {
+                $('#id_menu').select2({
+                    theme: 'bootstrap-5',
+                    dropdownParent: $("#modalPermission")
+                });
+
                 // Datatables
                 $('#role-table').DataTable({
                     ajax: "{{ route('ajax.getPermission') }}",
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul', name: 'judul'},

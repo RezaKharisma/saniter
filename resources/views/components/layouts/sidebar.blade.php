@@ -1,5 +1,5 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo">
+    <div class="app-brand demo mb-3">
         <a href="index.html" class="app-brand-link">
             <span class="app-brand-logo demo">
                <img src="{{ asset('assets/img/logo/logo-qinar.png') }}" alt="Logo Qinar" width="50px">
@@ -16,7 +16,7 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
             <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
@@ -38,8 +38,9 @@
                     @php $first = false; @endphp
                 @endif
 
+
                 <!-- {{ $item->judul }} -->
-                <li class="menu-item">
+                <li class="menu-item {{ request()->is($item->url.'*') ? 'active' : '' }}">
                     <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ url($item->url) }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
                         <i class="menu-icon tf-icons bx bx-{{ $item->icon }}"></i>
                         <div data-i18n="Layouts">{{ $item->judul }}</div>
@@ -50,7 +51,8 @@
                         <ul class="menu-sub">
 
                             @foreach (getSubMenu($item->id) as $sm)
-                            <li class="menu-item">
+
+                            <li class="menu-item {{ request()->is($item->url.'/'.$sm->url.'*') ? 'active' : '' }}">
                                 <a href="{{ url(strval($item->url.'/'.$sm->url)) }}" class="menu-link">
                                     <div data-i18n="Without menu">{{ $sm->judul }}</div>
                                 </a>
