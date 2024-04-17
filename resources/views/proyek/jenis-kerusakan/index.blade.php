@@ -91,16 +91,8 @@
                                             @php
                                                 $startDate = Carbon\Carbon::parse($item->created_at);
                                                 $endDate = Carbon\Carbon::parse($item->tgl_selesai_pekerjaan)
-
-                                                // if ($startDate->diffInDays($endDate) != 0) {
-                                                //     $jangkaWaktu = $startDate->diffInDays($endDate).' Hari';
-                                                // }else if($startDate->diffInHours($endDate) != 0){
-                                                //     $jangkaWaktu = $startDate->diffInHours($endDate).' Jam';
-                                                // }else{
-                                                //     $jangkaWaktu = $startDate->diffInMinutes($endDate).' Menit';
-                                                // }
                                             @endphp
-                                            <h6 class="mb-0">{{ $startDate->diffInDays($endDate) != 0 ? $startDate->diffInDays($endDate).' Hari' : $startDate->diffInHours($endDate).' Jam' }}</h6>
+                                            <h6 class="mb-0">{{ $startDate->diffInDays($endDate) != 0 ? $startDate->diffInDays($endDate).' Hari' : ($startDate->diffInHours($endDate) != 0 ? $startDate->diffInHours($endDate).' Jam' : $startDate->diffInMinutes($endDate).' Menit') }}</h6>
                                         @endif
                                     </div>
                                 </div>

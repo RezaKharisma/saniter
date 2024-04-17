@@ -252,7 +252,7 @@ class JenisKerusakanController extends Controller
 
                     HistoryStokMaterial::create([
                         'stok_material_id' => $item,
-                        'detail_jenis_kerusakan' => $detailKerusakan->id,
+                        'detail_jenis_kerusakan_id' => $detailKerusakan->id,
                         'tanggal' => Carbon::now(),
                         'jumlah' => $request->volume[$key] ?? '0',
                         'satuan' => $request->satuan[$key] ?? '0',
