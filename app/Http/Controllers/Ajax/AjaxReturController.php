@@ -24,12 +24,7 @@ class AjaxReturController extends Controller
             return DataTables::of($retur)
             ->addIndexColumn()
             ->addColumn('kode_material', function($row){
-                foreach ($this->namaMaterial as $item) {
-                    if ($item['id'] == $row->material_id) {
-                        return $item['kode_material'];
-                        break;
-                    }
-                }
+                return $row->kode_material;
             })
             ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                 $btn = '';

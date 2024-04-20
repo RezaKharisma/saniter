@@ -523,19 +523,14 @@
 
             function setMaterialVisible(e){
                 if($(e).val() == "Tanpa Material"){
-                    count = jQuery.grep(count, function (value) {
-                        return value != "#nomor-" + e.dataset.id;
-                    });
-
-                    $("#list-" + e.dataset.id).fadeOut(200, function(){
-                        $(this).remove();
-                    });
-
                     $.each(count, function (index, value) {
-                        $(value).html("Material " + (index + 1));
+                        $("#list-"+value.replace('#nomor-','')).remove();
+                        if (index != 0) {
+                            count = jQuery.grep(count, function (value2) {
+                                return value2 != value;
+                            });
+                        }
                     });
-
-                    console.log(count);
 
                     $.each(count, function (index, value) {
                         $('#btnAddMaterial').attr('disabled', true);
@@ -606,16 +601,21 @@
             }
 
             function deleteList(e) {
-                count = jQuery.grep(count, function (value) {
-                    return value != "#nomor-" + e.dataset.id;
-                });
+                // count = jQuery.grep(count, function (value) {
+                //     if (index != 0) {
+                //         return value != "#nomor-" + e.dataset.id;
+                //     }
+                // });
 
                 $("#list-" + e.dataset.id).fadeOut(200, function(){
                     $(this).remove();
                 });
 
                 $.each(count, function (index, value) {
-                    $(value).html("Material " + (index + 1));
+                    $("#list-"+value.replace('#nomor-','')).remove();
+                    count = jQuery.grep(count, function (value2) {
+                        return value2 != value;
+                    });
                 });
             }
 

@@ -43,12 +43,14 @@ class JenisKerusakanController extends Controller
             ->join('list_area','detail_tgl_kerja.list_area_id','=','list_area.id')
             ->find($id);
 
-        $stokMaterial = StokMaterial::select('id','nama_material')
+        $stokMaterial = StokMaterial::select('id','kode_material','nama_material','harga','stok_update')
             ->where('diterima_pm', 1)
             ->where('diterima_spv', 1)
             ->where('status_validasi_pm', 'ACC')
             ->whereNot('status_validasi_pm', 'Tolak')
+            ->groupBy('kode_material')
             ->get();
+
         return view('proyek.jenis-kerusakan.create', compact('detailKerja','stokMaterial','teknisi'));
     }
 

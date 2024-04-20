@@ -98,9 +98,9 @@
                                 <div class="col-12 col-sm-12 col-md-5 mb-3">
                                     <x-partials.label title="Nama Material" />
                                     <select name="nama_material[]" id="nama_material" class="form-control w-100 @error('nama_material') is-invalid @enderror" required>
-                                        <option value="" selected disabled>Pilih nama material...</option>
+                                        <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
                                         @foreach ($stokMaterial as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_material }}</option>
+                                        <option value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -170,6 +170,16 @@
             $(document).ready(() => {
                 $("#nama_material").select2({
                     theme: "bootstrap-5",
+                    createTag: function (params) {
+                        return {
+                            id: params.term,
+                            text: params.term + $select.data('appendme'),
+                            kode_material: $select.data('kode_material'),
+                            harga: $select.data('harga'),
+                            newOption: true
+                        }
+                    },
+                    templateResult: formatMaterialOptionTemplate,
                 });
 
                 $("#perbaikan").select2({
@@ -196,20 +206,39 @@
                 });
             });
 
+            function formatMaterialOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<h6 class="mb-0"><u>'+originalOption.data('kode_material')+'</u></h6>'+
+                    '<div>'+state.text+'</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+'</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
             function setMaterialVisible(e){
                 if($(e).val() == "Tanpa Material"){
                     $('#btnAddMaterial').attr('disabled', true);
                     $('#btnAddMaterial').removeClass('btn-outline-success');
                     $('#btnAddMaterial').addClass('btn-outline-secondary');
                     $('#nama_material').attr('disabled', true);
+                    $('#nama_material').val('').trigger('change');
                     $('#volume').attr('disabled', true);
+                    $('#volume').val('');
                     $('#satuan').attr('disabled', true);
+                    $('#satuan').val('');
 
                     $.each(count, function (index, value) {
-                        if (index != 0) {
-                            $("#list-"+value.replace('#nomor-','')).remove();
-                            delete count[1];
-                        }
+                        $("#list-"+value.replace('#nomor-','')).remove();
+                        count = jQuery.grep(count, function (value2) {
+                            return value2 != value;
+                        });
                     });
                 }else{
                     $('#btnAddMaterial').attr('disabled', false);
@@ -237,9 +266,26 @@
                             $(response.list).appendTo("#perbaikanList").hide().fadeIn(200);
                             count.push("#nomor-" + response.kode);
                             $.each(count, function (index, value) {
-                                $(value).html("Material " + (index + 2));
+
+                                if (index == 0) {
+                                    plus = 2;
+                                }else{
+                                    plus = 1;
+                                }
+
+                                $(value).html("Material " + (index + plus));
                             });
                             $("#select-field-" + response.kode).select2({
+                                createTag: function (params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term + $select.data('appendme'),
+                                        kode_material: $select.data('kode_material'),
+                                        harga: $select.data('harga'),
+                                        newOption: true
+                                    }
+                                },
+                                templateResult: formatMaterialOptionTemplate,
                                 theme: "bootstrap-5",
                             });
                         } else {
@@ -277,6 +323,21 @@
                 $.each(count, function (index, value) {
                     $(value).html("Material " + (index + 2));
                 });
+            }
+
+            function formatRupiah(angka, prefix = null){
+                var number_string = angka.toString(),
+                split   		= number_string.split(','),
+                sisa     		= split[0].length % 3,
+                rupiah     		= split[0].substr(0, sisa),
+                ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+                if(ribuan){
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                return rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
             }
         </script>
     </x-slot>

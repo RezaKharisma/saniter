@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('retur_to')->nullable();
             $table->string('validasi_to')->nullable()->default(0);
             $table->string('jumlah');
-            $table->enum('hasil_retur',['Diterima','Menunggu Validasi','Pending','Proses'])->nullable()->default('Menunggu Validasi');
+            $table->enum('hasil_retur',['Diterima','Menunggu Validasi','Pending','Proses','Ditolak'])->nullable()->default('Menunggu Validasi');
             $table->string('created_by');
             $table->timestamps();
         });

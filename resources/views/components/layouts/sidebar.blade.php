@@ -43,6 +43,9 @@
                     <a href="@if (count(getSubMenu($item->id)) < 0) 'javascript:void(0);' @else {{ url($item->url) }} @endif" class="menu-link @if (count(getSubMenu($item->id)) > 0) menu-toggle @endif">
                         <i class="menu-icon tf-icons bx bx-{{ $item->icon }}"></i>
                         <div data-i18n="Layouts">{{ $item->judul }}</div>
+                        @if (checkNewMaterial() == true && $item->judul == "Stok Material")
+                            <span class="badge badge-center rounded-pill bg-danger ms-auto" id="stokNotification" style="width: 10px;height: 12px;font-size: 10px"> </span>
+                        @endif
                     </a>
 
                     @if (count(getSubMenu($item->id)) > 0)

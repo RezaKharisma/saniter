@@ -9,9 +9,9 @@
     <div class="col-12 col-sm-12 col-md-5 mb-3">
         <x-partials.label title="Nama Material" />
         <select name="nama_material[]" id="select-field-{{ $kode }}" class="form-control w-100" required>
-            <option value="" selected disabled>Pilih nama material...</option>
+            <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
             @foreach ($stokMaterial as $item)
-                <option value="{{ $item->id }}">{{ $item->nama_material }}</option>
+                <option value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
             @endforeach
         </select>
     </div>

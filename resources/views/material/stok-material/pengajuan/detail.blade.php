@@ -58,6 +58,7 @@
                             </div>
                         </div>
 
+                        {{-- Kode Material --}}
                         <div class="mb-3">
                             <x-input-text title="Kode Material" name='kode_material' value="{{ $stokMaterial['kode_material'] }}" readonly />
                         </div>
@@ -65,27 +66,95 @@
                         {{-- Stok Input --}}
                         <div class="">
                             <x-partials.label title="Jumlah Stok Masuk" required />
-                            <input class="form-control" name="masuk" id="stokMasuk" value="{{ $stokMaterial->masuk }}" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57" @if($stokMaterial->diterima_pm == 1) readonly @endif/>
+
+                            <input class="form-control" name="masuk" id="stokMasuk" value="{{ $stokMaterial->masuk }}" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57"
+                            {{-- Ini Didalam Input Name="Masuk" --}}
+                            {{--    Readonly Jika Sudah Diterima PM --}}
+                                @if($stokMaterial->diterima_spv == 1) readonly @endif
+
+                            {{--    Hanya SPV Yang Bisa Mengubah Data Masuk --}}
+                                @can('validasi_pm_stok_material') readonly @endcan
+                            />
+
                             <x-partials.error-message name="masuk" class="d-block" />
                         </div>
 
                         <div>
                             <div class="row mt-4">
+
+                                {{-- Validasi SPV --}}
+                                <div class="col-12 col-sm-12 col-md-6">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card shadow w-100">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-12 justify-content-center d-flex mb-3">
+                                                            <div class="form-check d-block">
+
+                                                                {{-- Check Box Validasi SPV --}}
+                                                                @can('validasi_spv_stok_material')
+                                                                    <input class="form-check-input" type="checkbox" name="diterima_spv" @if($stokMaterial->diterima_spv == 1) checked disabled @endif>
+                                                                @else
+                                                                    <input class="form-check-input" type="checkbox" name="diterima_spv" disabled @if($stokMaterial->diterima_spv == 1) checked @endif>
+                                                                @endcan
+
+                                                                <label class="form-check-label" for="defaultCheck1">Validasi SPV</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 justify-content-center d-flex">
+
+                                                            {{-- Detail Span Dibawah Check Box SPV --}}
+                                                            @if($stokMaterial->diterima_spv == 1)
+                                                                <span class="badge bg-label-secondary pt-3 pb-3 w-100">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">Oleh : {{ $stokMaterial->diterima_spv_by }}</div>
+                                                                        <div class="col-12 col-sm-12 col-md-6">Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_spv)->format('d F Y') }}</div>
+                                                                    </div>
+                                                                </span>
+                                                            @else
+                                                                <span class="badge bg-label-secondary pt-3 pb-3 w-100">Belum Divalidasi</span>
+                                                            @endif
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Validasi PM --}}
                                 <div class="col-12 col-sm-12 col-md-6 mb-3">
                                     <div class="card shadow w-100">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-12 justify-content-center d-flex mb-3">
                                                     <div class="form-check d-block">
+
+                                                        {{-- Check Box Validasi PM --}}
                                                         @can('validasi_pm_stok_material')
-                                                            <input class="form-check-input setuju" type="checkbox" name="diterima_pm" onchange="setInputanStatusValidasi(this)" @if($stokMaterial->diterima_pm == 1) checked disabled @endif @if(old('diterima_pm')) checked @endif>
+                                                            <input class="form-check-input setuju" type="checkbox" name="diterima_pm" onchange="setInputanStatusValidasi(this)" @if($stokMaterial->diterima_pm == 1) checked disabled @endif @if(old('diterima_pm')) checked @endif @if($stokMaterial->diterima_spv == 0) disabled @endif>
                                                         @else
                                                             <input class="form-check-input" type="checkbox" name="diterima_pm" disabled @if($stokMaterial->diterima_pm == 1) checked @endif>
                                                         @endcan
                                                         <label class="form-check-label" for="defaultCheck1">Validasi PM</label>
+
                                                     </div>
                                                 </div>
+
+                                                {{-- Alert Jika SPV Belum Validasi Pada Tampilan PM --}}
+                                                @can('validasi_pm_stok_material')
+                                                    @if($stokMaterial->diterima_spv == 0)
+                                                        <div class="col-12">
+                                                            <div class="alert alert-warning" role="alert">Mohon menunggu validasi SPV</div>
+                                                        </div>
+                                                    @endif
+                                                @endcan
+
                                                 <div class="col-12 justify-content-center d-flex">
+
+                                                    {{-- Detail Span Dibawah Check Box PM --}}
                                                     @if($stokMaterial->diterima_pm == 1)
                                                         <span class="badge bg-label-secondary pt-3 pb-3 w-100">
                                                             <div class="row">
@@ -94,12 +163,17 @@
                                                             </div>
                                                         </span>
                                                     @else
-                                                        <span class="badge bg-label-secondary w-100">Belum Divalidasi</span>
+                                                        <span class="badge bg-label-secondary w-100 pt-3 pb-3 ">Belum Divalidasi</span>
                                                     @endif
+
                                                 </div>
 
                                                 <div class="col-12 mt-3 d-none" id="inputanStatusValidasi">
+
+                                                    {{-- Jika PM Belum Validasi --}}
                                                     @if($stokMaterial->diterima_pm == 0 )
+
+                                                        {{-- Select Status Validasi PM --}}
                                                         <select name="status_validasi_pm" id="status_validasi" class="form-control @error('status_validasi_pm') is-invalid @enderror" onchange="cekSebagian()" required>
                                                             <option value="" disabled selected>Pilih status...</option>
                                                             <option @if(old('status_validasi_pm') == 'ACC') selected @endif value="ACC">ACC</option>
@@ -107,10 +181,15 @@
                                                             <option @if(old('status_validasi_pm') == 'Tolak') selected @endif value="Tolak">Tolak</option>
                                                         </select>
                                                         <x-partials.error-message name="status_validasi_pm" class="d-block" />
+
+                                                        {{-- Input Sebagian --}}
                                                         <input type="text" class="form-control mt-2 d-none @error('jumlahSebagian') is-invalid @enderror" name="jumlahSebagian" id="jumlahSebagian" placeholder="Jumlah Sebagian" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57">
                                                         <x-partials.error-message name="jumlahSebagian" class="d-block" />
+
+                                                        {{-- Input Keterangan --}}
                                                         <textarea name="keterangan" id="keterangan" rows="3" class="form-control mt-2" placeholder="Keterangan" required>{{ old('keterangan') }}</textarea>
                                                     @else
+                                                        {{-- Jika PM Sudah Validasi --}}
                                                         <table>
                                                             <tr height="50px">
                                                                 <td>Status</td>
@@ -135,48 +214,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-12 col-md-6">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card shadow w-100">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-12 justify-content-center d-flex mb-3">
-                                                            <div class="form-check d-block">
-                                                                @can('validasi_spv_stok_material')
-                                                                    <input class="form-check-input" type="checkbox" name="diterima_spv" @if($stokMaterial->diterima_spv == 1) checked disabled @endif @if($stokMaterial->diterima_pm == 0) disabled @endif>
-                                                                @else
-                                                                    <input class="form-check-input" type="checkbox" name="diterima_spv" disabled @if($stokMaterial->diterima_spv == 1) checked @endif>
-                                                                @endcan
-                                                                <label class="form-check-label" for="defaultCheck1">Validasi SPV</label>
-                                                            </div>
-                                                        </div>
-                                                        @can('validasi_spv_stok_material')
-                                                            @if($stokMaterial->diterima_pm == 0)
-                                                                <div class="col-12">
-                                                                    <div class="alert alert-warning" role="alert">Mohon menunggu validasi PM</div>
-                                                                </div>
-                                                            @endif
-                                                        @endcan
-                                                        <div class="col-12 justify-content-center d-flex">
-                                                            @if($stokMaterial->diterima_spv == 1)
-                                                                <span class="badge bg-label-secondary w-100">
-                                                                    <div class="row">
-                                                                        <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">Oleh : {{ $stokMaterial->diterima_spv_by }}</div>
-                                                                        <div class="col-12 col-sm-12 col-md-6">Tanggal : {{ Carbon\Carbon::parse($stokMaterial->tanggal_diterima_spv)->format('d F Y') }}</div>
-                                                                    </div>
-                                                                </span>
-                                                            @else
-                                                                <span class="badge bg-label-secondary w-100">Belum Divalidasi</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                {{-- Jika Tabel Retur Dan List Tidak Kosong --}}
                                 @if (!empty($retur) || !empty($diterima))
                                     <div class="col-12 mt-3">
                                         <div class="card shadow w-100">
@@ -251,17 +289,15 @@
                     <a href="{{ route('stok-material.pengajuan.index') }}" class="btn btn-secondary">Kembali</a>
 
                     @if ($stokMaterial->history == 0)
-                        @can('validasi_pm_stok_material')
-                            <form action="{{ route('stok-material.pengajuan.delete', $stokMaterial->id) }}" method='POST' class='d-inline' id="formDelete">
-                                @csrf
-                                @method('DELETE')
-                                <button type='button' class='btn btn-danger' id="deleteForm">Hapus</button>
-                            </form>
-                        @endcan
+                        <form action="{{ route('stok-material.pengajuan.delete', $stokMaterial->id) }}" method='POST' class='d-inline' id="formDelete">
+                            @csrf
+                            @method('DELETE')
+                            <button type='button' class='btn btn-danger' id="deleteForm">Hapus</button>
+                        </form>
                     @endif
 
                     @can('validasi_pm_stok_material')
-                        @if ($stokMaterial->diterima_pm == 0)
+                        @if ($stokMaterial->diterima_pm == 0 && $stokMaterial->diterima_spv == 1)
                             <button type="button" class="btn btn-primary" id="submitForm">Submit</button>
                         @endif
                     @else
@@ -360,52 +396,84 @@
                     }
                 });
             })
-
-            $("#submitForm").on('click', function () {
-                var stokLogistik = parseInt($('#qty').val());
-                var stokMasuk = parseInt($("#stokMasuk").val());
-
-                if (stokMasuk > stokLogistik) {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'center',
-                        icon: 'danger',
-                        customClass: {
-                            popup: 'colored-toast',
-                        },
-                        showConfirmButton: false,
-                        timer: 1000,
-                    })
-
-                    ;(async () => {
-                    await Toast.fire({
-                        icon: 'error',
-                        title: 'Stok Gudang Logistik Tidak Mencukupi!',
-                    })})()
-                }
-
-                if(parseInt($('#jumlahSebagian').val()) > parseInt($('#stokMasuk').val())){
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'center',
-                        icon: 'danger',
-                        customClass: {
-                            popup: 'colored-toast',
-                        },
-                        showConfirmButton: false,
-                        timer: 1000,
-                    })
-
-                    ;(async () => {
-                    await Toast.fire({
-                        icon: 'error',
-                        title: 'Jumlah sebagian melebihi stok masuk!',
-                    })})()
-                }else{
-                    $('#formSubmit').submit();
-                }
-            });
         </script>
+
+        @can('validasi_pm_stok_material')
+            <script>
+                $("#submitForm").on('click', function () {
+                    var stokLogistik = parseInt($('#qty').val());
+                    var stokMasuk = parseInt($("#stokMasuk").val());
+
+                    if (stokMasuk > stokLogistik) {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'center',
+                            icon: 'danger',
+                            customClass: {
+                                popup: 'colored-toast',
+                            },
+                            showConfirmButton: false,
+                            timer: 1000,
+                        })
+
+                        ;(async () => {
+                        await Toast.fire({
+                            icon: 'error',
+                            title: 'Stok Gudang Logistik Tidak Mencukupi!',
+                        })})()
+                    }
+
+                    if(parseInt($('#jumlahSebagian').val()) > parseInt($('#stokMasuk').val())){
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'center',
+                            icon: 'danger',
+                            customClass: {
+                                popup: 'colored-toast',
+                            },
+                            showConfirmButton: false,
+                            timer: 1000,
+                        })
+
+                        ;(async () => {
+                        await Toast.fire({
+                            icon: 'error',
+                            title: 'Jumlah sebagian melebihi stok masuk!',
+                        })})()
+                    }else{
+                        $('#formSubmit').submit();
+                    }
+                });
+            </script>
+        @else
+            <script>
+                $("#submitForm").on('click', function () {
+                    var stokLogistik = parseInt($('#qty').val());
+                    var stokMasuk = parseInt($("#stokMasuk").val());
+
+                    if (stokMasuk > stokLogistik) {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'center',
+                            icon: 'danger',
+                            customClass: {
+                                popup: 'colored-toast',
+                            },
+                            showConfirmButton: false,
+                            timer: 1000,
+                        })
+
+                        ;(async () => {
+                        await Toast.fire({
+                            icon: 'error',
+                            title: 'Stok Gudang Logistik Tidak Mencukupi!',
+                        })})()
+                    }else{
+                        $('#formSubmit').submit();
+                    }
+                });
+            </script>
+        @endcan
 
         @if (Session::has('jumlahSebagian'))
         <script>

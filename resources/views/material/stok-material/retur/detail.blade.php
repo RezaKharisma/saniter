@@ -33,7 +33,7 @@
                             <x-input-text title="Nama Material" name='displayNamaMaterial' value="{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}" readonly/>
                         </div>
 
-                        <div class="row">
+                        <div class="row mb-3">
 
                             {{-- Jenis Pekerjaan --}}
                             <div class="col-12 col-sm-4 col-sm-6 mb-3">
@@ -68,7 +68,7 @@
 
                         <div class="mb-3">
                             <x-partials.label title="Dikembalikan Kepada" required />
-                            <input type="text" name='retur_to'class="form-control"  placeholder="Dikembalikan kepada" value="{{ $retur->retur_to ?? old('retur_to') }}" required @if($retur->hasil_retur == 'Diterima') readonly @endif/>
+                            <input type="text" name='retur_to'class="form-control"  placeholder="Dikembalikan kepada" value="{{ old('retur_to') ?? $retur->retur_to }}" required @if($retur->hasil_retur == 'Diterima') readonly @endif/>
                         </div>
 
                         <div class="mb-3">
@@ -79,7 +79,7 @@
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
                                 <x-partials.label title="Tanggal Retur" required/>
-                                <input type="text" class="form-control" id="tgl_retur" name="tgl_retur" placeholder="Tanggal Retur" value="{{ \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') == "0000-00-00" ? '' : \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') }}" required autocomplete="off" @if($retur->hasil_retur == 'Diterima') disabled @endif/>
+                                <input type="text" class="form-control" id="tgl_retur" name="tgl_retur" placeholder="Tanggal Retur" value="{{ old('tgl_retur') != null ? old('tgl_retur') : (\Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y') == null ? '' : \Carbon\Carbon::parse($retur->tgl_retur)->format('d/m/Y')) }}" required autocomplete="off" @if($retur->hasil_retur == 'Diterima') disabled @endif/>
                                 <x-partials.error-message name="tgl_mulai_izin" class="d-block" />
                             </div>
                             <div class="col-12 col-sm-12 col-md-6">

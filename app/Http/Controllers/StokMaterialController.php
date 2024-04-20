@@ -39,6 +39,7 @@ class StokMaterialController extends Controller
 
     public function createPengajuan()
     {
+        // Ambil API Q-tech
         $material = new NamaMaterial();
         $namaMaterial = $material->getAllMaterial();
         return view('material.stok-material.pengajuan.create',compact('namaMaterial'));
@@ -49,12 +50,16 @@ class StokMaterialController extends Controller
         $diterima = '';
         $stokMaterial = StokMaterial::where('id', $id)->first();
 
-        if ($stokMaterial->diterima_pm != 0 && $stokMaterial->diterima_spv != 0 && $stokMaterial->status_validasi_pm != 'Tolak') {
+        // Get dimana stok tersebut diterima spv dan pm, dan juga validasi pm bukan Tolak
+        if ($stokMaterial->diterima_spv != 0 && $stokMaterial->diterima_pm != 0 && $stokMaterial->status_validasi_pm != 'Tolak') {
+            // select stok material yang merupakan history
             $diterima = StokMaterial::where('history_id', $stokMaterial->history_id)->first();
         }
 
+        // Ambil retur sesuai dengan stok material
         $retur = Retur::where('stok_material_id', $stokMaterial->id)->first();
 
+        // Ambil API dari Q-tech
         $material = new NamaMaterial();
         $namaMaterial = $material->getNamaMaterialById($stokMaterial->material_id);
         $namaMaterial['harga_beli'] = number_format(floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $namaMaterial['harga_beli'])), 0, ",", ".");
@@ -64,24 +69,26 @@ class StokMaterialController extends Controller
 
     public function storePengajuan(Request $request)
     {
+        // Validasi
         $validator = Validator::make($request->all(),[
             'material_id' => 'required',
             'masuk' => 'required',
-        ],['masuk.required' => 'stok masuk wajib diisi.','material_id.required' => 'nama material wajib diisi.']);
+        ],['masuk.required' => 'stok masuk wajib diisi.','material_id.required' => 'nama material wajib diisi.']); // Message
 
         // Jika validasi gagal
         if ($validator->fails()) {
-            toast('Mohon periksa form kembali!', 'error'); // Toast
+            toast('Mohon periksa form kembali!', 'error');
             return Redirect::back()
                 ->withErrors($validator)
-                ->withInput(); // Return kembali membawa error dan old input
+                ->withInput();
         }
 
+        // Insert data
         $stok = StokMaterial::create([
             'material_id' => $request->material_id,
-            'kode_material' => $this->cekKodeMaterial($request->kode_material),
+            'kode_material' => $request->kode_material,
             'nama_material' => $request->nama_material,
-            'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $request->harga)),
+            'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $request->harga)), // hilangkan karakter dan ubah menjadi float
             'masuk' => $request->masuk,
             'stok_update' => 0,
             'created_by' => auth()->user()->name
@@ -92,22 +99,50 @@ class StokMaterialController extends Controller
     }
 
     public function updatePengajuan(Request $request, $id){
+        // Validasi
         $validator = Validator::make($request->all(),[
             'masuk' => 'required'
         ],['masuk.required' => 'stok masuk wajib diisi.']);
 
         // Jika validasi gagal
         if ($validator->fails()) {
-            toast('Mohon periksa form kembali!', 'error'); // Toast
+            toast('Mohon periksa form kembali!', 'error');
             return Redirect::back()
                 ->withErrors($validator)
-                ->withInput(); // Return kembali membawa error dan old input
+                ->withInput();
         }
 
         $stok = StokMaterial::where('id', $id)->first();
 
-        if (auth()->user()->can('validasi_pm_stok_material')) {
-            if (isset($request->diterima_pm) != null) {
+        // Jika user memiliki permission validasi spv saat update
+        if (auth()->user()->can('validasi_spv_stok_material')) {
+
+            // Jika hanya update masuk saja
+            $stok->update([
+                'masuk' => $request->masuk,
+            ]);
+
+            // Jika update dengan check box validasi SPV
+            if (isset($request->diterima_spv) != null) {
+                $stok->update([
+                    'masuk' => $request->masuk,
+                    'diterima_spv' => 1,
+                    'diterima_spv_by' => auth()->user()->name,
+                    'tanggal_diterima_spv' => Carbon::now()->format('Y-m-d'),
+                ]);
+            }
+
+            toast('Data berhasil disimpan!', 'success');
+            return Redirect::route('stok-material.pengajuan.index');
+        }
+
+        // Jika user memiliki permission validasi pm saat update
+        if (auth()->user()->can('validasi_pm_stok_material') && $stok->diterima_spv == 1) {
+
+            // Jika update dengan check box validasi PM
+            if(isset($request->diterima_pm) != null){
+
+                // Validasi
                 $validator = Validator::make($request->all(),[
                     'status_validasi_pm' => 'required',
                 ],['status_validasi_pm.required' => 'status validasi wajib diisi.']);
@@ -115,23 +150,26 @@ class StokMaterialController extends Controller
                 // Jika validasi gagal
                 if ($validator->fails()) {
                     Session::flash('statusValidasi', 'error');
-                    toast('Mohon periksa form kembali!', 'error'); // Toast
+                    toast('Mohon periksa form kembali!', 'error');
                     return Redirect::back()
                     ->withErrors($validator)
-                    ->withInput(); // Return kembali membawa error dan old input
+                    ->withInput();
                 }
 
+                // Jika status ACC
                 if ($request->status_validasi_pm == 'ACC') {
                     $stok->update([
-                        'masuk' => $request->masuk,
                         'diterima_pm' => 1,
                         'diterima_pm_by' => auth()->user()->name,
                         'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
+                        'stok_update' => $this->cekStokUpdateMaterial($request->kode_material) + $request->masuk,
                         'status_validasi_pm' => 'ACC',
-                        'keterangan' => $request->keterangan == null ? '-' : $request->keterangan,
+                        'history' => 1,
+                        'history_id' => $stok->id
                     ]);
                 }
 
+                // Jika status ACC Sebagian
                 if ($request->status_validasi_pm == 'ACC Sebagian') {
 
                     $validator = Validator::make($request->all(),[
@@ -147,111 +185,77 @@ class StokMaterialController extends Controller
                         ->withInput(); // Return kembali membawa error dan old input
                     }
 
-                    $stok->update([
-                        'masuk' => $request->masuk,
-                        'sebagian' => $request->jumlahSebagian,
-                        'diterima_pm' => 1,
-                        'diterima_pm_by' => auth()->user()->name,
-                        'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
-                        'status_validasi_pm' => $request->status_validasi_pm,
-                        'keterangan' => $request->keterangan == null ? '-' : $request->keterangan,
-                    ]);
-                }
-
-                if($request->status_validasi_pm == 'Tolak'){
-                    $stok->update([
-                        'masuk' => $request->masuk,
-                        'sebagian' => 0,
-                        'diterima_pm' => 1,
-                        'diterima_pm_by' => auth()->user()->name,
-                        'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
-                        'status_validasi_pm' => $request->status_validasi_pm,
-                        'keterangan' => $request->keterangan == null ? '-' : $request->keterangan,
-                    ]);
-                }
-
-                toast('Data berhasil disimpan!', 'success');
-                return Redirect::route('stok-material.pengajuan.index');
-            }else{
-                toast('Data berhasil disimpan!', 'success');
-                return Redirect::route('stok-material.pengajuan.index');
-            }
-        }
-
-        if (auth()->user()->can('validasi_spv_stok_material') && $stok->diterima_pm == 1) {
-            if(isset($request->diterima_spv) != null){
-
-                if ($stok->status_validasi_pm == 'ACC') {
-                    $stok->update([
-                        'diterima_spv' => 1,
-                        'diterima_spv_by' => auth()->user()->name,
-                        'tanggal_diterima_spv' => Carbon::now()->format('Y-m-d'),
-                        'stok_update' => $request->masuk,
-                        'history' => 1,
-                        'history_id' => $stok->id
-                    ]);
-                }
-
-                if ($stok->status_validasi_pm == 'ACC Sebagian') {
+                    // Insert baru stok untuk List Stok Material dengan kolom history = 1
                     $diterima = StokMaterial::create([
                         'material_id' => $stok->material_id,
                         'kode_material' => $stok->kode_material,
                         'nama_material' => $stok->nama_material,
                         'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $stok->harga)),
-                        'masuk' => $stok->sebagian,
+                        'masuk' => $request->jumlahSebagian,
                         'created_by' => 'System',
                         'diterima_pm' => 1,
-                        'diterima_pm_by' => $stok->diterima_pm_by,
+                        'diterima_pm_by' => auth()->user()->name,
                         'status_validasi_pm' => 'ACC',
-                        'tanggal_diterima_pm' => $stok->tanggal_diterima_pm,
-                        'keterangan' => $stok->keterangan,
+                        'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
+                        'keterangan' => '-',
                         'diterima_spv' => 1,
-                        'diterima_spv_by' => auth()->user()->name,
-                        'tanggal_diterima_spv' => Carbon::now()->format('Y-m-d'),
-                        'stok_update' => $stok->stok_update,
+                        'diterima_spv_by' => $stok->diterima_spv_by,
+                        'tanggal_diterima_spv' => $stok->tanggal_diterima_pm,
+                        'stok_update' => $this->cekStokUpdateMaterial($request->kode_material) + $request->jumlahSebagian,
                     ]);
 
+                    // Insert retur
                     Retur::create([
                         'stok_material_id' => $stok->id,
                         'diterima_id' => $diterima->id,
                         'kode_material' => $stok->kode_material,
                         'nama_material' => $stok->nama_material,
                         'tgl_retur' => null,
-                        'status' => $stok->status_validasi_pm,
+                        'status' => 'ACC Sebagian',
                         'keterangan' => $stok->keterangan,
-                        'jumlah' => $stok->masuk - $stok->sebagian,
+                        'jumlah' => $stok->masuk - $diterima->masuk,
                         'created_by' => $stok->diterima_pm_by,
                         'hasil_retur' => 'Menunggu Validasi'
                     ]);
 
+                    // Update stok sebelumnya menjadi history
                     $stok->update([
-                        'diterima_spv' => 1,
-                        'diterima_spv_by' => auth()->user()->name,
-                        'tanggal_diterima_spv' => Carbon::now()->format('Y-m-d'),
-                        'stok_update' => $request->masuk,
+                        'deskripsi' => $request->deskripsi,
+                        'sebagian' => $request->jumlahSebagian,
+                        'diterima_pm' => 1,
+                        'diterima_pm_by' => auth()->user()->name,
+                        'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
+                        'status_validasi_pm' => 'ACC Sebagian',
+                        'stok_update' => 0,
                         'history' => 1,
                         'history_id' => $diterima->id
                     ]);
                 }
 
-                if ($stok->status_validasi_pm == 'Tolak') {
+                // Jika status Tolak
+                if ($request->status_validasi_pm == 'Tolak') {
+
+                    // Insert retur
                     Retur::create([
                         'stok_material_id' => $stok->id,
                         'diterima_id' => $stok->id,
                         'kode_material' => $stok->kode_material,
                         'nama_material' => $stok->nama_material,
                         'tgl_retur' => null,
-                        'status' => $stok->status_validasi_pm,
+                        'status' => 'Tolak',
                         'keterangan' => $stok->keterangan,
                         'jumlah' => $stok->masuk,
                         'created_by' => $stok->diterima_pm_by,
                         'hasil_retur' => 'Menunggu Validasi'
                     ]);
 
+                    // Update stok sebelumnya menjadi history
                     $stok->update([
-                        'diterima_spv' => 1,
-                        'diterima_spv_by' => auth()->user()->name,
-                        'tanggal_diterima_spv' => Carbon::now()->format('Y-m-d'),
+                        'deskripsi' => $request->deskripsi,
+                        'diterima_pm' => 1,
+                        'diterima_pm_by' => auth()->user()->name,
+                        'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
+                        'status_validasi_pm' => 'Tolak',
                         'stok_update' => 0,
                         'history' => 1,
                         'history_id' => $stok->id
@@ -267,14 +271,19 @@ class StokMaterialController extends Controller
         }
     }
 
-    public function cekKodeMaterial($kode_material){
-        $stokKode = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->get();
-        return $kode_material."-SNTR-".sprintf('%03d',count($stokKode)+1);
-    }
+    // public function cekKodeMaterial($kode_material){
+    //     $stokKode = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->where('history', 1)->get();
+    //     return $kode_material."-SNTR-".sprintf('%03d',count($stokKode)+1);
+    // }
 
     public function cekStokUpdateMaterial($kode_material){
-        // $stokKode = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->get();
-        // return $kode_material."-SNTR-".sprintf('%03d',count($stokKode)+1);
+        $stokLatest = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->where('status_validasi_pm', 'ACC')->latest()->first();
+
+        if ($stokLatest == null) {
+            return 0;
+        }
+
+        return $stokLatest->stok_update;
     }
 
     public function deletePengajuan($id){

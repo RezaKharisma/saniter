@@ -13,11 +13,12 @@ class AjaxJenisKerusakanController extends Controller
 {
     public function getListHtml(Request $request){
         if ($request->ajax()) {
-            $stokMaterial = StokMaterial::select('id','nama_material')
+            $stokMaterial = StokMaterial::select('id','kode_material','nama_material','harga','stok_update')
                 ->where('diterima_pm', 1)
                 ->where('diterima_spv', 1)
                 ->where('status_validasi_pm', 'ACC')
                 ->whereNot('status_validasi_pm', 'Tolak')
+                ->groupBy('kode_material')
                 ->get();
 
             $kode = bin2hex(random_bytes(10));

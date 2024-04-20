@@ -6,6 +6,7 @@ use App\Models\SubMenu;
 use App\Models\Regional;
 use App\Models\UserRole;
 use App\Models\MenuKategori;
+use App\Models\StokMaterial;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
@@ -32,6 +33,32 @@ if (! function_exists('getRoleAccessMenu')) {
         return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode(array_values(array_unique(($roleMenu)))))));
     }
 }
+
+/*
+|---------------------------------
+| Notifikasi Material Baru
+|---------------------------------
+*/
+if (! function_exists('checkNewMaterial')) {
+    function checkNewMaterial(){
+        $material = new StokMaterial();
+
+        if(auth()->user()->can('validasi_spv_stok_material')){
+            if ($material->where('diterima_spv', 0)->first() != null ) {
+                return true;
+            }
+        }
+
+        if (auth()->user()->can('validasi_pm_stok_material')) {
+            if ($material->where('diterima_pm', 0)->first() != null ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
 
 /*
 |---------------------------------

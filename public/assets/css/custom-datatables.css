@@ -132,6 +132,7 @@ table.dataTable tfoot > tr > th {
     .dt-length {
         top: 0px;
         left: 25px;
+        z-index: 1;
         position: absolute;
     }
 
@@ -166,6 +167,7 @@ table.dataTable tfoot > tr > th {
     .dt-length {
         top: 0px;
         left: 25px;
+        z-index: 1;
         position: absolute;
     }
 
@@ -200,6 +202,7 @@ table.dataTable tfoot > tr > th {
     .dt-length {
         top: 0px;
         left: 25px;
+        z-index: 1;
         position: absolute;
     }
 
@@ -234,6 +237,7 @@ table.dataTable tfoot > tr > th {
     .dt-length {
         top: 0px;
         left: 25px;
+        z-index: 1;
         position: absolute;
     }
 

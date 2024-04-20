@@ -7,6 +7,7 @@ use App\Models\Api\NamaMaterial;
 use App\Models\StokMaterial;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class AjaxStokMaterialController extends Controller
@@ -15,12 +16,13 @@ class AjaxStokMaterialController extends Controller
 
     public function getListStokMaterial(Request $request){
         if ($request->ajax()) {
-            $stokMaterial = StokMaterial::select('material_id','kode_material','nama_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
+            $stokMaterial = StokMaterial::select(DB::raw('SUM(masuk) as totalStok'), 'material_id','kode_material','nama_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
                 ->where('diterima_pm', 1)
                 ->where('diterima_spv', 1)
                 ->where('status_validasi_pm', 'ACC')
                 ->whereNot('status_validasi_pm', 'Tolak')
                 ->orderBy('id','DESC')
+                ->groupBy('kode_material')
                 ->get();
 
             // Return datatables
@@ -65,10 +67,14 @@ class AjaxStokMaterialController extends Controller
     public function getPengajuanStokMaterial(Request $request){
         if ($request->ajax()) {
             // if (auth()->user()->can('validasi_pm_stok_material')) {
-                $stokMaterial = StokMaterial::where('diterima_spv', 0)
-                    ->orWhere('history', 1)
-                    ->orderBy('id', 'DESC')
-                    ->get();
+
+            // Select dimana data belum divalidasi PM
+            $stokMaterial = StokMaterial::where('diterima_pm', 0)
+                ->orWhere('history', 1)
+                ->orderBy('history', 'ASC')
+                ->orderBy('id', 'DESC')
+                ->get();
+
             // }
 
             // if (auth()->user()->can('validasi_spv_stok_material')) {
@@ -86,15 +92,10 @@ class AjaxStokMaterialController extends Controller
             return DataTables::of($stokMaterial)
             ->addIndexColumn()
             ->addColumn('kode_material', function($row){
-                foreach ($this->namaMaterial as $item) {
-                    if ($item['id'] == $row->material_id) {
-                        return $item['kode_material'];
-                        break;
-                    }
-                }
+                return $row->kode_material;
             })
             ->addColumn('oleh', function($row){
-                return $row->created_by."<p class='text-muted mb-0'>".Carbon::parse($row->created_at)->diffForHumans()."</p>";
+                return $row->created_by."<p class='text-muted mb-0'>".Carbon::parse($row->created_at)->isoFormat('dddd, D MMMM Y')."</p>";
             })
             ->addColumn('harga', function($row){
                 return "Rp. ".number_format($row->harga, 0, ",", ".");
@@ -119,23 +120,26 @@ class AjaxStokMaterialController extends Controller
             ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                 $btn = '';
 
-                if ($row->diterima_pm == 1) {
-                    $btn = "<a href='#' class='btn btn-success btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-check-square'></i>PM</a>";
-                }else{
-                    $btn = "<a href='#' class='btn btn-danger btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-checkbox'></i>PM</a>";
-                }
-
+                // Kondisi validasi SPV
                 if ($row->diterima_spv == 1) {
-                    $btn = $btn."<a href='#' class='btn btn-success btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-check-square'></i>SPV</a>";
+                    $btn = "<a href='#' class='btn btn-success btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-check-square'></i>SPV</a>";
                 }else{
-                    $btn = $btn."<a href='#' class='btn btn-danger btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-checkbox'></i>SPV</a>";
+                    $btn = "<a href='#' class='btn btn-danger btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-checkbox'></i>SPV</a>";
                 }
 
+                // Kondisi validasi PM
+                if ($row->diterima_pm == 1) {
+                    $btn = $btn."<a href='#' class='btn btn-success btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-check-square'></i>PM</a>";
+                }else{
+                    $btn = $btn."<a href='#' class='btn btn-danger btn-sm disabled me-1'><i class='menu-icon tf-icons bx bx-checkbox'></i>PM</a>";
+                }
+
+                // Jika keduanya sudah divalidasi dan merupakan file history
                 if ($row->diterima_pm == 1 && $row->diterima_spv == 1 && $row->history == 1) {
                     $btn = "<a href='#' class='btn btn-success btn-sm disabled me-1'>History</a>";
                 }
 
-
+                // Tombol detail
                 $btn = $btn."<a href=".route('stok-material.pengajuan.detailPengajuan', $row->id)." class='btn btn-info btn-sm'>Detail</a>";
                 return $btn;
             })

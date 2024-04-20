@@ -47,7 +47,7 @@
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'kode_material', name: 'kode_material'},
                         {data: 'nama_material', name: 'nama_material'},
-                        {data: 'masuk', name: 'masuk'},
+                        {data: 'totalStok', name: 'totalStok'},
                         {data: 'harga', name: 'harga'},
                         {data: 'tgl_input', name: 'tgl_input'},
                         // {data: 'action', name: 'action'},
@@ -57,25 +57,29 @@
                     ]
                 })
 
-            // Jika tombol delete diklik
-            $(document).on("click", "button.confirm-delete", function () {
-                var form = $(this).closest("form");
-                event.preventDefault();
-                Swal.fire({ // SweetAlert
-                    title: "Apa kamu yakin?",
-                    text: "Data akan terhapus!",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yakin",
-                    cancelButtonText: "Batal",
-                }).then((result) => {
-                    if (result.isConfirmed) { // Jika iyaa form akan tersubmit
-                        form.submit();
-                    }
+                setInterval( function () {
+                    $('#stok-material-table').DataTable().ajax.reload();
+                }, 30000 );
+
+                // Jika tombol delete diklik
+                $(document).on("click", "button.confirm-delete", function () {
+                    var form = $(this).closest("form");
+                    event.preventDefault();
+                    Swal.fire({ // SweetAlert
+                        title: "Apa kamu yakin?",
+                        text: "Data akan terhapus!",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yakin",
+                        cancelButtonText: "Batal",
+                    }).then((result) => {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                            form.submit();
+                        }
+                    });
                 });
             });
-        });
         </script>
     </x-slot>
 </x-layouts.app>

@@ -65,6 +65,10 @@
                     ]
                 })
 
+                setInterval( function () {
+                    $('#stok-material-table').DataTable().ajax.reload();
+                }, 20000 );
+
                 // Jika tombol delete diklik
                 $(document).on("click", "button.confirm-delete", function () {
                     var form = $(this).closest("form");

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Api\NamaMaterial;
 use App\Models\Retur;
 use App\Models\StokMaterial;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -49,6 +50,7 @@ class ReturController extends Controller
 
         $retur = Retur::find($id);
         $retur->update([
+            'tgl_retur' => Carbon::createFromFormat('d/m/Y', $request->tgl_retur)->format('Y-m-d'),
             'retur_by' => $request->retur_by,
             'validasi_by' => 1,
             'retur_to' => $request->retur_to,

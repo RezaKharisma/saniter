@@ -15,7 +15,43 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <li class="nav-item lh-1 me-3">
-                <span class="badge bg-secondary">Regional {{ getRegional(auth()->user()->regional_id) }}</span> {{-- Get regional dari helper --}}
+                <span class="badge bg-secondary">Regional {{ getRegional(auth()->user()->regional_id) }}</span>
+            </li>
+
+            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    @if (checkNewMaterial() == true)
+                        <i class="bx bx-bell" style="font-size: 25px"></i>
+                        <span class="badge badge-center rounded-pill bg-danger" style="transform: translate(-10px, -10px);width:10px;height:12px;font-size: 10px"> </span>
+                    @else
+                        <i class="bx bx-bell me-2" style="font-size: 25px"></i>
+                    @endif
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-menu-header">
+                        <div class="dropdown-header d-flex align-items-center py-3">
+                            <h5 class="text-body mb-0 me-auto">Notifikasi</h5>
+                            <a href="javascript:void(0)" class="dropdown-notifications-all text-body" ><i class="bx fs-4 bx-envelope-open"></i></a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-divider"></div>
+                    </li>
+                    @if (checkNewMaterial() == true)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('stok-material.pengajuan.index') }}">
+                                <h6 class="mb-1">Material Baru</h6>
+                                <p class="mb-0">Baru ditambahkan, menunggu validasi.</p>
+                            </a>
+                        </li>
+                    @else
+                        <li class="p-2">
+                            <div class="alert alert-primary mb-0" style="width: 300px" role="alert">
+                                Belum ada notifikasi terbaru.
+                            </div>
+                        </li>
+                    @endif
+                </ul>
             </li>
 
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
