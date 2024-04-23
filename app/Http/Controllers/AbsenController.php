@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AbsenController extends Controller
 {
@@ -49,30 +50,6 @@ class AbsenController extends Controller
     public function allDetail(){
         return view('absen.all-detail');
     }
-
-    // // Ambil semua izin berdasarkan user id, tahun dan bulan sekarang
-        // $cekUserIzin = Izin::select('tgl_mulai_izin','tgl_akhir_izin')
-        //     ->where('user_id', auth()->user()->id)
-        //     ->whereYear('created_at', Carbon::now()->year)
-        //     ->whereMonth('created_at', Carbon::now()->month)
-        //     ->get();
-
-        // // Perulangan user izin
-        // foreach ($cekUserIzin as $item) {
-
-        //     if (Carbon::parse($item->tgl_mulai_izin)->format('m') == Carbon::now()->format('m')) {
-        //         $periodeTanggal = CarbonPeriod::create(Carbon::parse($item->tgl_mulai_izin), Carbon::parse($item->tgl_akhir_izin));
-
-        //         $periode = array();
-
-        //         foreach ($periodeTanggal as $tgl) {
-        //             array_push($periode, $tgl->format('Y-m-d'));
-        //         }
-
-        //         dd($periode);
-
-        //     }
-        // }
 
     /*
     |--------------------------------------------
@@ -557,5 +534,32 @@ class AbsenController extends Controller
                 ]);
             }
         }
+    }
+
+    public function printPDF(Request $request){
+        $absen = Absen::select('absen.tgl_masuk','absen.status','shift.nama as shift_nama','shift.jam_masuk as shiftMasuk','shift.jam_pulang as shiftPulang','users.name')
+            ->join('shift','absen.shift_id','=','shift.id')
+            ->join('users','absen.user_id','=','users.id')
+            ->orderBy('tgl_masuk','DESC');
+
+        if (!empty($request->thn_start_date) && !empty($request->thn_end_date)) {
+            $absen->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->thn_start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->thn_end_date)->format('Y-m-d')]);
+        }
+
+        if(!empty($request->thn_status)){
+            $absen->where('absen.status', $request->thn_status);
+        }
+
+
+        if(!empty($request->thn_nama_karyawan)){
+            $absen->where('users.name', 'LIKE', '%'.$request->thn_nama_karyawan.'%');
+        }
+
+        $data = json_encode($absen->get(), true);
+
+        // dd(json_decode($data, true));
+
+        $pdf = PDF::loadView('components.print-layouts.absen', ['absen' => $data])->setPaper('a4','landscape');
+        return $pdf->stream('Laporan-absen.pdf');
     }
 }

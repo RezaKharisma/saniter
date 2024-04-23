@@ -133,7 +133,6 @@ class JenisKerusakanController extends Controller
                 ->first();
         }
 
-
         $detailMaterial = DetailJenisKerusakan::select('detail_jenis_kerusakan.*')
             ->where('jenis_kerusakan_id', $id)
             ->get();
@@ -146,11 +145,12 @@ class JenisKerusakanController extends Controller
             ->join('list_area','detail_tgl_kerja.list_area_id','=','list_area.id')
             ->first();
 
-        $stokMaterial = StokMaterial::select('id','nama_material')
+        $stokMaterial = StokMaterial::select('id','kode_material','nama_material','harga','stok_update')
             ->where('diterima_pm', 1)
             ->where('diterima_spv', 1)
             ->where('status_validasi_pm', 'ACC')
             ->whereNot('status_validasi_pm', 'Tolak')
+            ->groupBy('kode_material')
             ->get();
 
         return view('proyek.jenis-kerusakan.detail', compact('detail','detailMaterial','teknisi','stokMaterial','jenisKerusakan'));
@@ -203,18 +203,18 @@ class JenisKerusakanController extends Controller
         }
 
         if ($request->btnStatus == "simpanPerubahan") {
-            $jenisKerusakan->update([
+            $data = [
                 'dikerjakan_oleh' => $request->dikerjakan_oleh,
                 'tgl_pengerjaan' => $request->tgl_pengerjaan,
                 'nama_kerusakan' => $request->perbaikan,
-                'status_kerusakan' => $request->status_kerusakan,
                 'deskripsi' => $request->deskripsi ?? '-',
                 'nomor_denah' => $request->nomor_denah,
                 'foto' => $foto,
-            ]);
+            ];
 
             if ($request->nama_material != null) {
                 DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+                $detailKerusakan = new DetailJenisKerusakan();
                 foreach ($request->nama_material as $key => $item) {
                     DetailJenisKerusakan::create([
                         'jenis_kerusakan_id' => $jenisKerusakan->id,
@@ -223,10 +223,16 @@ class JenisKerusakanController extends Controller
                         'harga' => $this->getHargaStokMaterial($item),
                         'volume' => $request->volume[$key] ?? '0',
                         'satuan' => $request->satuan[$key] ?? '0',
-                        'total_harga' => $this->getHargaStokMaterial($item) * $request->volume[$key],
+                        'total_harga' => floatval($this->getHargaStokMaterial($item)) * floatval($request->volume[$key]),
                     ]);
                 }
+                $data['status_kerusakan'] = $request->status_kerusakan;
+            }else{
+                DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+                $data['status_kerusakan'] = 'Tanpa Material';
             }
+
+            $jenisKerusakan->update($data);
         }else{
             $jenisKerusakan->update([
                 'dikerjakan_oleh' => $request->dikerjakan_oleh,
@@ -249,16 +255,19 @@ class JenisKerusakanController extends Controller
                         'harga' => $this->getHargaStokMaterial($item),
                         'volume' => $request->volume[$key] ?? '0',
                         'satuan' => $request->satuan[$key] ?? '0',
-                        'total_harga' => $this->getHargaStokMaterial($item) * $request->volume[$key],
+                        'total_harga' => floatval($this->getHargaStokMaterial($item)) * floatval($request->volume[$key])
                     ]);
 
                     HistoryStokMaterial::create([
                         'stok_material_id' => $item,
                         'detail_jenis_kerusakan_id' => $detailKerusakan->id,
                         'tanggal' => Carbon::now(),
-                        'jumlah' => $request->volume[$key] ?? '0',
+                        'volume' => $request->volume[$key] ?? '0',
                         'satuan' => $request->satuan[$key] ?? '0',
                     ]);
+
+                    $stokMaterial = StokMaterial::find($item);
+                    $this->setStokUpdate($stokMaterial, $request->volume[$key]);
                 }
             }
         }
@@ -275,6 +284,14 @@ class JenisKerusakanController extends Controller
         $detailKerusakan->delete();
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('jenis-kerusakan.index', $request->detail_tgl_kerusakan_id); // Redirect kembali
+    }
+
+    public function setStokUpdate($stokMaterial, $volume){
+        $stokLatest = StokMaterial::where('kode_material', 'LIKE', '%'.$stokMaterial->kode_material.'%')->where('status_validasi_pm', 'ACC')->latest()->first();
+        $stokLatest->update([
+            'stok_update' => floatval($stokLatest->stok_update) - floatval($volume)
+        ]);
+        return;
     }
 
     private function getHargaStokMaterial($idMaterial)

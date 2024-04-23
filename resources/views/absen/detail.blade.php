@@ -20,10 +20,10 @@
 
                 <div style="position: relative">
                     <div class="table-responsive text-nowrap" >
-                        <table class="table table-hover" id="tabel-log-absen">
+                        <table class="table table-hover" id="tabel-log-absen" width="100%">
                             <thead>
                                 <th>No</th>
-                                <th width="280px">Foto</th>
+                                <th>Foto</th>
                                 <th>Tanggal</th>
                                 <th>Shift</th>
                                 <th>Jam Masuk</th>

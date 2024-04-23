@@ -214,7 +214,7 @@
                     return state.text;
                 }
                 var $state = $(
-                    '<h6 class="mb-0"><u>'+originalOption.data('kode_material')+'</u></h6>'+
+                    '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
                     '<div>'+state.text+'</div>'+
                     '<div>Rp. '+formatRupiah(originalOption.data('harga'))+'</div>'+
                     '<div></div>'

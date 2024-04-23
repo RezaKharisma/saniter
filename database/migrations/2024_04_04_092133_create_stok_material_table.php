@@ -21,13 +21,13 @@ return new class extends Migration
             $table->string('sebagian')->nullable()->default(0);
             $table->boolean('diterima_pm')->default(0);
             $table->string('diterima_pm_by')->nullable()->default(0);
-            $table->date('tanggal_diterima_pm')->nullable()->default('0000-00-00');
+            $table->date('tanggal_diterima_pm')->nullable()->default(null);
             $table->enum('status_validasi_pm',['Belum Validasi','ACC','ACC Sebagian','Tolak'])->nullable()->default('Belum Validasi');
             $table->text('keterangan')->default('-');
             $table->boolean('diterima_spv')->nullable()->default(0);
             $table->string('diterima_spv_by')->nullable()->default(0);
-            $table->date('tanggal_diterima_spv')->nullable()->default('0000-00-00');
-            $table->string('stok_update')->nullable()->default(0);
+            $table->date('tanggal_diterima_spv')->nullable()->default(null);
+            $table->double('stok_update')->nullable()->default(0);
             $table->string('created_by')->default(0);
             $table->boolean('history')->default(0);
             $table->unsignedBigInteger('history_id')->default(0);

@@ -16,6 +16,7 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyek /</span> Detail Kerusakan</h4>
 
     <a href="{{ route('jenis-kerusakan.index', $jenisKerusakan->detailKerjaID) }}" class="btn btn-secondary mb-3"><i class="bx bx-arrow-back me-1"></i> Kembali</a>
+    <a href="{{ $_SERVER["REQUEST_URI"] }}" class="btn btn-primary mb-3"><i class="bx bx-refresh"></i></a>
 
     <form action="{{ route('jenis-kerusakan.update', $jenisKerusakan->jenisKerusakanID) }}" method="POST" id="formUpdate" enctype="multipart/form-data">
     @csrf
@@ -35,8 +36,9 @@
                             <label for="upload" class="btn btn-primary me-2 mb-1 w-100 mt-3" tabindex="0">
                                 <span class="d-none d-sm-block">Unggah Foto Baru</span>
                                 <i class="bx bx-upload d-block d-sm-none"></i>
-                                <input type="file" id="upload" name="foto" class="account-file-input imageUpload" hidden="" accept="image/png, image/jpeg">
+                                <input type="file" id="upload" name="foto" class="account-file-input imageUpload @error('foto') is-invalid @enderror" hidden="" accept="image/png, image/jpeg">
                             </label>
+                            <x-partials.error-message name="foto" class="d-block"/>
                         @endif
 
                     </div>
@@ -135,6 +137,7 @@
                         </div>
                     </div>
                 </div>
+
                 <h5 class="card-header border-top mb-0 mt-3">Detail Material</h5>
                 <div class="card overflow-hidden" style="height: 455px">
                     <div class="card-body" id="vertical-example">
@@ -156,8 +159,8 @@
                                             <x-partials.label title="Nama Material" />
                                             <select class="form-control w-100" disabled>
                                                 <option value="" selected disabled>Pilih nama material...</option>
-                                                @foreach ($stokMaterial as $s)
-                                                    <option @if($itemMaterial->stok_material_id == $s->id) selected @endif value="{{ $s->id }}">{{ $s->nama_material }}</option>
+                                                @foreach ($stokMaterial as $item)
+                                                    <option @if($itemMaterial->stok_material_id == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -194,10 +197,10 @@
 
                                         <div class="col-12 col-sm-12 col-md-5 mb-3">
                                             <x-partials.label title="Nama Material" />
-                                            <select name="nama_material[]" id="nama_material-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
-                                                <option value="" selected disabled>Pilih nama material...</option>
-                                                @foreach ($stokMaterial as $s)
-                                                    <option @if($itemMaterial->stok_material_id == $s->id) selected @endif value="{{ $s->id }}">{{ $s->nama_material }}</option>
+                                            <select name="nama_material[]" id="select-field-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
+                                                <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
+                                                @foreach ($stokMaterial as $item)
+                                                    <option @if($itemMaterial->stok_material_id == $item->id) selected @endif value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                             <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -230,10 +233,10 @@
 
                                         <div class="col-12 col-sm-12 col-md-5 mb-3">
                                             <x-partials.label title="Nama Material" />
-                                            <select name="nama_material[]" id="nama_material-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
-                                                <option value="" selected disabled>Pilih nama material...</option>
-                                                @foreach ($stokMaterial as $s)
-                                                    <option value="{{ $s->id }}">{{ $s->nama_material }}</option>
+                                            <select name="nama_material[]" id="select-field-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
+                                                <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
+                                                @foreach ($stokMaterial as $item)
+                                                    <option value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                             <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -354,12 +357,16 @@
                 $(document).ready(function () {
                     var test = $("input[name='kodeList[]']").map(function(){return $(this).val();}).get();
                     $.each(test, function (index, value) {
+                        count.push("#nomor-"+value);
+                    });
+                    $.each(count, function (index, value) {
                         $('#btnAddMaterial').attr('disabled', true);
                         $('#btnAddMaterial').removeClass('btn-outline-success');
                         $('#btnAddMaterial').addClass('btn-outline-secondary');
-                        $('#nama_material-'+value).attr('disabled', true);
-                        $('#volume-'+value).attr('disabled', true);
-                        $('#satuan-'+value).attr('disabled', true);
+                        $('#select-field-'+value.replace('#nomor-','')).trigger('change');
+                        $('#select-field-'+value.replace('#nomor-','')).attr('disabled', true);
+                        $('#volume-'+value.replace('#nomor-','')).attr('disabled', true);
+                        $('#satuan-'+value.replace('#nomor-','')).attr('disabled', true);
                     });
                 });
             </script>
@@ -368,14 +375,30 @@
                 $(document).ready(function () {
                     var test = $("input[name='kodeList[]']").map(function(){return $(this).val();}).get();
                     $.each(test, function (index, value) {
-                        count.push("#nomor-" + value);
-                        $("#nama_material-" + value).select2({
+                        count.push("#nomor-"+value);
+                    });
+
+                    $.each(count, function (index, value) {
+                        $("#select-field-" + value.replace('#nomor-','')).select2({
                             theme: "bootstrap-5",
+                            createTag: function (params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term + $select.data('appendme'),
+                                    kode_material: $select.data('kode_material'),
+                                    harga: $select.data('harga'),
+                                    newOption: true
+                                }
+                            },
+                            templateResult: formatMaterialOptionTemplate,
                         });
+                        $("#select-field-" + value.replace('#nomor-','')).trigger('change');
                     });
                     $.each(count, function (index, value) {
                         $(value).html("Material " + (index+1));
                     });
+
+                    console.log(count);
                 });
             </script>
         @endif
@@ -384,7 +407,7 @@
             <script>
                 $(document).ready(function () {
                     $("#dikerjakan_oleh").select2({
-                    theme: "bootstrap-5",
+                        theme: "bootstrap-5",
                     });
 
                     $("#status_kerusakan").select2({
@@ -524,8 +547,8 @@
             function setMaterialVisible(e){
                 if($(e).val() == "Tanpa Material"){
                     $.each(count, function (index, value) {
-                        $("#list-"+value.replace('#nomor-','')).remove();
                         if (index != 0) {
+                            $("#list-"+value.replace('#nomor-','')).remove();
                             count = jQuery.grep(count, function (value2) {
                                 return value2 != value;
                             });
@@ -536,22 +559,38 @@
                         $('#btnAddMaterial').attr('disabled', true);
                         $('#btnAddMaterial').removeClass('btn-outline-success');
                         $('#btnAddMaterial').addClass('btn-outline-secondary');
-                        $('#nama_material-'+value.replace('#nomor-','')).attr('disabled', true);
-                        $('#nama_material-'+value.replace('#nomor-','')).val('').attr('selected','selected').trigger('change');
+                        $('#select-field-'+value.replace('#nomor-','')).attr('disabled', true);
+                        $('#select-field-'+value.replace('#nomor-','')).val('').attr('selected','selected').trigger('change');
                         $('#volume-'+value.replace('#nomor-','')).attr('disabled', true);
                         $('#volume-'+value.replace('#nomor-','')).val('');
                         $('#satuan-'+value.replace('#nomor-','')).attr('disabled', true);
                         $('#satuan-'+value.replace('#nomor-','')).val('');
                     });
+                    console.log(count);
                 }else{
                     $.each(count, function (index, value) {
                         $('#btnAddMaterial').attr('disabled', false);
                         $('#btnAddMaterial').removeClass('btn-outline-secondary');
                         $('#btnAddMaterial').addClass('btn-outline-success');
-                        $('#nama_material-'+value.replace('#nomor-','')).attr('disabled', false);
+                        $('#select-field-'+value.replace('#nomor-','')).attr('disabled', false);
                         $('#volume-'+value.replace('#nomor-','')).attr('disabled', false);
                         $('#satuan-'+value.replace('#nomor-','')).attr('disabled', false);
+
+                        $("#select-field-" + value.replace('#nomor-','')).select2({
+                            theme: "bootstrap-5",
+                            createTag: function (params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term + $select.data('appendme'),
+                                    kode_material: $select.data('kode_material'),
+                                    harga: $select.data('harga'),
+                                    newOption: true
+                                }
+                            },
+                            templateResult: formatMaterialOptionTemplate,
+                        });
                     });
+                    console.log(count);
                 }
             }
 
@@ -575,7 +614,18 @@
                             });
                             $("#select-field-" + response.kode).select2({
                                 theme: "bootstrap-5",
+                                createTag: function (params) {
+                                return {
+                                    id: params.term,
+                                    text: params.term + $select.data('appendme'),
+                                    kode_material: $select.data('kode_material'),
+                                    harga: $select.data('harga'),
+                                    newOption: true
+                                }
+                                },
+                                templateResult: formatMaterialOptionTemplate,
                             });
+                            console.log(count);
                         } else {
                             const Toast = Swal.mixin({
                                 toast: true,
@@ -595,33 +645,76 @@
                                 });
                             })();
                         }
-                        console.log(count);
                     },
                 });
             }
 
             function deleteList(e) {
-                // count = jQuery.grep(count, function (value) {
-                //     if (index != 0) {
-                //         return value != "#nomor-" + e.dataset.id;
-                //     }
-                // });
-
-                $("#list-" + e.dataset.id).fadeOut(200, function(){
-                    $(this).remove();
-                });
-
                 $.each(count, function (index, value) {
-                    $("#list-"+value.replace('#nomor-','')).remove();
-                    count = jQuery.grep(count, function (value2) {
-                        return value2 != value;
-                    });
+                    if (count.length != 1) {
+                        count = jQuery.grep(count, function (value) {
+                            return value != "#nomor-" + e.dataset.id;
+                        });
+
+                        $("#list-" + e.dataset.id).fadeOut(200, function(){
+                            $(this).remove();
+                        });
+                    }
+
+                    if (index == 0) {
+                        plus = 1;
+                    }else{
+                        plus = 0;
+                    }
+
+                    $(value).html("Material " + (index+plus));
                 });
             }
 
             $('#btnSimpanPerubahan').on('click', function () {
                 $('#btnStatus').val('simpanPerubahan')
-                $('#formUpdate').submit();
+
+                var submit = false;
+
+                if($('#status_kerusakan').val() != "Tanpa Material"){
+                    $.each(count, function (index, value) {
+                        if($('#select-field-'+value.replace('#nomor-','')).val() == '' || $('#volume-'+value.replace('#nomor-','')).val() == ''){
+                            $('#select-field-'+value.replace('#nomor-','')).addClass('is-invalid');
+                            $('#volume-'+value.replace('#nomor-','')).addClass('is-invalid');
+                            $(value).css('color','red');
+                            submit = false;
+                        }else{
+                            $('#select-field-'+value.replace('#nomor-','')).removeClass('is-invalid');
+                            $('#volume-'+value.replace('#nomor-','')).removeClass('is-invalid');
+                            $(value).css('color','');
+                            submit = true;
+                        }
+                    });
+                }else{
+                    submit = true;
+                }
+
+                if (submit == true) {
+                    $('#formUpdate').submit();
+                }else{
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "center",
+                        icon: "danger",
+                        customClass: {
+                            popup: "colored-toast",
+                        },
+                        showConfirmButton: false,
+                        timer: 1000,
+                    });
+
+                    (async () => {
+                        await Toast.fire({
+                            icon: "error",
+                            title: "Pastikan material diisi lengkap!",
+                        });
+                    })();
+                }
             });
 
             $('#btnPekerjaanSelesai').on('click', function () {
@@ -637,11 +730,81 @@
                 }).then((result) => {
                     if (result.isConfirmed) { // Jika iyaa form akan tersubmit
                         $('#btnStatus').val('pekerjaanSelesai')
-                        $('#formUpdate').submit();
+
+                        var submit = false;
+                        if($('#status_kerusakan').val() != "Tanpa Material"){
+                            $.each(count, function (index, value) {
+                                if($('#select-field-'+value.replace('#nomor-','')).val() == '' || $('#volume-'+value.replace('#nomor-','')).val() == ''){
+                                    $('#select-field-'+value.replace('#nomor-','')).addClass('is-invalid');
+                                    $('#volume-'+value.replace('#nomor-','')).addClass('is-invalid');
+                                    $(value).css('color','red');
+                                    submit = false;
+                                }else{
+                                    $('#select-field-'+value.replace('#nomor-','')).removeClass('is-invalid');
+                                    $('#volume-'+value.replace('#nomor-','')).removeClass('is-invalid');
+                                    $(value).css('color','');
+                                    submit = true;
+                                }
+                            });
+                        }else{
+                            submit = true;
+                        }
+
+                        if (submit == true) {
+                            $('#formUpdate').submit();
+                        }else{
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "center",
+                                icon: "danger",
+                                customClass: {
+                                    popup: "colored-toast",
+                                },
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+
+                            (async () => {
+                                await Toast.fire({
+                                    icon: "error",
+                                    title: "Pastikan material diisi lengkap!",
+                                });
+                            })();
+                        }
                     }
                 });
             });
 
+            function formatMaterialOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
+                    '<div>'+state.text+'</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+'</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
+            function formatRupiah(angka, prefix = null){
+                var number_string = angka.toString(),
+                split   		= number_string.split(','),
+                sisa     		= split[0].length % 3,
+                rupiah     		= split[0].substr(0, sisa),
+                ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+                if(ribuan){
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                return rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            }
         </script>
     </x-slot>
 </x-layouts.app>

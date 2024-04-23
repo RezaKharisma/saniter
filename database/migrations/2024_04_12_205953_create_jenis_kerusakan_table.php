@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('foto');
             $table->text('deskripsi')->default('-');
             $table->string('nomor_denah');
-            $table->date('tgl_selesai_pekerjaan')->nullable();
+            $table->dateTime('tgl_selesai_pekerjaan')->nullable();
             $table->enum('status_kerusakan',['Penggantian','Dengan Material','Tanpa Material']);
             $table->string('created_by');
             $table->timestamps();

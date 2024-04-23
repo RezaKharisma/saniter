@@ -62,14 +62,12 @@
                         <div class="row">
                             <div class="col-6">
                                 <button type="button" class="btn btn-primary btn-block btn-lg w-100" disabled style="text-align: center" id="btnAbsenMasuk">
-                                    <small class="d-block mb-2 text-light fw-medium">Absen Masuk</small>
-                                    Belum Absen
+                                    Absen Masuk
                                 </button>
                             </div>
                             <div class="col-6">
                                 <button type="button" class="btn btn-primary btn-block btn-lg w-100" disabled style="text-align: center" id="btnAbsenPulang">
-                                    <small class="d-block mb-2 text-light fw-medium " id="modal">Absen Pulang</small>
-                                    Belum Absen
+                                    Absen Pulang
                                 </button>
                             </div>
                         </div>

@@ -26,6 +26,19 @@ class StokMaterialController extends Controller
         return view('material.stok-material.list.index', compact('stokMaterial'));
     }
 
+
+    /*
+    |----------------------------------------
+    | Histori Stok Material
+    |----------------------------------------
+    */
+
+    public function indexHistori(){
+        $stokMaterial = StokMaterial::all();
+        return view('material.stok-material.histori.index', compact('stokMaterial'));
+    }
+
+
     /*
     |----------------------------------------
     | Pengajuan / Tambah Stok Material

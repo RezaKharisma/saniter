@@ -110,7 +110,7 @@ class AjaxAbsenController extends Controller
                         <img src='".asset('storage/'.$foto)."' class='img-fluid' style='width: 100px;height: auto'/>
                     </a></div>";
 
-                    return "<div class='row p-0 justify-content-center'>".$fotoMasuk.$fotoPulang."</div>";
+                    return "<div class='row p-0 justify-content-center' style='width: 250px'>".$fotoMasuk.$fotoPulang."</div>";
                 })
                 ->addColumn('shift', function($row){
                     if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
@@ -194,15 +194,30 @@ class AjaxAbsenController extends Controller
         if ($request->ajax()) {
             $absen = Absen::select('absen.*','absen.id','shift.nama as shift_nama','shift.jam_masuk as shiftMasuk','shift.jam_pulang as shiftPulang','users.name')
                 ->join('shift','absen.shift_id','=','shift.id')
-                ->join('users','absen.user_id','=','users.id')
-                ->orderBy('tgl_masuk','DESC')
-                ->get();
+                ->join('users','absen.user_id','=','users.id');
+
+            if (!empty($request->start_date) && !empty($request->end_date)) {
+                $absen->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])
+                    ->orderBy('tgl_masuk','ASC');
+            }else{
+                $absen->orderBy('tgl_masuk','DESC');
+            }
+
+            if(!empty($request->nama_karyawan)){
+                $absen->where('users.name', 'LIKE', '%'.$request->nama_karyawan.'%');
+            }
+
+            if(!empty($request->status)){
+                $absen->where('absen.status', $request->status);
+            }
+
+            $data = $absen->get();
 
             // Return datatables
-            return DataTables::of($absen)
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('nama', function($row){
-                    return $row->name;
+                    return "<div class='text-nowrap'>$row->name</div>";
                 })
                 ->addColumn('foto', function($row){
                     $fotoMasuk = "
@@ -217,7 +232,7 @@ class AjaxAbsenController extends Controller
                         <img src='".asset('storage/'.$foto)."' class='img-fluid' style='width: 100px;height: auto'/>
                     </a></div>";
 
-                    return "<div class='row p-0 justify-content-center'>".$fotoMasuk.$fotoPulang."</div>";
+                    return "<div class='row p-0 justify-content-center' style='width: 250px'>".$fotoMasuk.$fotoPulang."</div>";
                 })
                 ->addColumn('shift', function($row){
                     if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {
@@ -226,12 +241,12 @@ class AjaxAbsenController extends Controller
 
                     $shift = "
                     $row->shift_nama
-                    <p class='text-muted mb-0'>(".Carbon::parse($row->shiftMasuk)->format('H:i')." - ".Carbon::parse($row->shiftPulang)->format('H:i').")</p>
+                    <p class='text-muted mb-0 text-nowrap'>(".Carbon::parse($row->shiftMasuk)->format('H:i')." - ".Carbon::parse($row->shiftPulang)->format('H:i').")</p>
                     ";
                     return $shift;
                 })
                 ->addColumn('tanggalAbsen', function($row){
-                    return \Carbon\Carbon::parse($row->tgl_masuk)->isoFormat('dddd, D MMMM Y');
+                    return "<div class='text-nowrap'>".\Carbon\Carbon::parse($row->tgl_masuk)->isoFormat('dddd, D MMMM Y')."</div>";
                 })
                 ->addColumn('jamMasuk', function($row){
                     if ($row->status == "Cuti" || $row->status == "Izin" || $row->status == "Sakit") {

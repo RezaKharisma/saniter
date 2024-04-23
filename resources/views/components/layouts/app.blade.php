@@ -22,6 +22,7 @@
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
+        {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables/datatables.min.css') }}" /> --}}
         <link rel="stylesheet" href="{{ asset('assets/vendor/css/jquery-ui.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/css/select2-bootstrap-5-theme.min.css') }}" />
@@ -99,7 +100,10 @@
         <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
         <script src="{{ asset('assets/js/main.js') }}"></script>
         <script src="{{ asset('assets/js/numberOnly.js') }}"></script>
-        <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
+        {{-- <script src="{{ asset('assets/js/datatables.min.js') }}"></script> --}}
+        <script src="{{ asset('assets/vendor/libs/datatables/pdfmake.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/datatables/vfs_fonts.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/datatables/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
 

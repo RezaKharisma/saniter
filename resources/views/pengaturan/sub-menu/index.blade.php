@@ -136,7 +136,7 @@
                         {{-- Input Judul --}}
                         <x-input-text title="Judul" name="judul" id="judulEdit" placeholder="Masukkan judul sub menu" margin="mb-3" onkeyup="convertToSlug(this, 'urlEdit')" value="{{ old('judul') }}"/>
 
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-12 col-sm-12 col-md-6 mb-3 mb-sm-3 mb-md-0">
 
                                 {{-- Input Kategori --}}

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('stok_material_id');
             $table->unsignedBigInteger('detail_jenis_kerusakan_id');
             $table->date('tanggal');
-            $table->bigInteger('jumlah');
+            $table->double('volume');
             $table->string('satuan');
             $table->timestamps();
         });

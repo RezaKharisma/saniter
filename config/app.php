@@ -173,6 +173,7 @@ return [
         Clockwork\Support\Laravel\ClockworkServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -190,6 +191,7 @@ return [
         'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         'Clockwork' => Clockwork\Support\Laravel\Facade::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
 ];

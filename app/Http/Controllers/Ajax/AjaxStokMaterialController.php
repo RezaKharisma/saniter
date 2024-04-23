@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Models\Api\NamaMaterial;
+use App\Models\HistoryStokMaterial;
 use App\Models\StokMaterial;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,23 +17,40 @@ class AjaxStokMaterialController extends Controller
 
     public function getListStokMaterial(Request $request){
         if ($request->ajax()) {
-            $stokMaterial = StokMaterial::select(DB::raw('SUM(masuk) as totalStok'), 'material_id','kode_material','nama_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
+            $stokMaterial = StokMaterial::select('material_id','kode_material','nama_material','harga','stok_update','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
                 ->where('diterima_pm', 1)
                 ->where('diterima_spv', 1)
                 ->where('status_validasi_pm', 'ACC')
                 ->whereNot('status_validasi_pm', 'Tolak')
                 ->orderBy('id','DESC')
-                ->groupBy('kode_material')
-                ->get();
+                ->groupBy('kode_material');
+
+            if (!empty($request->start_date) && !empty($request->end_date)) {
+                $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
+            }
+
+            if(!empty($request->kode_material)){
+                $stokMaterial->where('kode_material', 'LIKE', '%'.$request->kode_material.'%');
+            }
+
+            if(!empty($request->nama_material)){
+                $stokMaterial->where('nama_material', 'LIKE', '%'.$request->nama_material.'%');
+            }
+
+            $data = $stokMaterial->get();
 
             // Return datatables
-            return DataTables::of($stokMaterial)
+            return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('tgl_input', function($row){
-                return Carbon::parse($row->created_at)->format('d F Y');
+            ->addColumn('tanggal_diterima_pm', function($row){
+                return Carbon::parse($row->tanggal_diterima_pm)->format('d F Y');
             })
             ->addColumn('harga', function($row){
                 return "Rp. ".number_format($row->harga, 0, ",", ".");
+            })
+            ->addColumn('stok_update', function($row){
+                $stokLatest = StokMaterial::where('kode_material', 'LIKE', '%'.$row->kode_material.'%')->where('status_validasi_pm', 'ACC')->latest()->first();
+                return $stokLatest->stok_update;
             })
             ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                 $btn = '';
@@ -44,7 +62,7 @@ class AjaxStokMaterialController extends Controller
                 // }
                 // return $btn;
             })
-            ->rawColumns(['action','harga'])
+            ->rawColumns(['action','harga','stok_update','tanggal_diterima_pm'])
             ->make(true);
         }
     }
@@ -140,10 +158,43 @@ class AjaxStokMaterialController extends Controller
                 }
 
                 // Tombol detail
-                $btn = $btn."<a href=".route('stok-material.pengajuan.detailPengajuan', $row->id)." class='btn btn-info btn-sm'>Detail</a>";
+                $btn = $btn."<a href=".route('stok-material.pengajuan.detailPengajuan', $row->id)." class='btn btn-info btn-sm'><i class='bx bx-detail'></i></a>";
                 return $btn;
             })
             ->rawColumns(['action','oleh','kode_material','status'])
+            ->make(true);
+        }
+    }
+
+    public function getHistoriStokMaterial(Request $request){
+        if ($request->ajax()) {
+            $histori = HistoryStokMaterial::select('stok_material.nama_material','stok_material.kode_material','jenis_kerusakan.id','detail_jenis_kerusakan.nama','history_stok_material.volume','history_stok_material.satuan','history_stok_material.created_at')
+                ->join('stok_material','history_stok_material.stok_material_id','=','stok_material.id')
+                ->join('detail_jenis_kerusakan','history_stok_material.detail_jenis_kerusakan_id','=','detail_jenis_kerusakan.id')
+                ->join('jenis_kerusakan','detail_jenis_kerusakan.jenis_kerusakan_id','=','jenis_kerusakan.id')
+                ->orderBy('id','DESC')
+                ->get();
+
+            // Return datatables
+            return DataTables::of($histori)
+            ->addIndexColumn()
+            ->addColumn('stok_material', function($row){
+                $html = "<div style='font-weight: bold;'>$row->kode_material</div><div>$row->nama_material</div>";
+                return $html;
+            })
+            ->addColumn('jenis_kerusakan', function($row){
+                return 'Perbaikan '.$row->nama;
+            })
+            ->addColumn('volume', function($row){
+                return $row->volume.' satuan';
+            })
+            ->addColumn('tanggal', function($row){
+                return Carbon::parse($row->created_at)->isoFormat('dddd, D MMMM Y');
+            })
+            ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
+                return "<a class='btn btn-info btn-sm' href='".route('jenis-kerusakan.detail',$row->id)."'><i class='bx bx-detail'></i></a>";
+            })
+            ->rawColumns(['action','stok_material','jenis_kerusakan','volume','tanggal'])
             ->make(true);
         }
     }

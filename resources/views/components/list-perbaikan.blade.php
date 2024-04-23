@@ -19,7 +19,7 @@
         <x-partials.label title="Volume" />
         <div class="input-group">
             <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}">
-            <input type="text" class="form-control" name="volume[]" placeholder="Volume">
+            <input type="text" class="form-control" name="volume[]" id="volume-{{ $kode }}" placeholder="Volume" required>
             <span class="input-group-text">satuan*</span>
         </div>
     </div>
