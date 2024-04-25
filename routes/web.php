@@ -4,38 +4,51 @@ use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Route;
 
 // Ajax
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\IzinController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\ReturController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\AreaListController;
+
+// Settings
+use App\Http\Controllers\TglKerjaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PekerjaanController;
 use App\Http\Controllers\StokMaterialController;
-
-// Settings
+use App\Http\Controllers\Ajax\AjaxAreaController;
 use App\Http\Controllers\Ajax\AjaxIzinController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
 use App\Http\Controllers\Ajax\AjaxRoleController;
+
+// All
 use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Ajax\AjaxAbsenController;
+use App\Http\Controllers\Ajax\AjaxReturController;
 use App\Http\Controllers\Ajax\AjaxShiftController;
+use App\Http\Controllers\DetailTglKerjaController;
 
-// All
+// API
+use App\Http\Controllers\JenisKerusakanController;
 use App\Http\Controllers\Settings\ShiftController;
 use App\Http\Controllers\Ajax\AjaxLokasiController;
 use App\Http\Controllers\API\NamaMaterialController;
 use App\Http\Controllers\Settings\SubMenuController;
+use App\Http\Controllers\Ajax\AjaxAreaListController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
+use App\Http\Controllers\Ajax\AjaxTglKerjaController;
 use App\Http\Controllers\Settings\RegionalController;
 use App\Http\Controllers\Settings\PengaturanController;
-
-// API
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Ajax\AjaxStokMaterialController;
 use App\Http\Controllers\Settings\KategoriMenuController;
+use App\Http\Controllers\Ajax\AjaxDetailTglKerjaController;
+use App\Http\Controllers\Ajax\AjaxJenisKerusakanController;
+use App\Http\Controllers\PekerjaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +125,15 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/pengaturan/sub-menu','store')->name('pengaturan.submenu.store');
             Route::put('/pengaturan/sub-menu/{id}','update')->name('pengaturan.submenu.update');
             Route::delete('/pengaturan/sub-menu/{id}','delete')->name('pengaturan.submenu.delete');
+        });
+
+        // Jenis Pekerja
+        Route::controller(PekerjaController::class)->group(function(){
+            Route::get('/jenis-pekerja/index','index')->name('jenis-pekerja.index');
+            Route::get('/jenis-pekerja/create', 'create')->name('jenis-pekerja.create');
+            Route::post('/jenis-pekerja/store','store')->name('jenis-pekerja.store');
+            // Route::put('/pengaturan/sub-menu/{id}','update')->name('pengaturan.submenu.update');
+            // Route::delete('/pengaturan/sub-menu/{id}','delete')->name('pengaturan.submenu.delete');
         });
 
         // Role
