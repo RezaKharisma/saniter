@@ -34,11 +34,7 @@
                     <div data-i18n="Accordion">Jenis Pekerja</div>
                   </a>
                 </li>
-                <li class="menu-item">
-                  <a href="#" class="menu-link">
-                    <div data-i18n="Accordion">Pekerjaan</div>
-                  </a>
-                </li>
+                
                 <li class="menu-item">
                   <a href="#" class="menu-link">
                     <div data-i18n="Accordion">List Pekerjaan</div>

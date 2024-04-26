@@ -127,13 +127,21 @@ Route::group(['middleware' => ['auth']], function () {
             Route::delete('/pengaturan/sub-menu/{id}','delete')->name('pengaturan.submenu.delete');
         });
 
-        // Jenis Pekerja
-        Route::controller(PekerjaController::class)->group(function(){
-            Route::get('/jenis-pekerja/index','index')->name('jenis-pekerja.index');
-            Route::get('/jenis-pekerja/create', 'create')->name('jenis-pekerja.create');
-            Route::post('/jenis-pekerja/store','store')->name('jenis-pekerja.store');
-            // Route::put('/pengaturan/sub-menu/{id}','update')->name('pengaturan.submenu.update');
-            // Route::delete('/pengaturan/sub-menu/{id}','delete')->name('pengaturan.submenu.delete');
+        // Setting Pekerjaan (Pekerja, Pekerjaan, Item Pekerjaan)
+        Route::controller(PekerjaanController::class)->group(function(){
+
+            // Pekerja
+            Route::get('/jenis-pekerja/index','index_pekerja')->name('jenis-pekerja.index');
+            Route::get('/jenis-pekerja/create', 'create_pekerja')->name('jenis-pekerja.create');
+            Route::post('/jenis-pekerja/store','store_pekerja')->name('jenis-pekerja.store');
+
+            // Pekerja
+            Route::get('/kategori-pekerjaan/index','index_kategori')->name('kategori-pekerjaan.index');
+            Route::get('/kategori-pekerjaan/create', 'create_kategori')->name('kategori-pekerjaan.create');
+            Route::post('/kategori-pekerjaan/store','store_kategori')->name('kategori-pekerjaan.store');
+
+            
+        
         });
 
         // Role
@@ -262,11 +270,11 @@ Route::group(['middleware' => ['auth']], function () {
     | Route Pekerjaan
     | ----------------------
     */
-    Route::controller(PekerjaanController::class)->group(function()
-    {
-        Route::get('/pengaturan/pekerjaan', 'index')->name('pengaturan.pekerjaan.index')->middleware('permission:pengaturan_pekerjaan_read');
-        Route::get('/pengaturan/pekerjaan/create', 'create')->name('pengaturan.pekerjaan.create')->middleware('permission:pengaturan_pekerjaan_create');
-    });
+    // Route::controller(PekerjaanController::class)->group(function()
+    // {
+    //     Route::get('/pengaturan/pekerjaan', 'index')->name('pengaturan.pekerjaan.index')->middleware('permission:pengaturan_pekerjaan_read');
+    //     Route::get('/pengaturan/pekerjaan/create', 'create')->name('pengaturan.pekerjaan.create')->middleware('permission:pengaturan_pekerjaan_create');
+    // });
 
     /*
     | Route Ajax Pekerjaan (develop)
