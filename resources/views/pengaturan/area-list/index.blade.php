@@ -13,29 +13,30 @@
                     Data Area
                 </h5>
 
-                <div class="card-body">
+                <div style="position: relative">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-hover" id="area-table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Denah</th>
+                                    <th>Area</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
 
-                    <table class="table table-hover" id="area-table" width="100%">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Denah</th>
-                                <th>Area</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-
-                        <tfoot>
-                            <tr>
-                                <th>No</th>
-                                <th>Denah</th>
-                                <th>Area</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </tfoot>
-
-                    </table>
+                            <tfoot>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Denah</th>
+                                    <th>Area</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>

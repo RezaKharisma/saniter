@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Api\NamaMaterial;
 use App\Models\Retur;
 use App\Models\StokMaterial;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +25,16 @@ class StokMaterialController extends Controller
 
     public function indexList(){
         $stokMaterial = StokMaterial::all();
-        return view('material.stok-material.list.index', compact('stokMaterial'));
+
+        $stokMaterialList = StokMaterial::select('id','kode_material','nama_material','harga','stok_update')
+            ->where('diterima_pm', 1)
+            ->where('diterima_spv', 1)
+            ->where('status_validasi_pm', 'ACC')
+            ->whereNot('status_validasi_pm', 'Tolak')
+            ->groupBy('kode_material')
+            ->get();
+
+        return view('material.stok-material.list.index', compact('stokMaterial','stokMaterialList'));
     }
 
 
@@ -178,7 +189,8 @@ class StokMaterialController extends Controller
                         'stok_update' => $this->cekStokUpdateMaterial($request->kode_material) + $request->masuk,
                         'status_validasi_pm' => 'ACC',
                         'history' => 1,
-                        'history_id' => $stok->id
+                        'history_id' => $stok->id,
+                        'keterangan' => $request->keterangan
                     ]);
                 }
 
@@ -233,7 +245,7 @@ class StokMaterialController extends Controller
 
                     // Update stok sebelumnya menjadi history
                     $stok->update([
-                        'deskripsi' => $request->deskripsi,
+                        'keterangan' => $request->keterangan,
                         'sebagian' => $request->jumlahSebagian,
                         'diterima_pm' => 1,
                         'diterima_pm_by' => auth()->user()->name,
@@ -264,7 +276,7 @@ class StokMaterialController extends Controller
 
                     // Update stok sebelumnya menjadi history
                     $stok->update([
-                        'deskripsi' => $request->deskripsi,
+                        'keterangan' => $request->keterangan,
                         'diterima_pm' => 1,
                         'diterima_pm_by' => auth()->user()->name,
                         'tanggal_diterima_pm' => Carbon::now()->format('Y-m-d'),
@@ -284,11 +296,6 @@ class StokMaterialController extends Controller
         }
     }
 
-    // public function cekKodeMaterial($kode_material){
-    //     $stokKode = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->where('history', 1)->get();
-    //     return $kode_material."-SNTR-".sprintf('%03d',count($stokKode)+1);
-    // }
-
     public function cekStokUpdateMaterial($kode_material){
         $stokLatest = StokMaterial::where('kode_material', 'LIKE', '%'.$kode_material.'%')->where('status_validasi_pm', 'ACC')->latest()->first();
 
@@ -305,5 +312,62 @@ class StokMaterialController extends Controller
 
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('stok-material.pengajuan.index'); // Redirect kembali
+    }
+
+    public function prestasiPhisik(){
+        return view('material.prestasi-phisik');
+    }
+
+    public function laporanMaterial(){
+        $stokMaterial = StokMaterial::select('id','kode_material','nama_material','harga','stok_update')
+            ->where('diterima_pm', 1)
+            ->where('diterima_spv', 1)
+            ->where('status_validasi_pm', 'ACC')
+            ->whereNot('status_validasi_pm', 'Tolak')
+            ->groupBy('kode_material')
+            ->get();
+
+        return view('material.material', compact('stokMaterial'));
+    }
+
+    public function printList(Request $request){
+        $stokMaterial = StokMaterial::select('material_id','kode_material','nama_material','harga','stok_update','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
+            ->where('diterima_pm', 1)
+            ->where('diterima_spv', 1)
+            ->where('status_validasi_pm', 'ACC')
+            ->whereNot('status_validasi_pm', 'Tolak')
+            ->orderBy('id','DESC');
+
+        if (!empty($request->start_date) && !empty($request->end_date)) {
+            $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
+        }
+
+        if ($request->checkAll != "on" && !empty($request->kode_material)) {
+            $stokMaterial->where('kode_material', $request->kode_material);
+        }
+
+        $data = $stokMaterial->latest()->get()->unique('kode_material');
+
+        $pdf = Pdf::loadView('components.print-layouts.material.model1', ['list' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end'=>Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4');
+        return $pdf->stream('list_material_('.Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y').' - '.Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y').'.pdf');
+    }
+
+    public function printPengajuan(Request $request){
+        $stokMaterial = StokMaterial::select('material_id','kode_material','nama_material','harga','masuk','diterima_pm','tanggal_diterima_pm','diterima_spv','tanggal_diterima_spv')
+            ->where('diterima_pm', 0)
+            ->orWhere('history', 1)
+            ->orderBy('history', 'ASC')
+            ->orderBy('id', 'DESC');
+
+        if (!empty($request->start_date) && !empty($request->end_date)) {
+            $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
+        }
+
+        $data = $stokMaterial->get();
+
+        dd($data);
+
+        $pdf = Pdf::loadView('components.print-layouts.material.model2', ['list' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end'=>Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4');
+        return $pdf->stream('list_material_('.Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y').' - '.Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y').'.pdf');
     }
 }

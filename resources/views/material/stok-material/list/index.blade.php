@@ -7,22 +7,22 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>List Stok Material</h4>
 
     <!-- Striped Rows -->
-    <div class="card">
+    {{-- <div class="card">
         <h5 class="card-header">Filter Stok Material</h5>
         <div class="card-body">
-            {{-- Material --}}
+
             <div class="row mb-2">
-                <div class="col-12 col-sm-12 col-md-6 mb-3">
-                    <x-partials.label title="Kode Material"/>
-                    <input type="text" class="form-control" name="kode_material" placeholder="Kode Material" autocomplete="off"/>
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 mb-3">
-                    <x-partials.label title="Nama Material"/>
-                    <input type="text" class="form-control" name="nama_material"  placeholder="Nama Material" autocomplete="off"/>
+                <div class="col-12 mb-3">
+                    <x-partials.label title="Material"/>
+                    <select name="kode_material" id="nama_material" class="form-control w-100 @error('nama_material') is-invalid @enderror" required>
+                        <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih material...</option>
+                        @foreach ($stokMaterialList as $item)
+                            <option value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
-            {{-- Tanggal --}}
             <div class="row mb-2">
                 <div class="col-12 col-sm-12 col-md-6 mb-3">
                     <x-partials.label title="Tanggal Mulai"/>
@@ -49,7 +49,7 @@
             </div>
 
         </div>
-    </div>
+    </div> --}}
 
     <div class="card mt-3">
         <h5 class="card-header">Data Stok Material</h5>
@@ -96,6 +96,19 @@
                     dateFormat: 'dd/mm/yy',
                 });
 
+                $("#nama_material").select2({
+                    theme: "bootstrap-5",
+                    createTag: function (params) {
+                        return {
+                            id: params.term,
+                            text: params.term + $select.data('appendme'),
+                            kode_material: $select.data('kode_material'),
+                            newOption: true
+                        }
+                    },
+                    templateResult: formatMaterialOptionTemplate,
+                });
+
                 // Jika tombol delete diklik
                 $(document).on("click", "button.confirm-delete", function () {
                     var form = $(this).closest("form");
@@ -115,6 +128,19 @@
                     });
                 });
             });
+
+            function formatMaterialOptionTemplate(state) {
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
+                    '<div>'+state.text+'</div>'
+                );
+                return $state;
+            }
 
             $('#filterDate').on('click', function (e) {
                 $('#stok-material-table').DataTable().destroy();
@@ -143,7 +169,7 @@
                     },
                     processing: true,
                     serverSide: true,
-                    dom:'lBfrtip',
+                    // dom:'lBfrtip',
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'kode_material', name: 'kode_material'},
@@ -153,7 +179,7 @@
                         {data: 'tanggal_diterima_pm', name: 'tanggal_diterima_pm'},
                         // {data: 'action', name: 'action'},
                     ],
-                    buttons: ['excel', 'pdf', 'print'],
+                    // buttons: ['excel', 'pdf', 'print'],
                     columnDefs: [
                         {targets: [3,5], className: 'text-center'}
                     ],

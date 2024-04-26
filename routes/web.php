@@ -76,6 +76,9 @@ Fortify::resetPasswordView(function () { return view('auth.reset-password'); });
 // Verified Account
 Route::group(['middleware' => ['auth']], function () {
 
+    // Search Menu
+    Route::post('/ajax/search-menu', [DashboardController::class, 'searchMenu'])->name('search-menu');
+
     /*
     |--------------------------------------------------------------------------
     | Middleware Admin
@@ -91,20 +94,20 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Kategori Menu
         Route::controller(KategoriMenuController::class)->group(function(){
-            Route::get('/pengaturan/kategori-menu','index')->name('pengaturan.kategorimenu.index');
-            Route::post('/pengaturan/kategori-menu','store')->name('pengaturan.kategorimenu.store');
-            Route::put('/pengaturan/kategori-menu/{id}','update')->name('pengaturan.kategorimenu.update');
-            Route::put('/pengaturan/kategori-menu/{id}/show','updateShow')->name('pengaturan.kategorimenu.updateShow');
-            Route::delete('/pengaturan/kategori-menu/{id}','delete')->name('pengaturan.kategorimenu.delete');
+            Route::get('/pengaturan/manajemen-menu/kategori-menu','index')->name('pengaturan.kategorimenu.index');
+            Route::post('/pengaturan/manajemen-menu/kategori-menu','store')->name('pengaturan.kategorimenu.store');
+            Route::put('/pengaturan/manajemen-menu/kategori-menu/{id}','update')->name('pengaturan.kategorimenu.update');
+            Route::put('/pengaturan/manajemen-menu/kategori-menu/{id}/show','updateShow')->name('pengaturan.kategorimenu.updateShow');
+            Route::delete('/pengaturan/manajemen-menu/kategori-menu/{id}','delete')->name('pengaturan.kategorimenu.delete');
         });
 
         // Menu
         Route::controller(MenuController::class)->group(function(){
-            Route::get('/pengaturan/menu','index')->name('pengaturan.menu.index');
-            Route::post('/pengaturan/menu','store')->name('pengaturan.menu.store');
-            Route::put('/pengaturan/menu/{id}','update')->name('pengaturan.menu.update');
-            Route::put('/pengaturan/menu/{id}/show','updateShow')->name('pengaturan.menu.updateShow');
-            Route::delete('/pengaturan/menu/{id}','delete')->name('pengaturan.menu.delete');
+            Route::get('/pengaturan/manajemen-menu/menu','index')->name('pengaturan.menu.index');
+            Route::post('/pengaturan/manajemen-menu/menu','store')->name('pengaturan.menu.store');
+            Route::put('/pengaturan/manajemen-menu/menu/{id}','update')->name('pengaturan.menu.update');
+            Route::put('/pengaturan/manajemen-menu/menu/{id}/show','updateShow')->name('pengaturan.menu.updateShow');
+            Route::delete('/pengaturan/manajemen-menu/menu/{id}','delete')->name('pengaturan.menu.delete');
         });
 
         // Ajax Menu Request
@@ -357,7 +360,7 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(AbsenController::class)->group(function(){
         // All Absen
-        Route::get('/administrasi/absen/detail/all', 'allDetail')->name('absen.all.index')->middleware('permission:absen_detail_all');
+        Route::get('/laporan/absensi', 'allDetail')->name('absen.all.index')->middleware('permission:absen_detail_all');
 
         // User Absen
         Route::get('/administrasi/absen', 'index')->name('absen.index')->middleware('permission:absen_read');
@@ -366,7 +369,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/administrasi/absen', 'store')->name('absen.store')->middleware('permission:absen_create');
 
         // Print
-        Route::post('/administrasi/absen/PDF','printPDF')->name('absen.pdf')->middleware('permission:absen_create');
+        Route::post('/laporan/absensi/model1','printModel1')->name('absen.pdf.model1')->middleware('permission:absen_create');
+        Route::post('/laporan/absensi/model2','printModel2')->name('absen.pdf.model2')->middleware('permission:absen_create');
     });
 
     /*
@@ -389,6 +393,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/material/stok-material/list', 'indexList')->name('stok-material.list.index')->middleware('permission:stok material list_read');
 
         // Route Pengajuan / Tambah
+        Route::get('/material/stok-material', 'indexPengajuan')->middleware('permission:stok material pengajuan_read');
         Route::get('/material/stok-material/tambah-stok', 'indexPengajuan')->name('stok-material.pengajuan.index')->middleware('permission:stok material pengajuan_read');
         Route::get('/material/stok-material/tambah-stok/create', 'createPengajuan')->name('stok-material.pengajuan.create')->middleware('permission:stok material pengajuan_create');
         Route::post('/material/stok-material/tambah-stok/store', 'storePengajuan')->name('stok-material.pengajuan.store')->middleware('permission:stok material pengajuan_create');
@@ -398,6 +403,13 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Route Histori
         Route::get('/material/stok-material/histori-penggunaan', 'indexHistori')->name('stok-material.histori.index')->middleware('permission:stok material histori_read');
+
+        // Prestasi Phisik
+        Route::get('/laporan/material', 'laporanMaterial')->name('laporan.material')->middleware('permission:material_read');
+        Route::post('/laporan/material/print-list', 'printList')->name('laporan.material.printList')->middleware('permission:material_read');
+        Route::post('/laporan/material/print-pengajuan', 'printPengajuan')->name('laporan.material.printPengajuan')->middleware('permission:material_read');
+
+        Route::get('/laporan/prestasi-phisik', 'prestasiPhisik')->name('laporan.phisik')->middleware('permission:prestasi phisik_read');
     });
 
     /*
@@ -416,6 +428,7 @@ Route::group(['middleware' => ['auth']], function () {
     */
     Route::controller(ReturController::class)->group(function(){
         Route::get('/material/stok-material/retur', 'index')->name('stok-material.retur.index')->middleware('permission:stok material retur_read');
+        Route::get('/material/stok-material/retur/{kode_material}/detail', 'detail')->name('stok-material.retur.detail')->middleware('permission:stok material retur_update');
         Route::get('/material/stok-material/retur/{kode_material}/detail', 'detail')->name('stok-material.retur.detail')->middleware('permission:stok material retur_update');
         Route::put('/material/stok-material/retur/{kode_material}/update', 'update')->name('stok-material.retur.update')->middleware('permission:stok material retur_update');
         Route::delete('/material/stok-material/retur/{kode_material}/delete', 'delete')->name('stok-material.retur.delete')->middleware('permission:stok material retur_delete');
@@ -477,6 +490,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/proyek/data-proyek/jenis-kerusakan/store', 'store')->name('jenis-kerusakan.store')->middleware('permission:jenis kerusakan_create');
         Route::put('/proyek/data-proyek/jenis-kerusakan/{id}/update', 'update')->name('jenis-kerusakan.update')->middleware('permission:jenis kerusakan_update');
         Route::delete('/proyek/data-proyek/jenis-kerusakan/{id}/delete', 'delete')->name('jenis-kerusakan.delete')->middleware('permission:jenis kerusakan_delete');
+
+        // Dokumentasi Kerusakan
+        Route::get('/laporan/dokumentasi','dokumentasi')->name('dokumentasi')->middleware('permission:dokumentasi_read');
+        Route::post('/laporan/dokumentasi/model1','dokModel1')->name('dokumentasi.model1')->middleware('permission:dokumentasi_read');
     });
 
     /*

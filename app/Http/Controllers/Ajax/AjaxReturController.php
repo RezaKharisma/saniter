@@ -51,7 +51,7 @@ class AjaxReturController extends Controller
                     $btn = "<button class='btn btn-warning disabled btn-sm d-inline me-1'>Pending</button>";
                 }
 
-                $btn = $btn."<a href=".route('stok-material.retur.detail', $row->kode_material)." class='btn btn-info btn-sm'>Detail</a>";
+                $btn = $btn."<a href=".route('stok-material.retur.detail', $row->kode_material)." class='btn btn-info btn-sm'><i class='bx bx-detail'></i></a>";
                 return $btn;
             })
             ->rawColumns(['action','kode_material'])

@@ -45,7 +45,7 @@
                                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-1">
                                         <div class="me-2">
                                             <h5 class="mb-0">{{ $item->name }}</h5>
-                                            <small class="text-muted">{{ Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small>
+                                            <small class="text-muted">{{ Carbon\Carbon::parse($item->created_at)->isoFormat('LT')." ".ucfirst(Carbon\Carbon::parse($item->created_at)->isoFormat('A')) }} ({{ Carbon\Carbon::parse($item->created_at)->diffForHumans() }})</small>
                                         </div>
                                     </div>
                                 </div>

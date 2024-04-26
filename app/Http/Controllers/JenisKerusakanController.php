@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Api\NamaMaterial;
-use App\Models\AreaList;
-use App\Models\DetailJenisKerusakan;
-use App\Models\DetailTglKerja;
-use App\Models\HistoryStokMaterial;
-use App\Models\JenisKerusakan;
-use App\Models\StokMaterial;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Area;
+use App\Models\User;
+use App\Models\AreaList;
+use App\Models\StokMaterial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use App\Models\DetailTglKerja;
+use App\Models\JenisKerusakan;
+use App\Models\Api\NamaMaterial;
+use App\Models\HistoryStokMaterial;
+use App\Models\DetailJenisKerusakan;
+use App\Models\FotoKerusakan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -113,7 +116,7 @@ class JenisKerusakanController extends Controller
         }
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect::route('jenis-kerusakan.index', $request->detail_tgl_kerja_id);
+        return Redirect::route('jenis-kerusakan.detail', $jenisKerusakan->id);
     }
 
     public function detail($id){
@@ -273,7 +276,7 @@ class JenisKerusakanController extends Controller
         }
 
         toast('Data berhasil tersimpan!', 'success');
-        return Redirect::route('jenis-kerusakan.index', $request->detail_tgl_kerja_id);
+        return Redirect::route('jenis-kerusakan.detail', $id);
     }
 
     public function delete(Request $request, $id){
@@ -321,5 +324,57 @@ class JenisKerusakanController extends Controller
             $image = Storage::disk('public')->put('jenis-kerusakan/'.$perbaikan.'/', $image);
             return $image;
         }
+    }
+
+    public function dokumentasi(){
+        $area = Area::select('area.id','area.nama','regional.nama as regionalNama')->join('regional','area.regional_id','=','regional.id')->get();
+        return view('proyek.dokumentasi', compact('area'));
+    }
+
+    public function dokModel1(Request $request){
+        $start_date = $request->start_date." 23:59:59";
+        $end_date = $request->end_date." 23:59:59";
+
+        $list_area = AreaList::select('list_area.id','area.nama as areaNama','regional.nama as regionalNama')
+            ->join('area','list_area.area_id','=','area.id')
+            ->join('regional','area.regional_id','=','regional.id')
+            ->where('list_area.area_id',$request->area_id)
+            ->first();
+
+        if (empty($list_area->id)) {
+            toast('Dokumentasi pada area tersebut belum ada!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $jenis_kerusakan = JenisKerusakan::select('jenis_kerusakan.id','users.name as namaKaryawan','nama_kerusakan','deskripsi','nomor_denah','tgl_selesai_pekerjaan','status_kerusakan','list_area.nama as listNama','nomor_denah','lantai')
+            ->join('detail_tgl_kerja','jenis_kerusakan.detail_tgl_kerja_id','=','detail_tgl_kerja.id')
+            ->join('list_area','detail_tgl_kerja.list_area_id','=','list_area.id')
+            ->join('area','list_area.area_id','=','area.id')
+            ->join('users','jenis_kerusakan.dikerjakan_oleh','=','users.id')
+            ->where('area.id', $request->area_id)
+            ->whereBetween('tgl_selesai_pekerjaan', [Carbon::createFromFormat('d/m/Y H:i:s', $start_date)->format('Y-m-d H:i:s'), Carbon::createFromFormat('d/m/Y H:i:s', $end_date)->format('Y-m-d H:i:s')])
+            ->get();
+
+        if (empty($jenis_kerusakan)) {
+            toast('Belum ada dokumentasi pada tanggal tersebut!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $foto = new FotoKerusakan();
+
+        foreach ($jenis_kerusakan as $key => $item) {
+            $data[$key]['data'] = $item;
+            $data[$key]['foto'] = $foto->select('foto')->where('jenis_kerusakan_id', $item->id)->get();
+        }
+
+        if (empty($data)) {
+            toast('Belum ada dokumentasi pada tanggal tersebut!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $data = json_encode($data, true);
+
+        $pdf = Pdf::loadView('components.print-layouts.dokumentasi.model1', ['jenis_kerusakan' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end'=>Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y'),'area' => $list_area])->setPaper('a4');
+        return $pdf->stream('dokumentasi_('.Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y').' - '.Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y').').pdf');
     }
 }

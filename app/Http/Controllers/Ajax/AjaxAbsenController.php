@@ -203,8 +203,8 @@ class AjaxAbsenController extends Controller
                 $absen->orderBy('tgl_masuk','DESC');
             }
 
-            if(!empty($request->nama_karyawan)){
-                $absen->where('users.name', 'LIKE', '%'.$request->nama_karyawan.'%');
+            if(!empty($request->user_id)){
+                $absen->where('users.id', $request->user_id);
             }
 
             if(!empty($request->status)){

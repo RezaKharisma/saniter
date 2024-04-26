@@ -77,9 +77,6 @@
                     Log Absen
                     <div>
                         <a class="btn btn-info btn-sm" href="{{ route('absen.detail') }}">Detail</a>
-                        @can('absen_detail_all')
-                            <a class="btn btn-secondary btn-sm" href="{{ route('absen.all.index') }}">All Detail</a>
-                        @endcan
                     </div>
                 </h5>
                 <div style="position: relative">

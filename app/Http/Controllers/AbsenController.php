@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class AbsenController extends Controller
 {
@@ -48,7 +49,8 @@ class AbsenController extends Controller
     }
 
     public function allDetail(){
-        return view('absen.all-detail');
+        $users = User::select('id','name')->get();
+        return view('absen.all-detail', compact('users'));
     }
 
     /*
@@ -536,30 +538,78 @@ class AbsenController extends Controller
         }
     }
 
-    public function printPDF(Request $request){
+    public function printModel1(Request $request){
         $absen = Absen::select('absen.tgl_masuk','absen.status','shift.nama as shift_nama','shift.jam_masuk as shiftMasuk','shift.jam_pulang as shiftPulang','users.name')
             ->join('shift','absen.shift_id','=','shift.id')
             ->join('users','absen.user_id','=','users.id')
             ->orderBy('tgl_masuk','DESC');
 
-        if (!empty($request->thn_start_date) && !empty($request->thn_end_date)) {
-            $absen->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->thn_start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->thn_end_date)->format('Y-m-d')]);
-        }
+        $absen->whereYear('tgl_masuk','=',$request->tahun);
+        $absen->where('user_id', $request->user_id);
+        $user = User::select('users.name','users.email','users.telp','users.alamat_ktp','users.alamat_dom','lokasi.nama_bandara','lokasi.lokasi_proyek','regional.nama')
+            ->join('lokasi','users.lokasi_id','=','lokasi.id')
+            ->join('regional','lokasi.regional_id','=','regional.id')
+            ->find($request->user_id);
 
-        if(!empty($request->thn_status)){
-            $absen->where('absen.status', $request->thn_status);
-        }
-
-
-        if(!empty($request->thn_nama_karyawan)){
-            $absen->where('users.name', 'LIKE', '%'.$request->thn_nama_karyawan.'%');
+        if (count($absen->get()) == null) {
+            toast('Belum ada absen pada tahun tersebut!', 'warning'); // Toast
+            return Redirect::back();
         }
 
         $data = json_encode($absen->get(), true);
 
-        // dd(json_decode($data, true));
+        $pdf = PDF::loadView('components.print-layouts.absen.model1', ['absen' => $data, 'user' => $user, 'tahun' => $request->tahun])->setPaper('a4','landscape');
+        return $pdf->stream('absensi_'.$user->name.'_'.$request->tahun.'.pdf');
+    }
 
-        $pdf = PDF::loadView('components.print-layouts.absen', ['absen' => $data])->setPaper('a4','landscape');
-        return $pdf->stream('Laporan-absen.pdf');
+    public function printModel2(Request $request){
+        $data['Normal'] = Absen::groupBy('user_id')->where('status','Normal')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+        $data['Terlambat'] = Absen::groupBy('user_id')->where('status','Terlambat')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+        $data['Alfa'] = Absen::groupBy('user_id')->where('status','Alfa')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+        $data['Cuti'] = Absen::groupBy('user_id')->where('status','Cuti')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+        $data['Izin'] = Absen::groupBy('user_id')->where('status','Izin')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+        $data['Sakit'] = Absen::groupBy('user_id')->where('status','Sakit')->whereBetween('tgl_masuk', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')])->select('user_id','status', DB::raw('count("") as total'))->get();
+
+        $users = new User();
+        $result = array();
+
+        foreach ($data['Normal'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Normal'] = $value->total;
+        }
+
+        foreach ($data['Terlambat'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Terlambat'] = $value->total;
+        }
+
+        foreach ($data['Alfa'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Alfa'] = $value->total;
+        }
+
+        foreach ($data['Cuti'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Cuti'] = $value->total;
+        }
+
+        foreach ($data['Izin'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Izin'] = $value->total;
+        }
+
+        foreach ($data['Sakit'] as $value) {
+            $user = $users->select('name')->find($value->user_id);
+            $result[$user->name]['Sakit'] = $value->total;
+        }
+
+        if (count($result) == null) {
+            toast('Belum ada absen pada tahun tersebut!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $pdf = PDF::loadView('components.print-layouts.absen.model2', ['user' => $result,'start'=>Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'),'end'=>Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4','landscape');
+        return $pdf->stream('rekap_absensi_karyawan_('.Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y').' - '.Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y').').pdf');
+
     }
 }

@@ -91,6 +91,30 @@
             <div class="layout-overlay layout-menu-toggle"></div>
         </div>
 
+        <div class="modal fade" id="searchMenu" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="modalToggleLabel">Search Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <x-input-text title="menu" name="nama_menu" id="nama_menu" autofocus/>
+
+                        <div class="demo-inline-spacing mt-3">
+                            <ul class="list-group" id="list-search-menu">
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {{-- Asset Javascript --}}
         <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
@@ -119,6 +143,43 @@
         <script src="{{ asset('assets/vendor/libs/dropzone/dropzone-min.js') }}"></script>
 
         {{-- Custom script (jika ada) --}}
+
+        <script>
+            function searchMenu(){
+                loadMenu();
+                $('#searchMenu').modal('show')
+            }
+
+            $('#nama_menu').on('hidden.bs.modal', function () {
+                $('#list-search-menu').html('');
+            })
+
+            $('#nama_menu').on('keyup', function () {
+                loadMenu();
+            });
+
+            function loadMenu(){
+                $.ajax({
+                    headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+                    type: "POST",
+                    url: "{{ route('search-menu') }}",
+                    data: {
+                        nama: $('#nama_menu').val()
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        $('#list-search-menu').html('');
+                        $.each(response.SubMenu, function (index, value) {
+                            $('#list-search-menu').append('<a href="'+$(location).attr('origin')+'/'+value.urlMenu+'/'+value.urlSub+'" class="list-group-item d-flex align-items-center"><i class="bx bx-'+value.icon+' me-2"></i>'+value.judulSub+'</a>')
+                        });
+                        $.each(response.Menu, function (index, value) {
+                            $('#list-search-menu').append('<a href="'+$(location).attr('origin')+'/'+value.url+'" class="list-group-item d-flex align-items-center"><i class="bx bx-'+value.icon+' me-2"></i>'+value.judul+'</a>')
+                        });
+                    }
+                });
+            }
+        </script>
+
         {{ $script ?? null }}
     </body>
 </html>
