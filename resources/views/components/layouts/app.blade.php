@@ -140,7 +140,7 @@
 
         <script src="{{ asset('assets/vendor/libs/choices/choices.min.js') }}"></script>
         <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
-        <script src="{{ asset('assets/vendor/libs/dropzone/dropzone-min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/libs/dropzone/dropzoneupdate.js') }}"></script>
 
         {{-- Custom script (jika ada) --}}
 

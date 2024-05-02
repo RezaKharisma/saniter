@@ -89,7 +89,9 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        <div class="alert alert-warning" role="alert">Tidak dapat diubah setelah validasi!</div>
+                        <div class="alert alert-warning" role="alert">
+                            Tidak dapat diubah setelah validasi!
+                        </div>
                     </div>
                     <div class="col-12 mb-3">
                         <div class="card shadow w-100">
@@ -98,7 +100,7 @@
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
                                             <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi1" id="validasi1" >
-                                            <label class="form-check-label" for="defaultCheck1">Validasi 1</label>
+                                            <label class="form-check-label" for="defaultCheck1">Validasi SOM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
@@ -112,11 +114,16 @@
                     <div class="col-12">
                         <div class="card shadow w-100">
                             <div class="card-body">
+                                @can('validasi2_izin')
+                                <div class="alert alert-warning" role="alert">
+                                    Mohon menunggu validasi dari SOM.
+                                </div>
+                                @endcan
                                 <div class="row">
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
                                             <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi2" id="validasi2">
-                                            <label class="form-check-label" for="defaultCheck1">Validasi 2</label>
+                                            <label class="form-check-label" for="defaultCheck1">Validasi PM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
@@ -221,7 +228,12 @@
                 validasi1();
             }
             if ($.isFunction(validasi2)) {
-                validasi2();
+                if (response.validasi1 == 0) {
+                    $('#validasi1').prop('disabled', true);
+                    $('#validasi2').prop('disabled', true);
+                }else{
+                    validasi2();
+                }
             }
             if (response.validasi2) {
                 $('#validasi2').prop('checked', true);

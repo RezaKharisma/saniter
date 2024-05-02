@@ -25,7 +25,8 @@ class RegionalController extends Controller
      */
     public function create()
     {
-        return view('pengaturan.regional.create');
+        $timezones = $this->timezones();
+        return view('pengaturan.regional.create', compact('timezones'));
     }
 
     /**
@@ -34,8 +35,8 @@ class RegionalController extends Controller
     public function edit(string $id)
     {
         $regional = Regional::find($id);
-
-        return view('pengaturan.regional.edit', compact('regional'));
+        $timezones = $this->timezones();
+        return view('pengaturan.regional.edit', compact('regional','timezones'));
 
 
     }
@@ -49,7 +50,8 @@ class RegionalController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|unique:regional,nama',
             'latitude' => 'required',
-            'longitude' => 'required'
+            'longitude' => 'required',
+            'timezone' => 'required'
         ]);
 
         // Jika validasi gagal
@@ -64,6 +66,7 @@ class RegionalController extends Controller
             'nama' => $request->nama,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'timezone' => $request->timezone
         ]);
 
         toast('Data berhasil tersimpan!', 'success');
@@ -88,7 +91,8 @@ class RegionalController extends Controller
                 // Validasi & ambil semua request
                 'nama' => 'required',
                 'latitude' => 'required',
-                'longitude' => 'required'
+                'longitude' => 'required',
+                'timezone' => 'required'
         ]);
 
         // Jika validasi gagal
@@ -104,11 +108,38 @@ class RegionalController extends Controller
             'nama' => $request->nama,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'timezone' => $request->timezone
         ];
         // dd($regional);
         $regional->update($data); // Update data
 
         toast('Data berhasil tersimpan!', 'success');
         return Redirect::route('regional.index'); // Redirect kembali
+    }
+
+    public function timezones()
+    {
+        return $timeZone = [
+            ["America/New_York", "GMT-4"],
+            ["America/Los_Angeles", "GMT-7"],
+            ["Europe/London", "GMT+1"],
+            ["Europe/Paris", "GMT+2"],
+            ["Asia/Tokyo", "GMT+9"],
+            ["Asia/Shanghai", "GMT+8"],
+            ["Asia/Dubai", "GMT+4"],
+            ["Australia/Sydney", "GMT+10"],
+            ["Australia/Melbourne", "GMT+10"],
+            ["Asia/Singapore", "GMT+8"],
+            ["America/Chicago", "GMT-5"],
+            ["America/Toronto", "GMT-4"],
+            ["Europe/Berlin", "GMT+2"],
+            ["Europe/Madrid", "GMT+2"],
+            ["America/Mexico_City", "GMT-5"],
+            ["America/Buenos_Aires", "GMT-3"],
+            ["Asia/Hong_Kong", "GMT+8"],
+            ["Asia/Seoul", "GMT+9"],
+            ["Asia/Jakarta", "GMT+7"],
+            ["Africa/Johannesburg", "GMT+2"],
+        ];
     }
 }

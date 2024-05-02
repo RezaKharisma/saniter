@@ -1,15 +1,13 @@
-<x-layouts.app title="Detail Data Proyek">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyek / </span> Detail Proyek</h4>
+<x-layouts.app title="Detail Tanggal Kerja">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyek / </span> Detail Tanggal Kerja</h4>
 
     {{-- Menu --}}
     <ul class="nav nav-pills flex-column flex-md-row mb-3">
         <li class="nav-item">
-            {{-- Jika request url adalah url yg di tentukan, set class active --}}
-            <a class="btn btn-secondary d-block" href="{{ route('data-proyek.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+            <a class="btn btn-secondary d-block" href="{{ route('tanggal-kerja.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
         </li>
         @if (Carbon\Carbon::now()->format('Y-m-d') == Carbon\Carbon::parse($tglKerja->tanggal)->format('Y-m-d'))
             <li class="nav-item ms-0 ms-sm-0 ms-md-2 mt-2 mt-sm-2 mt-md-0">
-                {{-- Jika request url adalah url yg di tentukan, set class active --}}
                 <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modalAdd" onclick="setLokasi(this)"><i class="bx bx-plus"></i>Tambah Lokasi Kerusakan</button>
             </li>
         @endif
@@ -20,7 +18,7 @@
 
             <div class="card mb-4">
                 <h5 class="card-header">
-                    Detail Data Proyek
+                    Detail Tanggal Kerja
                 </h5>
 
                 <div class="card-body mb-0">

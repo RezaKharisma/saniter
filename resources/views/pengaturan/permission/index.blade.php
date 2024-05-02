@@ -23,7 +23,7 @@
                         <table id="role-table" class="table table-hover table-sm" width="100%">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th width="1">#</th>
                                     <th>Menu</th>
                                     <th>Name</th>
                                     <th>Aksi</th>
@@ -126,7 +126,7 @@
                 $('#role-table').DataTable({
                     ajax: "{{ route('ajax.getPermission') }}",
                     processing: true,
-                    serverSide: true,
+                    // serverSide: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul', name: 'judul'},

@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
@@ -112,9 +113,14 @@ class FortifyServiceProvider extends ServiceProvider
                             'status' => 'Tetap'
                         ]);
                         $user->assignRole($role->name);
+
+                        $this->setTimezone($user->regional_id);
+                        toast('Selamat datang '.$user->name, 'success');
                         return $user;
                     }
 
+                    $this->setTimezone($cekUser->regional_id);
+                    toast('Selamat datang '.$cekUser->name, 'success');
                     return $cekUser;
                 }
             }
@@ -124,11 +130,21 @@ class FortifyServiceProvider extends ServiceProvider
                 if ($user->is_active == false) {
                     throw ValidationException::withMessages(['email' => 'Saat ini akun anda tidak aktif. Hubungi administrator situs untuk mengaktifkannya.']);
                 }
+                $this->setTimezone($user->regional_id);
+                toast('Selamat datang '.$user->name, 'success');
                 return $user;
             }
         });
 
         $this->configureRoutes();
+    }
+
+    private function setTimezone($regionalUser){
+        $regional = Regional::select('timezone')->where('id', $regionalUser)->first();
+        $jamTimezoneUser = $regional->timezone;
+        config(['app.timezone' => $jamTimezoneUser]);
+        date_default_timezone_set($jamTimezoneUser);
+        return;
     }
 
     /**

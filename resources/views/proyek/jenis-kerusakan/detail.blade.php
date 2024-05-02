@@ -160,7 +160,7 @@
                                             <select class="form-control w-100" disabled>
                                                 <option value="" selected disabled>Pilih nama material...</option>
                                                 @foreach ($stokMaterial as $item)
-                                                    <option @if($itemMaterial->stok_material_id == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_material }}</option>
+                                                    <option @if($itemMaterial->kode_material == $item->kode_material) selected @endif value="{{ $item->kode_material }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -200,7 +200,7 @@
                                             <select name="nama_material[]" id="select-field-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
                                                 <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
                                                 @foreach ($stokMaterial as $item)
-                                                    <option @if($itemMaterial->stok_material_id == $item->id) selected @endif value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
+                                                    <option @if($itemMaterial->kode_material == $item->kode_material) selected @endif value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                             <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -236,7 +236,7 @@
                                             <select name="nama_material[]" id="select-field-{{ $kode }}" class="form-control w-100 @error('nama_material') is-invalid @enderror">
                                                 <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
                                                 @foreach ($stokMaterial as $item)
-                                                    <option value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
+                                                    <option value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                                 @endforeach
                                             </select>
                                             <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -332,11 +332,20 @@
         <div class="col-12 order-1 order-md-1 mt-3 mb-0">
             <div class="card ">
                 <div class="card-body">
-                    <a href="{{ route('jenis-kerusakan.index', $detail->detailKerjaID) }}" class="btn btn-secondary me-2 mb-3 mb-sm-3 mb-md-0">Kembali</a>
-                    @if ($detail->tgl_selesai_pekerjaan == null)
-                        <button type="button" class="btn btn-primary me-2 mb-3 mb-sm-3 mb-md-0" id="btnSimpanPerubahan">Simpan Perubahan</button>
-                        <button type="button" class="btn btn-success mb-md-0" id="btnPekerjaanSelesai">Pekerjaan Selesai</button>
-                    @endif
+                    <div class="row justify-content-between d-flex">
+                        <div class="col-12 col-sm-auto col-md-auto mb-1 mb-sm-1 mb-md-0 text-center d-flex">
+                            <a href="{{ route('jenis-kerusakan.index', $detail->detailKerjaID) }}" class="btn btn-secondary me-2 mb-3 mb-sm-3 mb-md-0">Kembali</a>
+
+                            @if ($detail->tgl_selesai_pekerjaan == null)
+                                <button type="button" class="btn btn-primary me-2 mb-3 mb-sm-3 mb-md-0" id="btnSimpanPerubahan">Simpan Perubahan</button>
+                            @endif
+                        </div>
+                        <div class="col-12 col-sm-auto col-md-auto text-center">
+                            @if ($detail->tgl_selesai_pekerjaan == null)
+                            <button type="button" class="btn btn-success mb-md-0" id="btnPekerjaanSelesai">Pekerjaan Selesai</button>
+                        @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -346,6 +355,7 @@
         <script src="{{ asset('assets/vendor/libs/jquery-ui/jquery-ui.js') }}"></script>
 
         <script>
+            Dropzone.autoDiscover = false;
             var count = [];
             $(document).ready(function () {
                 load_images();
@@ -398,7 +408,6 @@
                         $(value).html("Material " + (index+1));
                     });
 
-                    console.log(count);
                 });
             </script>
         @endif
@@ -426,8 +435,8 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
+                        acceptedFiles : ".png,.jpg,.jpeg",
                         autoProcessQueue : true,
-                        acceptedFiles : ".png,.jpg,.gif,.bmp,.jpeg",
                         uploadMultiple: true,
                         maxFiles: 10,
                         sending: function(file, xhr, formData){
@@ -566,7 +575,6 @@
                         $('#satuan-'+value.replace('#nomor-','')).attr('disabled', true);
                         $('#satuan-'+value.replace('#nomor-','')).val('');
                     });
-                    console.log(count);
                 }else{
                     $.each(count, function (index, value) {
                         $('#btnAddMaterial').attr('disabled', false);
@@ -590,7 +598,6 @@
                             templateResult: formatMaterialOptionTemplate,
                         });
                     });
-                    console.log(count);
                 }
             }
 
@@ -625,7 +632,6 @@
                                 },
                                 templateResult: formatMaterialOptionTemplate,
                             });
-                            console.log(count);
                         } else {
                             const Toast = Swal.mixin({
                                 toast: true,
@@ -804,6 +810,53 @@
                 }
 
                 return rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            }
+
+            function readExifMetadata(file, callback) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                var exif = EXIF.readFromBinaryFile(new BinaryFile(e.target.result));
+                var orientation = exif.Orientation || 1;
+                callback(orientation);
+                };
+                reader.readAsBinaryString(file);
+            }
+
+            function rotateImage(file, orientation, callback) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+                    var width = img.width;
+                    var height = img.height;
+                    // Rotate the image if necessary
+                    if ([5, 6, 7, 8].includes(orientation)) {
+                    canvas.width = height;
+                    canvas.height = width;
+                    } else {
+                    canvas.width = width;
+                    canvas.height = height;
+                    }
+                    switch (orientation) {
+                    case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+                    case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+                    case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+                    case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+                    case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+                    case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+                    case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+                    default: break;
+                    }
+                    ctx.drawImage(img, 0, 0);
+                    // Convert canvas to data URL
+                    var rotatedDataURL = canvas.toDataURL("image/jpeg");
+                    callback(rotatedDataURL);
+                };
+                img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             }
         </script>
     </x-slot>

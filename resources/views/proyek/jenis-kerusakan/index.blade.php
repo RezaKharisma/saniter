@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <img class="img-fluid" src="{{ asset('storage/'.$item->foto) }}" alt="Card image cap" style="max-height: 300px; object-fit: cover;background-position: center"/>
+                            <img class="img-fluid" src="{{ asset('storage/'.$item->foto) }}" alt="Card image cap" style="max-height: 300px; object-fit: cover"/>
                             <div class="featured-date mt-n4 ms-4 bg-white rounded w-px-50 shadow text-center p-1">
                                 <h5 class="mb-0 text-dark">{{ Carbon\Carbon::parse($item->created_at)->format('d') }}</h5>
                                 <span class="text-primary">{{ Carbon\Carbon::parse($item->created_at)->format('M') }}</span>
@@ -97,15 +97,22 @@
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
+
+                                    @if ($item->tgl_selesai_pekerjaan != null && auth()->user()->can('jenis kerusakan_update'))
+                                        <a href="{{ route('jenis-kerusakan.edit', $item->id) }}" class="btn btn-warning w-100 d-grid me-2">Update</a>
+                                    @endif
+
                                     <a href="{{ route('jenis-kerusakan.detail', $item->id) }}" class="btn btn-primary w-100 d-grid me-2">Detail</a>
+
                                     @if ($item->tgl_selesai_pekerjaan == null)
                                         <form action="{{ route('jenis-kerusakan.delete', $item->id) }}" method="POST" class="w-100 d-grid">
                                             @csrf
                                             @method('DELETE')
                                             <input type="hidden" value="{{ $detailKerja->id }}" name="detail_tgl_kerusakan_id">
-                                            <button type="submit" class="btn btn-danger">Hapus</button>
+                                            <button type="submit" class="btn btn-danger confirm-delete">Hapus</button>
                                         </form>
                                     @endif
+
                                 </div>
                             </div>
                         </div>
@@ -144,5 +151,25 @@
         </div>
     </div>
 
-    <x-slot name="script"> </x-slot>
+    <x-slot name="script">
+        <script>
+            $(document).on("click", "button.confirm-delete", function () {
+                    var form = $(this).closest("form");
+                    event.preventDefault();
+                    Swal.fire({ // SweetAlert
+                        title: "Apa kamu yakin?",
+                        text: "Data akan terhapus!",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yakin",
+                        cancelButtonText: "Batal",
+                    }).then((result) => {
+                        if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                            form.submit();
+                        }
+                    });
+                });
+        </script>
+    </x-slot>
 </x-layouts.app>

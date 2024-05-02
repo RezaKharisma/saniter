@@ -356,7 +356,6 @@
                     url: "{{ route('ajax.getAllLokasiMap') }}",
                     dataType: "json",
                     success: function (response) { // Jika ajax sukses dan memberikan respon
-                        console.log(response);
                         response.data.forEach(element => {
                             vars['Lokasi'+$.trim(element.nama_bandara)] = L.circle([element.latitude, element.longitude], {
                                 color: 'red',

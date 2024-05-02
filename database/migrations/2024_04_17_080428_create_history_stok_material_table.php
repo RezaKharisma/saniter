@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('history_stok_material', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('stok_material_id');
+            $table->string('kode_material');
             $table->unsignedBigInteger('detail_jenis_kerusakan_id');
             $table->date('tanggal');
             $table->double('volume');

@@ -10,7 +10,7 @@ use App\Models\StokMaterial;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
-if (! function_exists('getRegional')) {
+if (!function_exists('getRegional')) {
     function getRegional($id)
     {
         $query = Regional::where('id', $id)->first();
@@ -18,19 +18,19 @@ if (! function_exists('getRegional')) {
     }
 }
 
-if (! function_exists('getRoleAccessMenu')) {
+if (!function_exists('getRoleAccessMenu')) {
     function getRoleAccessMenu($itemOption)
     {
         $permission = Permission::with('roles')->where('id_menu', $itemOption->id)->get();
         $roleMenu = array();
-        foreach($permission as $item){
+        foreach ($permission as $item) {
             if ($item != null) {
-                foreach($item->roles as $itemRole){
+                foreach ($item->roles as $itemRole) {
                     array_push($roleMenu, $itemRole->name);
                 }
             }
         }
-        return str_replace('"', '', str_replace('","', '|', str_replace(array('[',']'),'',json_encode(array_values(array_unique(($roleMenu)))))));
+        return str_replace('"', '', str_replace('","', '|', str_replace(array('[', ']'), '', json_encode(array_values(array_unique(($roleMenu)))))));
     }
 }
 
@@ -39,18 +39,25 @@ if (! function_exists('getRoleAccessMenu')) {
 | Notifikasi Material Baru
 |---------------------------------
 */
-if (! function_exists('checkNewMaterial')) {
-    function checkNewMaterial(){
+if (!function_exists('checkNewMaterial')) {
+    function checkNewMaterial()
+    {
         $material = new StokMaterial();
 
-        if(auth()->user()->can('validasi_spv_stok_material')){
-            if ($material->where('diterima_spv', 0)->first() != null ) {
+        if (auth()->user()->can('validasi_som_stok_material')) {
+            if ($material->where('diterima_som', 0)->first() != null) {
                 return true;
             }
         }
 
         if (auth()->user()->can('validasi_pm_stok_material')) {
-            if ($material->where('diterima_pm', 0)->first() != null ) {
+            if ($material->where('diterima_pm', 0)->first() != null) {
+                return true;
+            }
+        }
+
+        if (auth()->user()->can('validasi_dir_stok_material')) {
+            if ($material->where('diterima_dir', 0)->first() != null) {
                 return true;
             }
         }
@@ -65,16 +72,16 @@ if (! function_exists('checkNewMaterial')) {
 | Get Semua Menu
 |---------------------------------
 */
-if (! function_exists('getMenu')) {
+if (!function_exists('getMenu')) {
     function getMenu()
     {
         $query = Menu::select('menu.*', 'menu_kategori.nama_kategori')
-        ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
-        ->orderBy('menu_kategori.order', 'ASC')
-        ->orderBy('menu.order', 'ASC')
-        ->where('menu_kategori.show', '1')
-        ->where('menu.show', '1')
-        ->get();
+            ->leftJoin('menu_kategori', 'menu.id_kategori', '=', 'menu_kategori.id')
+            ->orderBy('menu_kategori.order', 'ASC')
+            ->orderBy('menu.order', 'ASC')
+            ->where('menu_kategori.show', '1')
+            ->where('menu.show', '1')
+            ->get();
 
         return $query->groupBy(function ($item, $key) {
             return $item['nama_kategori'];
@@ -82,7 +89,7 @@ if (! function_exists('getMenu')) {
     }
 }
 
-if (! function_exists('getSubMenu')) {
+if (!function_exists('getSubMenu')) {
     function getSubMenu($id)
     {
         $query = SubMenu::select('sub_menu.*')
@@ -93,7 +100,7 @@ if (! function_exists('getSubMenu')) {
     }
 }
 
-if (! function_exists('getCheckedMenu')) {
+if (!function_exists('getCheckedMenu')) {
     function getCheckedMenu($rolePermission, $judulMenu)
     {
         $group = 0;
@@ -108,7 +115,7 @@ if (! function_exists('getCheckedMenu')) {
     }
 }
 
-if (! function_exists('getCheckedUserMenu')) {
+if (!function_exists('getCheckedUserMenu')) {
     function getCheckedUserMenu($userPermissions, $judulMenu = null)
     {
         $group = 0;
@@ -123,5 +130,3 @@ if (! function_exists('getCheckedUserMenu')) {
         return $group;
     }
 }
-
-

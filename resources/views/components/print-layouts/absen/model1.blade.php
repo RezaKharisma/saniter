@@ -106,7 +106,7 @@
             @for ($i = 0; $i < 31; $i++)
             <th width="20px" align='center'>{{ $i+1 }}</th>
             @endfor
-            <th style="text-align: center;" width="15px">n</th>
+            <th style="text-align: center;" width="15px">h</th>
             <th style="text-align: center;" width="15px">t</th>
             <th style="text-align: center;" width="15px">a</th>
             <th style="text-align: center;" width="15px">c</th>
@@ -215,7 +215,7 @@
             <td colspan="39">
                 <div style="width: 12px;height: 12px;background-color: green"></div>
             </td>
-            <td style="font-size: 14px;">: Normal (n)</td>
+            <td style="font-size: 14px;">: Hadir (h)</td>
 
             <td colspan="39" style="padding-left: 20px">
                 <div style="width: 12px;height: 12px;background-color: red"></div>

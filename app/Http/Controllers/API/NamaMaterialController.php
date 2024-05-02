@@ -15,7 +15,6 @@ class NamaMaterialController extends Controller
     {
         $materialAll = new NamaMaterial();
         $namaMaterial = $materialAll->getAllMaterial();
-
         return view('material.nama-material.index', compact('namaMaterial'));
     }
 

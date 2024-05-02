@@ -10,27 +10,30 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class AreaListController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $area = Area::all();
-        $store = Area::select('area.*','area.nama as areaNama','regional.nama as regionalNama')->join('regional','area.regional_id','=','regional.id')->get();
+        $store = Area::select('area.*', 'area.nama as areaNama', 'regional.nama as regionalNama')->join('regional', 'area.regional_id', '=', 'regional.id')->get();
 
         $regional = array();
-        foreach($store as $key => $item){
+        foreach ($store as $key => $item) {
             $regional[$key]['id'] = $item->regional_id;
             $regional[$key]['nama'] = $item->regionalNama;
         }
-        $regional = $this->unique_multidim_array($regional,'nama');
-        return view('pengaturan.area-list.index', compact('area','regional'));
+        $regional = $this->unique_multidim_array($regional, 'nama');
+        return view('pengaturan.area-list.index', compact('area', 'regional'));
     }
 
-    public function store(Request $request) {
-        $validator = Validator::make($request->all(),[
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'area_id' => 'required',
             'nama' => 'required',
-            'denah' => 'required|mimes:png,jpg,jpeg|max:2000'
+            'denah' => 'required|mimes:png,jpg,jpeg'
         ]);
 
         if ($validator->fails()) {
@@ -42,7 +45,7 @@ class AreaListController extends Controller
         }
 
         AreaList::create([
-            'area_id' => $request->regional_id,
+            'area_id' => $request->area_id,
             'lantai' => $request->lantai,
             'nama' => $request->nama,
             'denah' => $this->imageStore($request->file('denah'))
@@ -52,11 +55,12 @@ class AreaListController extends Controller
         return Redirect::route('list-area.index');
     }
 
-    public function update(Request $request, $id){
-        $validator = Validator::make($request->all(),[
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
             'regional_id' => 'required',
             'denahEdit' => 'required',
-            'denahEdit' => 'mimes:png,jpg,jpeg|max:2000'
+            'denahEdit' => 'mimes:png,jpg,jpeg'
         ]);
 
         if ($validator->fails()) {
@@ -79,7 +83,8 @@ class AreaListController extends Controller
         return Redirect::route('list-area.index');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $area = AreaList::find($id);
         Storage::disk('public')->delete($area->denah);
         $area->delete();
@@ -87,11 +92,12 @@ class AreaListController extends Controller
         return Redirect::route('list-area.index');
     }
 
-    function unique_multidim_array($array, $key) {
+    function unique_multidim_array($array, $key)
+    {
         $temp_array = array();
         $i = 0;
         $key_array = array();
-        foreach($array as $val) {
+        foreach ($array as $val) {
             if (!in_array($val[$key], $key_array)) {
                 $key_array[$i] = $val[$key];
                 $temp_array[$i] = $val;
@@ -113,8 +119,14 @@ class AreaListController extends Controller
 
         // Masukkan ke folder user-images dengan nama random dan extensi saat upload
         if (!empty($image)) {
-            $image = Storage::disk('public')->put('denah', $image);
-            return $image;
+
+            $compressedImage = Image::make($image)->orientate()->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $path = Storage::disk('public')->put('denah', $image);
+            $compressedImage->save(public_path('storage/' . $path));
+            $filePath = 'denah/' . $compressedImage->filename . "." . $compressedImage->extension;
+            return $filePath;
         }
     }
 }

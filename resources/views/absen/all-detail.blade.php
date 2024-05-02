@@ -202,7 +202,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <img src="{{ asset('assets/img/model-print/modelPrint2.png') }}" class="img-fluid" alt="Model Print 1">
+                    <img src="{{ asset('assets/img/model-print/model2Absensi.png') }}" class="img-fluid" alt="Model Print 1">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

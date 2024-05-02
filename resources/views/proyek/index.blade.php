@@ -1,5 +1,5 @@
-<x-layouts.app title="Data Proyek">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyek / </span> Data Proyek</h4>
+<x-layouts.app title="Tanggal Kerja">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Proyek / </span> Tanggal Kerja</h4>
 
     {{-- <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAdd">
         <i class="bx bx-plus"></i> Tambah Area
@@ -10,7 +10,7 @@
 
             <div class="card mb-4">
                 <h5 class="card-header mb-3">
-                    Data Proyek
+                    Tanggal Kerja
                 </h5>
 
                     <div style="position: relative">

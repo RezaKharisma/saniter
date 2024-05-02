@@ -100,16 +100,17 @@
                     <th rowspan="2">No</th>
                     <th rowspan="2">Nama Karyawan</th>
                     <th colspan="6">Status</th>
+                    <th rowspan="2">Detail Terlambat</th>
+                </thead>
+                <thead>
+                    <th width="90px">Hadir</th>
+                    <th width="90px">Terlambat</th>
+                    <th width="90px">Alfa</th>
+                    <th width="90px">Cuti</th>
+                    <th width="90px">Sakit</th>
+                    <th width="90px">Izin</th>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th width="100px">Normal</th>
-                        <th width="100px">Terlambat</th>
-                        <th width="100px">Alfa</th>
-                        <th width="100px">Cuti</th>
-                        <th width="100px">Sakit</th>
-                        <th width="100px">Izin</th>
-                    </tr>
                     @php
                         $no=1;
                         $status = ['Normal','Terlambat','Alfa','Cuti','Izin','Sakit'];
@@ -117,15 +118,22 @@
                     @foreach ($user as $key => $item)
                         <tr>
                             <td align="center" width="30px">{{ $no; }}</td>
-                            <td style="padding-left: 10px">{{ $key; }}</td>
+                            <td style="padding-left: 10px;padding-right:10px">{{ $key; }}</td>
 
                             @for ($i = 0; $i < count($status); $i++)
                                 @if (isset($item[$status[$i]]))
                                     <td align="center">{{ $item[$status[$i]] }}</td>
                                 @else
-                                    <td> </td>
+                                    <td></td>
                                 @endif
                             @endfor
+
+                            <td style="padding: 5px" width="200px">
+                                <div>{{ $item['Potongan']['waktu_1'] }} Menit ({{ $item['Potongan']['terlambat_1'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_1'], 0, '', '.') }}</div>
+                                <div>{{ $item['Potongan']['waktu_2'] }} Menit ({{ $item['Potongan']['terlambat_2'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_2'], 0, '', '.') }}</div>
+                                <div>{{ $item['Potongan']['waktu_3'] }} Menit ({{ $item['Potongan']['terlambat_3'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_3'], 0, '', '.') }}</div>
+                                <div style="text-align: center"><b>Total = Rp. {{ number_format($item['Potongan']['total'], 0, '', '.') }}</b></div>
+                            </td>
                         </tr>
                     @php
                         $no++;

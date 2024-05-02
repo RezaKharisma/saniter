@@ -2,9 +2,12 @@
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Pengajuan Stok Material</h4>
 
     @can('stok material pengajuan_create')
-    <ul class="nav nav-pills flex-md-row mb-3">
-        <li class="nav-item">
+    <ul class="nav nav-pills flex-md-row mb-3 justify-content-between">
+        <li class="nav-item mb-2 mb-sm-2 mb-md-0">
             <a href="{{ route('stok-material.pengajuan.create') }}" class="nav-link btn btn-primary active"><i class="bx bx-plus"></i> Tambah Stok Material</a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('stok-material.pengajuan.histori') }}" class="btn btn-secondary active">Histori Pengajuan</a>
         </li>
     </ul>
     @endcan

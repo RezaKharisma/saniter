@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
 class ProfilController extends Controller
 {
     public function index()
     {
-        $user = User::select('users.*', 'regional.nama AS namaRegional','lokasi.nama_bandara as bandara','lokasi.lokasi_proyek as lokasi','roles.name as role_name')
+        $user = User::select('users.*', 'regional.nama AS namaRegional', 'lokasi.nama_bandara as bandara', 'lokasi.lokasi_proyek as lokasi', 'roles.name as role_name')
             ->join('regional', 'users.regional_id', '=', 'regional.id')
             ->join('lokasi', 'users.lokasi_id', '=', 'lokasi.id')
             ->join('roles', 'users.role_id', '=', 'roles.id')
@@ -43,7 +44,7 @@ class ProfilController extends Controller
                 'nik' => 'required',
                 'alamat_ktp' => 'required',
                 'alamat_dom' => 'required',
-                'telp' => 'required|unique:users,telp,'.$id,
+                'telp' => 'required|unique:users,telp,' . $id,
             ],
             ['telp.required' => 'nomor telepon wajib diisi.']
         ); // Custom error message
@@ -114,7 +115,7 @@ class ProfilController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'foto' => 'required|mimes:png,jpg,jpeg|max:2000',
+                    'foto' => 'required|mimes:png,jpg,jpeg',
                 ],
                 ['foto.max' => 'Foto maksimal berukuran 2 MB.']
             );
@@ -143,7 +144,7 @@ class ProfilController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'ttd' => 'required|mimes:png,jpg,jpeg|max:2000',
+                    'ttd' => 'required|mimes:png,jpg,jpeg',
                 ],
                 ['ttd.max' => 'tanda tangan maksimal berukuran 2 MB.']
             );
@@ -171,9 +172,14 @@ class ProfilController extends Controller
         if ($user->foto != 'user-images/default.jpg') {
             Storage::disk('public')->delete($user->foto);
         }
-        // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-        $image = Storage::disk('public')->put('user-images', $image);
-        return $image;
+
+        $compressedImage = Image::make($image)->orientate()->resize(800, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $path = Storage::disk('public')->put('user-images', $image);
+        $compressedImage->save(public_path('storage/' . $path));
+        $filePath = 'user-images/' . $compressedImage->filename . "." . $compressedImage->extension;
+        return $filePath;
     }
 
     // Fungsi simpan data ke folder
@@ -188,8 +194,13 @@ class ProfilController extends Controller
 
         if (!empty($image)) {
             // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-            $image = Storage::disk('public')->put('user-ttd', $image);
-            return $image;
+            $compressedImage = Image::make($image)->orientate()->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $path = Storage::disk('public')->put('user-ttd', $image);
+            $compressedImage->save(public_path('storage/' . $path));
+            $filePath = 'user-ttd/' . $compressedImage->filename . "." . $compressedImage->extension;
+            return $filePath;
         }
     }
 }

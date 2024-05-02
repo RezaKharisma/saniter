@@ -12,7 +12,7 @@
                                 <h2 class="card-title">
                                     <div id="clock" class="text-primary"></div>
                                 </h2>
-                                <p class="card-text">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y'); }}</p>
+                                <p class="card-text">{{ $timezone->isoFormat('dddd, D MMMM Y'); }}</p>
                                 <a href="{{ route('absen.create') }}" class="btn btn-primary btn-block btn-lg w-100 mt-3">Absen</a>
                             </div>
                         </div>
@@ -30,7 +30,7 @@
                             <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
                                 <div class="card-title">
                                     <h5 class="text-nowrap mb-2">Sisa Cuti</h5>
-                                    <span class="badge bg-label-warning rounded-pill">Tahun {{ Carbon\Carbon::now()->format('Y') }}</span>
+                                    <span class="badge bg-label-warning rounded-pill">Tahun {{ Carbon\Carbon::now()->isoFormat('Y') }}</span>
                                 </div>
                                 <div class="mt-sm-auto">
                                     <h3 class="mb-0">{{ $countJumlahIzin->jumlah_izin ?? '0' }}</h3>
@@ -45,7 +45,7 @@
                             <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
                                 <div class="card-title">
                                     <h5 class="text-nowrap mb-2">Total Kehadiran</h5>
-                                    <span class="badge bg-label-info rounded-pill">Bulan {{ Carbon\Carbon::now()->format('F') }}</span>
+                                    <span class="badge bg-label-info rounded-pill">Bulan {{ Carbon\Carbon::now()->isoFormat('MMMM') }}</span>
                                 </div>
                                 <div class="mt-sm-auto">
                                     <h3 class="mb-0">{{ $countKehadiranPerBulan }}</h3>
@@ -87,6 +87,7 @@
                                 <th>Shift</th>
                                 <th>Jam Masuk</th>
                                 <th>Jam Pulang</th>
+                                <th>Waktu Terlambat</th>
                             </thead>
 
                             <tfoot>
@@ -94,6 +95,7 @@
                                 <th>Shift</th>
                                 <th>Jam Masuk</th>
                                 <th>Jam Pulang</th>
+                                <th>Waktu Terlambat</th>
                             </tfoot>
                         </table>
                     </div>
@@ -122,6 +124,7 @@
                         {data: 'shift', name: 'shift'},
                         {data: 'jamMasuk', name: 'jamMasuk'},
                         {data: 'jamPulang', name: 'jamPulang'},
+                        {data: 'selisihTerlambat', name: 'selisihTerlambat'},
                     ],
                     columnDefs: [
                     {

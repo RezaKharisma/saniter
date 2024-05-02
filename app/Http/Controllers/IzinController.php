@@ -35,20 +35,20 @@ class IzinController extends Controller
 
     public function create()
     {
-        $user = User::whereNot('role_id',1)->get();
+        $user = User::whereNot('role_id', 1)->get();
         $jumlahIzin = JumlahIzin::select('jumlah_izin')->where('tahun', Carbon::now()->format('Y'))->where('user_id', auth()->user()->id)->first();
-        return view('izin/create', compact('user','jumlahIzin'));
+        return view('izin/create', compact('user', 'jumlahIzin'));
     }
 
     public function store(Request $request)
     {
         // Validasi form
         $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'jenis_izin' => 'required',
-                'tgl_mulai_izin' => 'required',
-                'tgl_akhir_izin' => 'required',
-                'foto' => 'required',
+            'name' => 'required',
+            'jenis_izin' => 'required',
+            'tgl_mulai_izin' => 'required',
+            'tgl_akhir_izin' => 'required',
+            'foto' => 'required',
         ]);
 
         // Jika validasi gagal
@@ -59,12 +59,18 @@ class IzinController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
+        // Fungsi jika tanggal sudah dipilih pada izin sebelumnya, atau terdapat tanggal yang sama
+        if ($this->cekTanggalSudahDipilihSebelumnya($request->name, $request->tgl_mulai_izin, $request->tgl_akhir_izin) == true) {
+            toast('Tanggal tersebut sudah terpilih sebelumnya!', 'warning');
+            return Redirect::route('izin.index');
+        }
+
         $total_izin = count(CarbonPeriod::create(Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
             return Redirect::route('izin.index'); // Redirect kembali
-        }else{
+        } else {
             $data = [
                 'user_id' => $request->name,
                 'jenis_izin' => $request->jenis_izin,
@@ -82,21 +88,21 @@ class IzinController extends Controller
 
     public function edit($id)
     {
-        $izin = Izin::select('izin.*','users.id as userId','users.name as userName')
-            ->join('users','izin.user_id','=','users.id')
+        $izin = Izin::select('izin.*', 'users.id as userId', 'users.name as userName')
+            ->join('users', 'izin.user_id', '=', 'users.id')
             ->find($id);
-        $jumlahIzin = JumlahIzin::where('user_id', $izin->user_id)->first();
-        return view('izin.edit', compact('izin','jumlahIzin'));
+        $jumlahIzin = JumlahIzin::where('user_id', $izin->user_id)->where('tahun', Carbon::now()->format('Y'))->first();
+        return view('izin.edit', compact('izin', 'jumlahIzin'));
     }
 
     public function update(Request $request, $id)
     {
         // Validasi form
         $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'jenis_izin' => 'required',
-                'tgl_mulai_izin' => 'required',
-                'tgl_akhir_izin' => 'required',
+            'name' => 'required',
+            'jenis_izin' => 'required',
+            'tgl_mulai_izin' => 'required',
+            'tgl_akhir_izin' => 'required',
         ]);
 
         // Jika validasi gagal
@@ -107,12 +113,18 @@ class IzinController extends Controller
                 ->withInput(); // Return kembali membawa error dan old input
         }
 
+        // Fungsi jika tanggal sudah dipilih pada izin sebelumnya, atau terdapat tanggal yang sama
+        if ($this->cekTanggalSudahDipilihSebelumnya($request->name, $request->tgl_mulai_izin, $request->tgl_akhir_izin) == true) {
+            toast('Tanggal tersebut sudah terpilih sebelumnya!', 'warning');
+            return Redirect::route('izin.index');
+        }
+
         $total_izin = count(CarbonPeriod::create(Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d')));
 
         if ($this->cekSisaCuti($request->name, $total_izin)) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
             return Redirect::route('izin.index'); // Redirect kembali
-        }else{
+        } else {
             $izin = Izin::find($id);
             $data = [
                 'user_id' => $request->name,
@@ -162,7 +174,8 @@ class IzinController extends Controller
         return Redirect::route('izin.index');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         // Cari lokasi berdasarkan ID
         $izin = Izin::findOrFail($id);
 
@@ -181,7 +194,7 @@ class IzinController extends Controller
 
         if (!empty($file)) {
             // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-            $file = Storage::disk('public')->put('dokumen-izin/'.Carbon::now()->format('Y-m-d'), $file);
+            $file = Storage::disk('public')->put('dokumen-izin/' . Carbon::now()->format('Y-m-d'), $file);
             return $file;
         }
     }
@@ -190,25 +203,25 @@ class IzinController extends Controller
     {
         $izin = Izin::find($izinId);
 
-        $user = User::select('users.id as userId','lokasi.id as lokasiId',)
+        $user = User::select('users.id as userId', 'lokasi.id as lokasiId',)
             ->where('users.id', $izin->user_id)
-            ->join('lokasi','users.lokasi_id','=','lokasi.id')
+            ->join('lokasi', 'users.lokasi_id', '=', 'lokasi.id')
             ->first();
 
-        $jumlahIzin = JumlahIzin::where('user_id', $user->userId)->first();
+        $jumlahIzin = JumlahIzin::where('user_id', $user->userId)->where('tahun', Carbon::now()->format('Y'))->first();
 
         if ($jumlahIzin->jumlah_izin < $izin->total_izin) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');
             return Redirect::route('izin.index'); // Redirect kembali
-        }else{
+        } else {
             $jumlahIzin->update([
                 'jumlah_izin' => $jumlahIzin->jumlah_izin - $izin->total_izin
             ]);
 
             $periodeTanggal = CarbonPeriod::create(Carbon::parse($izin->tgl_mulai_izin), Carbon::parse($izin->tgl_akhir_izin));
-            $keterangan = $izin->jenis_izin." dari tanggal (".Carbon::parse($izin->tgl_mulai_izin)->format('F')." - ".Carbon::parse($izin->tgl_akhir_izin)->format('F').") selama ".$izin->total_izin." hari.";
+            $keterangan = $izin->jenis_izin . " dari tanggal (" . Carbon::parse($izin->tgl_mulai_izin)->format('F') . " - " . Carbon::parse($izin->tgl_akhir_izin)->format('F') . ") selama " . $izin->total_izin . " hari.";
 
-            foreach($periodeTanggal as $item){
+            foreach ($periodeTanggal as $item) {
                 $data = [
                     'user_id' => $user->userId,
                     'lokasi_id' => $user->lokasiId,
@@ -232,13 +245,43 @@ class IzinController extends Controller
 
     private function cekSisaCuti($userId, $total_izin)
     {
-        $jumlahIzin = JumlahIzin::where('user_id', $userId)->first();
+        $jumlahIzin = JumlahIzin::where('user_id', $userId)->where('tahun', Carbon::now()->format('Y'))->first();
 
         if ($jumlahIzin == null) {
             return true;
         }
 
         if ($jumlahIzin->jumlah_izin < $total_izin) {
+            return true;
+        }
+        return false;
+    }
+
+    private function cekTanggalSudahDipilihSebelumnya($userId, $tglMulai, $tglSelesai)
+    {
+        $izin = Izin::select('tgl_mulai_izin', 'tgl_akhir_izin')->where('user_id', $userId)->get();
+
+        $periode = CarbonPeriod::create(Carbon::createFromFormat('d/m/Y', $tglMulai)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $tglSelesai)->format('Y-m-d'));
+
+        $p = array();
+        $pi = array();
+
+        foreach ($periode as $i) {
+            array_push($p, $i->format('Y-m-d'));
+        }
+
+        sort($p);
+
+        foreach ($izin as $i) {
+            $periodeIzin = CarbonPeriod::create(Carbon::parse($i->tgl_mulai_izin)->format('Y-m-d'), Carbon::parse($i->tgl_selesai_izin)->format('Y-m-d'));
+
+            foreach ($periodeIzin as $ii) {
+                array_push($pi, $ii->format('Y-m-d'));
+            }
+        }
+
+
+        if (count(array_intersect($p, $pi)) > 0) {
             return true;
         }
         return false;
@@ -253,17 +296,17 @@ class IzinController extends Controller
     public function indexPengaturan()
     {
         $regional = Regional::all();
-        $jumlah = JumlahIzin::select('*','users.name as name_user', 'regional.nama  as regional_nama')
+        $jumlah = JumlahIzin::select('*', 'users.name as name_user', 'regional.nama  as regional_nama')
             ->leftjoin('users', 'users.id', '=', 'jumlah_izin.user_id')
             ->leftjoin('regional', 'regional.id', '=', 'users.regional_id')
             ->get();
 
-        return view('pengaturan.izin.index', compact('regional','jumlah'));
+        return view('pengaturan.izin.index', compact('regional', 'jumlah'));
     }
 
     public function createPengaturan()
     {
-        $user = User::select('*','users.name as user_name', 'roles.name as role_name','users.id as user_id')
+        $user = User::select('*', 'users.name as user_name', 'roles.name as role_name', 'users.id as user_id')
             ->leftjoin('roles', 'roles.id', '=', 'users.role_id')
             ->where('roles.name', '=', 'Teknisi')
             ->get();
@@ -274,9 +317,9 @@ class IzinController extends Controller
     {
         // Validasi form
         $validator = Validator::make($request->all(), [
-                'user_id' => 'required',
-                'tahun' => 'required',
-                'jumlah_izin' => 'required',
+            'user_id' => 'required',
+            'tahun' => 'required',
+            'jumlah_izin' => 'required',
         ]);
 
         // Jika validasi gagal

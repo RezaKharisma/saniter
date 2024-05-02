@@ -100,7 +100,7 @@
                                     <select name="nama_material[]" id="nama_material" class="form-control w-100 @error('nama_material') is-invalid @enderror" required>
                                         <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
                                         @foreach ($stokMaterial as $item)
-                                        <option value="{{ $item->id }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
+                                            <option value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -109,7 +109,7 @@
                                     <x-partials.label title="Volume" />
                                     <div class="input-group">
                                         <input type="hidden" name="satuan[]" id="satuan">
-                                        <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume" name="volume[]" placeholder="Volume" />
+                                        <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume" name="volume[]" placeholder="Volume" required/>
                                         <span class="input-group-text">satuan*</span>
                                     </div>
                                     <x-partials.error-message name="volume[]" class="d-block"/>
@@ -216,7 +216,7 @@
                 var $state = $(
                     '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
                     '<div>'+state.text+'</div>'+
-                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+'</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' (satuan)</div>'+
                     '<div></div>'
                 );
                 return $state;

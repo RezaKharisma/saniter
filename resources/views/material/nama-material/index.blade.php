@@ -44,6 +44,7 @@
                                     <th>Nama Material</th>
                                     <th>Jenis Material</th>
                                     <th>Stok</th>
+                                    <th>Harga</th>
                                 </tr>
                             </thead>
 
@@ -59,6 +60,7 @@
                                     <td>{{ $item['nama_material'] }}</td>
                                     <td>{{ $item['jenis_material'] }}</td>
                                     <td class="text-center">{{ $item['qty'] }}</td>
+                                    <td>Rp. {{ number_format(str_replace(",", "", $item['harga_beli']),0,'','.') }}</td>
                                 </tr>
                                 @php
                                     $no++;
@@ -74,6 +76,7 @@
                                     <th>Nama Material</th>
                                     <th>Jenis Material</th>
                                     <th>Stok</th>
+                                    <th>Harga</th>
                                 </tr>
                             </tfoot>
                         </table>

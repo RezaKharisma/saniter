@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('detail_jenis_kerusakan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('jenis_kerusakan_id');
-            $table->unsignedBigInteger('stok_material_id');
+            $table->string('kode_material');
             $table->string('nama');
             $table->decimal('harga');
             $table->decimal('volume');

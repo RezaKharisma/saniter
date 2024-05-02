@@ -16,13 +16,15 @@ use Spatie\Permission\Models\Role;
 
 class MenuController extends Controller
 {
-    public function index(){
-        $kategori = KategoriMenu::select('id','nama_kategori')->get(); // Select menu kategori
+    public function index()
+    {
+        $kategori = KategoriMenu::select('id', 'nama_kategori')->get(); // Select menu kategori
         return view('pengaturan.menu.index', compact('kategori')); // Passing data ke view
     }
 
-    public function store(Request $request){
-        $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [ // Validasi request dari form tambah menu
             'id_kategori' => 'required',
             'judul' => 'required|unique:menu,judul',
             'order' => 'required',
@@ -52,10 +54,11 @@ class MenuController extends Controller
         return Redirect::back();
     }
 
-    public function update(Request $request, $id){
-        $validator = Validator::make($request->all(),[ // Validasi request dari form tambah menu
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [ // Validasi request dari form tambah menu
             'id_kategori' => 'required',
-            'judul' => 'required|unique:menu,judul,'.$id,
+            'judul' => 'required|unique:menu,judul,' . $id,
             'order' => 'required',
             'url' => 'required',
             'icon' => 'required'
@@ -82,7 +85,8 @@ class MenuController extends Controller
         return Redirect::back(); // Return kembali
     }
 
-    public function updateShow($id){
+    public function updateShow($id)
+    {
         $menu = Menu::find($id);
         $data = [
             'show' => $menu->show == 1 ? 0 : 1 // Jika value 1 maka ubah ke 0, dan sebaliknya
@@ -93,7 +97,8 @@ class MenuController extends Controller
         return Redirect::route('pengaturan.menu.index');
     }
 
-    public function delete($id){ // Id pada parameter url
+    public function delete($id)
+    { // Id pada parameter url
 
         $menu = Menu::find($id); // Cari menu berdasarkan id
         $subMenu = SubMenu::where('id_menu', $id); // Cari sub menu berdasarkan id_menu FK
@@ -102,9 +107,14 @@ class MenuController extends Controller
         $roles = Role::all();
         $permissions = Permission::where('id_menu', $id)->get();
 
-        if (count($permissions) > 0) {
-            $roles->revokePermissionTo($permissions);
-            $permissions->delete();
+        if ($permissions->isNotEmpty()) {
+            foreach ($roles as $role) {
+                $role->revokePermissionTo($permissions->pluck('id')->toArray());
+            }
+
+            foreach ($permissions as $permission) {
+                $permission->delete();
+            }
         }
 
         // Delete menu tersebut dan sub menu

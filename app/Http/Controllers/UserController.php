@@ -185,6 +185,7 @@ class UserController extends Controller
 
             $lokasi = Lokasi::select('lokasi.id','regional.nama','nama_bandara','lokasi_proyek')
                 ->join('regional','lokasi.regional_id','=','regional.id')
+                ->where('regional.id', $user->regional_id)
                 ->get();
 
             $regional = Regional::select('id','nama')

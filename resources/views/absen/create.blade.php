@@ -16,6 +16,14 @@
 
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi / Absen /</span> Proses</h4>
 
+    {{-- Menu --}}
+    <ul class="nav nav-pills flex-column flex-md-row mb-3">
+        <li class="nav-item">
+            {{-- Jika request url adalah url yg di tentukan, set class active --}}
+            <a class="btn btn-secondary" href="{{ route('absen.index') }}"> <i class="bx bx-left-arrow-alt me-1"></i> Kembali </a>
+        </li>
+    </ul>
+
     <div class="row d-flex justify-content-center text-center mb-4">
         <div class="col-12">
             <div class="card">
@@ -84,6 +92,14 @@
         <script>
                 $(document).ready(function(){
 
+                Swal.fire({
+                    title: 'Memuat',
+                    text: 'Melakukan pengecekan lokasi...',
+                    icon: 'info',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                });
+
                 // Disable button pada awal load
                 $('input[name=shiftChecked]').prop('disabled', true);
                 $('#btnAbsenMasuk').prop('disabled', true);
@@ -98,6 +114,7 @@
                 const config = {
                     enableHighAccuracy: true,
                     timeout: 10000,
+                    maximumAge:0
                 };
 
                 if (navigator.geolocation) {
@@ -117,27 +134,13 @@
                 $('#latitudeUser').val(lat);
                 $('#longitudeUser').val(long);
 
-                // fetch('http://www.geoplugin.net/json.gp')
-                //     .then((resp) => {
-                //     if(!resp.ok) {
-                //         sweetAlertMessage('Terjadi Kesalahan!', 'Pastikan absen pada lokasi yang ditentukan dan aktifkan akses lokasi.', 'warning');
-                //         return
-                //     }
-                //     return resp.json()
-                // }).then((data) => {
-                //     console.log(position);
-                //     if(Math.abs(lat - data.geoplugin_latitude) < 1 && Math.abs(long - data.geoplugin_longitude) < 1) {
-                        if (distance() <= $('#radius').val()){
-                            alertAbsen();
-                            propDisabled();
-                        } else {
-                            // Jika diluar radius
-                            sweetAlertMessage('Anda diluar radius!', 'Pastikan absen pada lokasi yang ditentukan.', 'warning');
-                        }
-                //     } else {
-                //         sweetAlertMessage('Peringatan!', 'Sistem mendeteksi adanya anomali.', 'warning');
-                //     }
-                // })
+                if (distance() <= $('#radius').val()){
+                    alertAbsen();
+                    propDisabled();
+                } else {
+                    // Jika diluar radius
+                    sweetAlertMessage('Anda diluar radius!', 'Pastikan absen pada lokasi yang ditentukan.', 'warning');
+                }
             }
 
             // Fungsi pemberian lokasi pada input hidden
@@ -147,6 +150,11 @@
 
                 var latitudeUser = $('#latitudeUser').val();
                 var longitudeUser = $('#longitudeUser').val();
+
+                console.log('Lokasi '+latitude);
+                console.log('Lokasi '+longitude);
+                console.log('user sekarang '+latitudeUser);
+                console.log('user sekarang '+longitudeUser);
 
                 // Radius bumi pada KM
                 var R = 6371;

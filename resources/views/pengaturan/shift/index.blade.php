@@ -24,10 +24,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Regional</th>
                                 <th>Nama</th>
-                                <th>Server Time</th>
+                                <th>Timezone</th>
                                 <th>Jam Masuk</th>
                                 <th>Jam Pulang</th>
+                                <th>Potongan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -35,70 +37,17 @@
                         <tfoot>
                             <tr>
                                 <th>No</th>
+                                <th>Regional</th>
                                 <th>Nama</th>
-                                <th>Server Time</th>
+                                <th>Timezone</th>
                                 <th>Jam Masuk</th>
                                 <th>Jam Pulang</th>
+                                <th>Potongan</th>
                                 <th>Aksi</th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Modal Edit Regional --}}
-    <div class="modal fade" id="modalEditShift" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalCenterTitle">Ubah Shift</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                {{-- Form Tambah Menu --}}
-                <form method="post" id="formEdit">
-                    @csrf
-                    @method('PUT')
-                    <div class="card-body">
-
-                        {{-- Input Nama Shift --}}
-                        <x-partials.label title="Shift" />
-                        <select name="namaEdit" class="form-control @error('namaEdit') is-invalid @enderror" id="namaEdit">
-                            <option value="" selected disabled>Pilih Shift...</option>
-                            <option value="Pagi" @if(old('nama') == "Pagi") selected @endif>Pagi</option>
-                            <option value="Sore" @if(old('nama') == "Sore") selected @endif>Sore</option>
-                            <option value="Malam" @if(old('nama') == "Malam") selected @endif>Malam</option>
-                        </select>
-                        <x-partials.error-message name="namaEdit" class="d-block"/>
-
-                        <div class="row mt-3">
-                            <div class="col">
-
-                                {{-- Input Jam Masuk --}}
-                                <x-partials.label title="Jam Masuk" />
-                                {{-- <input class="form-control @error('jam_masuk') is-invalid @enderror" type="datetime" name="jam_masuk" value="{{ old('jam_masuk') }}"> --}}
-                                <input type="text" class="form-control @error('jam_masukEdit') is-invalid @enderror" placeholder="HH:MM" id="jam_masuk" name="jam_masukEdit" style="background-color: white" value="{{ old('jam_masukEdit') }}" />
-                                <x-partials.error-message name="jam_masuk" class="d-block"/>
-
-                            </div>
-                            <div class="col">
-
-                                {{-- Input Jam Pulang --}}
-                                <x-partials.label title="Jam Pulang" />
-                                <input type="text" class="form-control @error('jam_pulangEdit') is-invalid @enderror" placeholder="HH:MM" id="jam_pulang" name="jam_pulangEdit" style="background-color: white" value="{{ old('jam_keluarEdit') }}"/>
-                                <x-partials.error-message name="jam_pulangEdit" class="d-block"/>
-
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="card-footer float-end">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -109,16 +58,26 @@
                 $('#tabel-shift').DataTable({
                     ajax: "{{ route('ajax.getShift') }}",
                     processing: true,
-                    serverSide: true,
-                    responsive: true,
+                    // serverSide: true,
                     columns:[
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'regionalNama', name: 'regionalNama'},
                         {data: 'nama', name: 'nama'},
-                        {data: 'server_time', name: 'server_time'},
+                        {data: 'timezone', name: 'timezone'},
                         {data: 'jam_masuk', name: 'jam_masuk'},
                         {data: 'jam_pulang', name: 'jam_pulang'},
+                        {data: 'potongan', name: 'potongan'},
                         {data: 'action', name: 'action', searchable: false, orderable: false},
-                    ]
+                    ],
+                    rowGroup: {
+                        dataSrc: 'regionalNama'
+                    },
+                    columnDefs: [
+                    {
+                        target: 1,
+                        visible: false,
+                        searchable: false
+                    }]
                 });
 
                 $("#jam_masuk").flatpickr({
@@ -160,71 +119,7 @@
                     });
                 });
             });
-
-            // Ketika tombol edit diklik
-            function editData(e){
-
-                resetFormValidation()
-
-                // Mengatur ajax csrf
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('ajax.getShiftEdit') }}",
-                    data: {
-                        id: e.dataset.id // Mengambil id pada event
-                    },
-                    dataType: "json",
-                    success: function (response) { // Jika ajax sukses dan memberikan respon
-                        var shift = response.data;
-                        var url = "{{ route('shift.update', ':id') }}"; // Action pada form edit
-                        url = url.replace(':id', shift.id );
-                        $("#formEdit")[0].reset();
-                        $('#formEdit').attr('action', url);
-                        $('#jam_masuk').val(shift.jam_masuk);
-                        $('#jam_pulang').val(shift.jam_pulang);
-                        $('#namaEdit option[value='+shift.nama+']').attr('selected','selected');
-
-                        $("#jam_masuk").flatpickr({
-                            enableTime: true,
-                            noCalendar: true,
-                            dateFormat: "H:i",
-                            time_24hr: true,
-                            defaultDate: shift.jam_masuk
-                        });
-
-                        $("#jam_pulang").flatpickr({
-                            enableTime: true,
-                            noCalendar: true,
-                            dateFormat: "H:i",
-                            time_24hr: true,
-                            defaultDate: shift.jam_pulang
-                        });
-                    }
-                });
-                }
-
-                // Reset is-invalid form validation
-                function resetFormValidation(){
-                $(".is-invalid").removeClass("is-invalid")
-                $(".invalid-feedback").addClass("d-none")
-                }
         </script>
-
-        {{-- Jika terdapat session dengan nama modalAdd, untuk validasi popup otomatis --}}
-        @if (Session::has('modalEdit'))
-        <script>
-            $(document).ready(function () {
-                $('#modalEditShift').modal('show');
-            });
-            </script>
-        @endif
-
     </x-slot>
 
 </x-layouts.app>

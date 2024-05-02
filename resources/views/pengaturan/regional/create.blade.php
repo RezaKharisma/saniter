@@ -28,6 +28,20 @@
                     <x-partials.error-message name="nama" class="d-block"/>
                 </div>
 
+                <div class="mb-3">
+                    <x-partials.label title="Timezone" />
+                    <select name="timezone" id="timezone" class="form-control @error('timezone') is-invalid @enderror" required>
+                        <option value="" selected disabled>Pilih timezone...</option>
+                        @foreach ($timezones as $key => $item)
+                            <option value="{{ $item[0] }}" @if(old('timezone') == $item[0]) selected @endif>{{ $item[0] }} ({{ $item[1] }})</option>
+                        @endforeach
+                    </select>
+                    <x-partials.error-message name="timezone" class="d-block"/>
+                    <div class='form-text mt-1'>
+                        Lihat area timezone GMT <a href="#" onclick="openModalTimezone()" data-bs-toggle="modal" data-bs-target="#modalTimezone">Disini.</a>
+                    </div>
+                </div>
+
                 <div class="row mb-0">
                     <div class="col-12 mb-3">
 
@@ -71,10 +85,34 @@
         </form>
     </div>
 
+    <div class="modal fade" id="modalTimezone" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalCenterTitle">Denah</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body ">
+                        <img src="{{ asset('assets/img/timezone-map/map.png') }}" class="img-fluid">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <x-slot name="script">
         <script src="{{ asset('assets/vendor/libs/leaflet/leaflet.js') }}"></script>
         <script>
             $(document).ready(function () {
+                $("#timezone").select2({
+                    theme: "bootstrap-5",
+                });
+
                 getGeo();
             });
 

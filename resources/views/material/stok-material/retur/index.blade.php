@@ -1,6 +1,8 @@
 <x-layouts.app title="Pengajuan Stok Material">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Retur</h4>
 
+    <div class="alert bg-danger w-100 text-white text-center">PENDING</div>
+
     <!-- Striped Rows -->
     <div class="card">
         <h5 class="card-header mb-3">Data Retur Material</h5>

@@ -31,6 +31,20 @@
                     <x-partials.error-message name="nama" class="d-block"/>
                 </div>
 
+                <div class="mb-3">
+                    <x-partials.label title="Timezone" />
+                    <select name="timezone" id="timezone" class="form-control @error('timezone') is-invalid @enderror" required>
+                        <option value="" selected disabled>Pilih timezone...</option>
+                        @foreach ($timezones as $key => $item)
+                            <option value="{{ $item[0] }}" @if(old('timezone') == $item[0] || $regional->timezone == $item[0]) selected @endif>{{ $item[0] }} ({{ $item[1] }})</option>
+                        @endforeach
+                    </select>
+                    <x-partials.error-message name="timezone" class="d-block"/>
+                    <div class='form-text mt-1'>
+                        Lihat area timezone GMT <a href="#" onclick="openModalTimezone()" data-bs-toggle="modal" data-bs-target="#modalTimezone">Disini.</a>
+                    </div>
+                </div>
+
                 <div class="row mb-0">
                     <div class="col-12 mb-3">
 
@@ -78,6 +92,10 @@
         <script src="{{ asset('assets/vendor/libs/leaflet/leaflet.js') }}"></script>
         <script>
             $(document).ready(function () {
+                $('#timezone').select2({
+                    theme: "bootstrap-5"
+                });
+
                 getGeo();
             });
 

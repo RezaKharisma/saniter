@@ -14,22 +14,34 @@ class AjaxShiftController extends Controller
         if ($request->ajax()) {
 
             // Query menu join kategori
-            $shift = Shift::all();
+            $shift = Shift::select('shift.*','regional.nama as regionalNama')
+                ->join('regional','shift.regional_id','=','regional.id')
+                ->get();
 
             // Return datatables
             return DataTables::of($shift)
                 ->addIndexColumn()
+                ->addColumn('regional_id', function($row){
+                    return $row->regionalNama;
+                })
+                ->addColumn('potongan', function($row){
+                    $html1 = "<div class='d-block'>Terlambat 1 (".$row->terlambat_1." Menit, Rp. ".number_format($row->potongan_1,0,'','.').")</div>";
+                    $html2 = "<div class='d-block'>Terlambat 2 (".$row->terlambat_2." Menit, Rp. ".number_format($row->potongan_2,0,'','.').")</div>";
+                    $html3 = "<div class='d-block'>Terlambat 3 (".$row->terlambat_3." Menit, Rp. ".number_format($row->potongan_3,0,'','.').")</div>";
+
+                    return $html1.$html2.$html3;
+                })
                 ->addColumn('action', function($row){ // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('shift_update')) {
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalEditShift' class='btn btn-warning btn-sm d-inline me-1' data-id='".$row->id."' onclick='editData(this)'><i class='bx bx-edit'></i></button>";
+                        $btn = "<a href='".route('shift.edit', $row->id)."' class='btn btn-warning btn-sm me-1'><i class='bx bx-edit'></i></a>";
                     }
                     if (auth()->user()->can('shift_delete')) {
                         $btn = $btn."<form action=".route('shift.destroy', $row->id)." method='POST' class='d-inline'>".csrf_field().method_field('DELETE')." <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','potongan'])
                 ->make(true);
         }
     }

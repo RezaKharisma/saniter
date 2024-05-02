@@ -208,7 +208,7 @@
                 $('#menu-table').DataTable({
                     ajax: "{{ route('ajax.getMenu') }}",
                     processing: true,
-                    serverSide: true,
+                    // serverSide: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'judul', name: 'judul'},
