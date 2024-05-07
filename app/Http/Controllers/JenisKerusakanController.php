@@ -11,9 +11,15 @@ use Illuminate\Http\Request;
 use App\Models\DetailTglKerja;
 use App\Models\JenisKerusakan;
 use App\Models\Api\NamaMaterial;
+use App\Models\DetailItemPekerjaan;
 use App\Models\HistoryStokMaterial;
 use App\Models\DetailJenisKerusakan;
+use App\Models\DetailPekerja;
 use App\Models\FotoKerusakan;
+use App\Models\ItemPekerjaan;
+use App\Models\LogHistoryStokMaterial;
+use App\Models\Pekerja;
+use App\Models\TglKerja;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
@@ -42,7 +48,15 @@ class JenisKerusakanController extends Controller
 
     public function create($id)
     {
-        $teknisi = User::select('users.id', 'users.name')->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.name', 'Teknisi')->get();
+        $pekerja = Pekerja::all();
+
+        $itemPekerjaan = ItemPekerjaan::all();
+
+        $teknisi = User::select('users.id', 'users.name')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->where('regional_id', auth()->user()->regional_id)
+            ->where('roles.name', 'Teknisi')
+            ->get();
 
         $detailKerja = DetailTglKerja::select('detail_tgl_kerja.id', 'list_area.denah', 'list_area.lantai', 'list_area.nama')
             ->join('list_area', 'detail_tgl_kerja.list_area_id', '=', 'list_area.id')
@@ -58,7 +72,7 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.create', compact('detailKerja', 'stokMaterial', 'teknisi'));
+        return view('proyek.jenis-kerusakan.create', compact('detailKerja', 'stokMaterial', 'teknisi', 'pekerja', 'itemPekerjaan'));
     }
 
     public function store(Request $request)
@@ -79,6 +93,38 @@ class JenisKerusakanController extends Controller
 
             // Jika validasi gagal
             if ($validator2->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
+        if ($request->nama_pekerja && $request->satuan_pekerja && $request->volume_pekerja) {
+            $validator3 = Validator::make($request->all(), [
+                'nama_pekerja' => 'required',
+                'satuan_pekerja' => '',
+                'volume_pekerja' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator3->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
+        if ($request->item_pekerjaan && $request->satuan_item_pekerjaan && $request->volume_item_pekerjaan) {
+            $validator4 = Validator::make($request->all(), [
+                'item_pekerjaan' => 'required',
+                'satuan_item_pekerjaan' => '',
+                'volume_item_pekerjaan' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator4->fails()) {
                 toast('Mohon periksa form kembali!', 'error'); // Toast
                 return Redirect::back()
                     ->withErrors($validator)
@@ -116,6 +162,34 @@ class JenisKerusakanController extends Controller
                     'volume' => $request->volume[$key] ?? '0',
                     'satuan' => $request->satuan[$key] ?? '0',
                     'total_harga' => floatval($this->getHargaStokMaterial($item)) * floatval($request->volume[$key]),
+                ]);
+            }
+        }
+
+        if ($request->nama_pekerja != null) {
+            foreach ($request->nama_pekerja as $key => $item) {
+                DetailPekerja::create([
+                    'jenis_kerusakan_id' => $jenisKerusakan->id,
+                    'pekerja_id' => $item,
+                    'nama' => $request->perbaikan,
+                    'upah' => floatval($this->getUpahPekerja($item)),
+                    'volume' => $request->volume_pekerja[$key] ?? '0',
+                    'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                    'total_harga' => floatval($this->getUpahPekerja($item)) * floatval($request->volume_pekerja[$key]),
+                ]);
+            }
+        }
+
+        if ($request->item_pekerjaan != null) {
+            foreach ($request->item_pekerjaan as $key => $item) {
+                DetailItemPekerjaan::create([
+                    'jenis_kerusakan_id' => $jenisKerusakan->id,
+                    'item_pekerjaan_id' => $item,
+                    'nama' => $request->perbaikan,
+                    'harga' => floatval($this->getHargaItemPekerjaan($item)),
+                    'volume' => $request->volume_pekerja[$key] ?? '0',
+                    'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                    'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
                 ]);
             }
         }
@@ -419,6 +493,18 @@ class JenisKerusakanController extends Controller
         return $stokMaterial->harga;
     }
 
+    private function getUpahPekerja($idPekerja)
+    {
+        $pekerja = Pekerja::find($idPekerja);
+        return $pekerja->upah;
+    }
+
+    private function getHargaItemPekerjaan($idItemPekerjaan)
+    {
+        $itemPekerjaan = ItemPekerjaan::find($idItemPekerjaan);
+        return $itemPekerjaan->harga;
+    }
+
     // Fungsi simpan data ke folder
     private function imageStore($image, $perbaikan, $jenisKerusakan = null)
     {
@@ -443,16 +529,18 @@ class JenisKerusakanController extends Controller
 
     private function kembalikanStokMaterial($jenisKerusakanID)
     {
-        $detailMaterials = DetailJenisKerusakan::select('id')->where('jenis_kerusakan_id', $jenisKerusakanID)->get();
+        $detailMaterials = DetailJenisKerusakan::select('id', 'jenis_kerusakan_id')->where('jenis_kerusakan_id', $jenisKerusakanID)->get();
 
         $histories = array();
+        $jenis_kerusakan_id = "";
         foreach ($detailMaterials as $detailMaterial) {
+            $jenis_kerusakan_id = $detailMaterial->jenis_kerusakan_id;
             $data = HistoryStokMaterial::where('detail_jenis_kerusakan_id', $detailMaterial->id)->first();
             array_push($histories, $data);
         }
 
         $materials = new StokMaterial();
-        foreach ($histories as $key => $histori) {
+        foreach ($histories as $histori) {
             $stok = $materials->where('kode_material', $histori->kode_material)
                 ->where('diterima_som', 1)
                 ->where('diterima_pm', 1)
@@ -465,6 +553,14 @@ class JenisKerusakanController extends Controller
             $stok->update([
                 'stok_update' => floatval($stok->stok_update) + floatval($histori->volume)
             ]);
+            LogHistoryStokMaterial::create([
+                'user_id' => auth()->user()->id,
+                'kode_material' => $histori->kode_material,
+                'jenis_kerusakan_id' => $jenis_kerusakan_id,
+                'tanggal' => Carbon::now(),
+                'volume' => $histori->volume,
+                'satuan' => $histori->satuan,
+            ]);
             HistoryStokMaterial::where('id', $histori->id)->delete();
         }
         return;
@@ -474,6 +570,12 @@ class JenisKerusakanController extends Controller
     {
         $area = Area::select('area.id', 'area.nama', 'regional.nama as regionalNama')->join('regional', 'area.regional_id', '=', 'regional.id')->get();
         return view('proyek.dokumentasi', compact('area'));
+    }
+
+    public function harian()
+    {
+        $area = Area::select('area.id', 'area.nama', 'regional.nama as regionalNama')->join('regional', 'area.regional_id', '=', 'regional.id')->get();
+        return view('proyek.harian', compact('area'));
     }
 
     public function dokModel1(Request $request)
@@ -521,6 +623,74 @@ class JenisKerusakanController extends Controller
         $data = json_encode($data, true);
 
         $pdf = Pdf::loadView('components.print-layouts.dokumentasi.model1', ['jenis_kerusakan' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end' => Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y'), 'area' => $list_area])->setPaper('a4');
+        return $pdf->stream('dokumentasi_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . ').pdf');
+    }
+
+    public function harianModel1(Request $request)
+    {
+        $start_date = $request->start_date . " 23:59:59";
+        $end_date = $request->end_date . " 23:59:59";
+
+        $list_area = AreaList::select('list_area.id', 'area.nama as areaNama', 'regional.nama as regionalNama')
+            ->join('area', 'list_area.area_id', '=', 'area.id')
+            ->join('regional', 'area.regional_id', '=', 'regional.id')
+            ->where('list_area.area_id', $request->area_id)
+            ->first();
+
+        if (empty($list_area->id)) {
+            toast('Pekerjaan pada area tersebut belum ada!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $jenis_kerusakan = JenisKerusakan::select('list_area.nama as namaArea', 'tgl_kerja.tanggal as tglKerja', 'jenis_kerusakan.id', 'nama_kerusakan', 'deskripsi', 'nomor_denah', 'tgl_selesai_pekerjaan', 'status_kerusakan', 'list_area.nama as listNama', 'nomor_denah', 'lantai')
+            ->join('detail_tgl_kerja', 'jenis_kerusakan.detail_tgl_kerja_id', '=', 'detail_tgl_kerja.id')
+            ->join('tgl_kerja', 'detail_tgl_kerja.tgl_kerja_id', '=', 'tgl_kerja.id')
+            ->join('list_area', 'detail_tgl_kerja.list_area_id', '=', 'list_area.id')
+            ->join('area', 'list_area.area_id', '=', 'area.id')
+            ->where('area.id', $request->area_id)
+            ->whereBetween('tgl_kerja.tanggal', [Carbon::createFromFormat('d/m/Y H:i:s', $start_date)->format('Y-m-d H:i:s'), Carbon::createFromFormat('d/m/Y H:i:s', $end_date)->format('Y-m-d H:i:s')])
+            ->get();
+
+        if (empty($jenis_kerusakan)) {
+            toast('Belum ada pekerjaan pada tanggal tersebut!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        $detail = array();
+        // $history = array();
+        foreach ($jenis_kerusakan as $key => $item) {
+            $data[$item->tglKerja][$key]['jenis_kerusakan'] = $item;
+
+            $detail_kerusakan = DetailJenisKerusakan::select('detail_jenis_kerusakan.nama', 'detail_jenis_kerusakan.volume', 'detail_jenis_kerusakan.satuan', 'stok_material.nama_material')
+                ->where('jenis_kerusakan_id', $item->id)
+                ->join('stok_material', 'detail_jenis_kerusakan.kode_material', '=', 'stok_material.kode_material')
+                ->get();
+
+            foreach ($detail_kerusakan as $itemDetailKerusakan) {
+                array_push($detail, $itemDetailKerusakan);
+                // $historyStokMaterial = HistoryStokMaterial::where('detail_jenis_kerusakan_id', $itemDetailKerusakan->id)->get();
+                // foreach ($historyStokMaterial as $itemHistoryStokMaterial) {
+                //     array_push($history, $itemHistoryStokMaterial);
+                // }
+            }
+
+            $data[$item->tglKerja][$key]['detail_kerusakan'] = $detail;
+            // $data[$item->tglKerja][$key]['history'] = $history;
+            $detail = array();
+            // $history = array();
+        }
+
+        // dd($data);
+
+        if (empty($jenis_kerusakan)) {
+            toast('Belum ada dokumentasi pada tanggal tersebut!', 'warning'); // Toast
+            return Redirect::back();
+        }
+
+        // $data = json_encode($jenis_kerusakan, true);
+
+        $pdf = Pdf::loadView('components.print-layouts.dokumentasi.harian', ['data' => $data])->setPaper('a4', 'landscape');
+        // $pdf = Pdf::loadView('components.print-layouts.dokumentasi.harian')->setPaper('a4', 'landscape');
         return $pdf->stream('dokumentasi_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . ').pdf');
     }
 }

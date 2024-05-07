@@ -38,7 +38,9 @@ class BackupSeeder extends Seeder
          */
 
         /* `db_saniter`.`absen` */
-        $absen = array();
+        $absen = array(
+            array('id' => '1', 'user_id' => '1', 'lokasi_id' => '3', 'shift_id' => '1', 'tgl_masuk' => '2024-05-06', 'jam_masuk' => '07:40:39', 'foto_masuk' => 'user-absen/2024-05-06/663818f7d5f17.png', 'lokasi_masuk' => 'Kubu Dukuh', 'tgl_pulang' => '0000-00-00', 'jam_pulang' => '00:00:00', 'foto_pulang' => 'Belum Dilakukan', 'lokasi_pulang' => 'Belum Dilakukan', 'terlambat' => '00:00:00', 'keterangan' => 'Masuk Tepat Waktu, Shift Pagi', 'potongan' => '0', 'status' => 'Normal', 'created_at' => '2024-05-06 07:40:39', 'updated_at' => '2024-05-06 07:40:39', 'deleted_at' => NULL)
+        );
 
         /* `db_saniter`.`area` */
         $area = array(
@@ -59,8 +61,17 @@ class BackupSeeder extends Seeder
         /* `db_saniter`.`foto_kerusakan` */
         $foto_kerusakan = array();
 
+        /* `db_saniter`.`history_pekerja` */
+        $history_pekerja = array();
+
+        /* `db_saniter`.`history_prestasi_phisik` */
+        $history_prestasi_phisik = array();
+
         /* `db_saniter`.`history_stok_material` */
         $history_stok_material = array();
+
+        /* `db_saniter`.`item_pekerjaan` */
+        $item_pekerjaan = array();
 
         /* `db_saniter`.`izin` */
         $izin = array();
@@ -70,6 +81,9 @@ class BackupSeeder extends Seeder
 
         /* `db_saniter`.`jumlah_izin` */
         $jumlah_izin = array();
+
+        /* `db_saniter`.`kategori_pekerjaan` */
+        $kategori_pekerjaan = array();
 
         /* `db_saniter`.`list_area` */
         $list_area = array(
@@ -239,8 +253,10 @@ class BackupSeeder extends Seeder
             array('id' => '15', 'id_kategori' => '1', 'judul' => 'Shift', 'order' => '6', 'url' => 'pengaturan/shift', 'icon' => 'time', 'show' => '1', 'created_at' => '2024-04-14 17:27:11', 'updated_at' => '2024-04-14 17:27:19'),
             array('id' => '16', 'id_kategori' => '5', 'judul' => 'Absensi', 'order' => '1', 'url' => 'laporan/absensi', 'icon' => 'book-content', 'show' => '1', 'created_at' => '2024-04-29 09:41:23', 'updated_at' => '2024-04-29 09:41:23'),
             array('id' => '17', 'id_kategori' => '5', 'judul' => 'Dokumentasi', 'order' => '2', 'url' => 'laporan/dokumentasi', 'icon' => 'images', 'show' => '1', 'created_at' => '2024-04-29 09:43:18', 'updated_at' => '2024-04-29 09:43:18'),
-            array('id' => '18', 'id_kategori' => '5', 'judul' => 'Prestasi Phisik', 'order' => '3', 'url' => 'laporan/prestasi-phisik', 'icon' => 'file', 'show' => '1', 'created_at' => '2024-04-29 09:44:04', 'updated_at' => '2024-04-29 10:07:12'),
-            array('id' => '19', 'id_kategori' => '5', 'judul' => 'Material', 'order' => '5', 'url' => 'laporan/material', 'icon' => 'layer', 'show' => '1', 'created_at' => '2024-04-29 09:45:31', 'updated_at' => '2024-04-29 10:05:49')
+            array('id' => '18', 'id_kategori' => '5', 'judul' => 'Prestasi Phisik', 'order' => '4', 'url' => 'laporan/prestasi-phisik', 'icon' => 'file', 'show' => '1', 'created_at' => '2024-04-29 09:44:04', 'updated_at' => '2024-05-05 10:41:53'),
+            array('id' => '19', 'id_kategori' => '5', 'judul' => 'Material', 'order' => '5', 'url' => 'laporan/material', 'icon' => 'layer', 'show' => '1', 'created_at' => '2024-04-29 09:45:31', 'updated_at' => '2024-04-29 10:05:49'),
+            array('id' => '20', 'id_kategori' => '4', 'judul' => 'Pekerjaan', 'order' => '2', 'url' => 'proyek/pekerjaan', 'icon' => 'file', 'show' => '1', 'created_at' => '2024-05-03 09:35:24', 'updated_at' => '2024-05-03 09:35:38'),
+            array('id' => '21', 'id_kategori' => '5', 'judul' => 'Harian', 'order' => '3', 'url' => 'laporan/harian', 'icon' => 'calendar-event', 'show' => '1', 'created_at' => '2024-05-05 10:40:38', 'updated_at' => '2024-05-05 10:40:38')
         );
 
         /* `db_saniter`.`menu_kategori` */
@@ -270,16 +286,21 @@ class BackupSeeder extends Seeder
             array('id' => '14', 'migration' => '2024_03_27_025822_create_izin_table', 'batch' => '1'),
             array('id' => '15', 'migration' => '2024_03_27_031834_create_jumlah_izin_table', 'batch' => '1'),
             array('id' => '16', 'migration' => '2024_04_04_092133_create_stok_material_table', 'batch' => '1'),
-            array('id' => '17', 'migration' => '2024_04_05_110651_create_nama_material_table', 'batch' => '1'),
-            array('id' => '18', 'migration' => '2024_04_06_115437_create_retur_material_table', 'batch' => '1'),
-            array('id' => '19', 'migration' => '2024_04_09_140518_create_area_table', 'batch' => '1'),
-            array('id' => '20', 'migration' => '2024_04_09_151539_create_list_area_table', 'batch' => '1'),
-            array('id' => '21', 'migration' => '2024_04_12_104022_create_tgl_kerja_table', 'batch' => '1'),
-            array('id' => '22', 'migration' => '2024_04_12_113426_create_detail_tgl_kerja_table', 'batch' => '1'),
-            array('id' => '23', 'migration' => '2024_04_12_205953_create_jenis_kerusakan_table', 'batch' => '1'),
-            array('id' => '24', 'migration' => '2024_04_13_182918_create_foto_kerusakan_table', 'batch' => '1'),
-            array('id' => '25', 'migration' => '2024_04_13_183353_create_detail_jenis_kerusakan_table', 'batch' => '1'),
-            array('id' => '26', 'migration' => '2024_04_17_080428_create_history_stok_material_table', 'batch' => '1')
+            array('id' => '17', 'migration' => '2024_04_06_115437_create_retur_material_table', 'batch' => '1'),
+            array('id' => '18', 'migration' => '2024_04_09_140518_create_area_table', 'batch' => '1'),
+            array('id' => '19', 'migration' => '2024_04_09_151539_create_list_area_table', 'batch' => '1'),
+            array('id' => '20', 'migration' => '2024_04_12_104022_create_tgl_kerja_table', 'batch' => '1'),
+            array('id' => '21', 'migration' => '2024_04_12_113426_create_detail_tgl_kerja_table', 'batch' => '1'),
+            array('id' => '22', 'migration' => '2024_04_12_205953_create_jenis_kerusakan_table', 'batch' => '1'),
+            array('id' => '23', 'migration' => '2024_04_13_182918_create_foto_kerusakan_table', 'batch' => '1'),
+            array('id' => '24', 'migration' => '2024_04_13_183353_create_detail_jenis_kerusakan_table', 'batch' => '1'),
+            array('id' => '25', 'migration' => '2024_04_17_080428_create_history_stok_material_table', 'batch' => '1'),
+            array('id' => '26', 'migration' => '2024_04_23_142000_create_pekerja_table', 'batch' => '1'),
+            array('id' => '27', 'migration' => '2024_04_26_111059_create_kategori_pekerjaan_table', 'batch' => '1'),
+            array('id' => '28', 'migration' => '2024_04_26_204152_create_sub_kategori_pekerjaan_table', 'batch' => '1'),
+            array('id' => '29', 'migration' => '2024_04_26_222329_create_item_pekerjaan_table', 'batch' => '1'),
+            array('id' => '30', 'migration' => '2024_05_04_131034_create_history_prestasi_phisik', 'batch' => '1'),
+            array('id' => '31', 'migration' => '2024_05_04_140404_create_history_pekerja', 'batch' => '1')
         );
 
         /* `db_saniter`.`model_has_permissions` */
@@ -292,11 +313,11 @@ class BackupSeeder extends Seeder
             array('role_id' => '35', 'model_type' => 'App\\Models\\User', 'model_id' => '3')
         );
 
-        /* `db_saniter`.`nama_material` */
-        $nama_material = array();
-
         /* `db_saniter`.`password_reset_tokens` */
         $password_reset_tokens = array();
+
+        /* `db_saniter`.`pekerja` */
+        $pekerja = array();
 
         /* `db_saniter`.`permissions` */
         $permissions = array(
@@ -392,7 +413,25 @@ class BackupSeeder extends Seeder
             array('id' => '101', 'id_menu' => '17', 'name' => 'dokumentasi_read', 'guard_name' => 'web', 'created_at' => '2024-04-29 09:45:59', 'updated_at' => '2024-04-29 09:45:59'),
             array('id' => '102', 'id_menu' => '18', 'name' => 'prestasi phisik_read', 'guard_name' => 'web', 'created_at' => '2024-04-29 09:46:12', 'updated_at' => '2024-04-29 09:46:12'),
             array('id' => '103', 'id_menu' => '19', 'name' => 'material_read', 'guard_name' => 'web', 'created_at' => '2024-04-29 09:46:30', 'updated_at' => '2024-04-29 09:46:30'),
-            array('id' => '104', 'id_menu' => '11', 'name' => 'validasi_dir_stok_material', 'guard_name' => 'web', 'created_at' => '2024-05-01 20:54:59', 'updated_at' => '2024-05-01 20:54:59')
+            array('id' => '104', 'id_menu' => '11', 'name' => 'validasi_dir_stok_material', 'guard_name' => 'web', 'created_at' => '2024-05-01 20:54:59', 'updated_at' => '2024-05-01 20:54:59'),
+            array('id' => '105', 'id_menu' => '20', 'name' => 'pekerjaan_read', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:36:20', 'updated_at' => '2024-05-03 09:36:20'),
+            array('id' => '106', 'id_menu' => '20', 'name' => 'pekerja_create', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:36:33', 'updated_at' => '2024-05-03 09:36:33'),
+            array('id' => '107', 'id_menu' => '20', 'name' => 'pekerja_read', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:36:33', 'updated_at' => '2024-05-03 09:36:33'),
+            array('id' => '108', 'id_menu' => '20', 'name' => 'pekerja_update', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:36:33', 'updated_at' => '2024-05-03 09:36:33'),
+            array('id' => '109', 'id_menu' => '20', 'name' => 'pekerja_delete', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:36:33', 'updated_at' => '2024-05-03 09:36:33'),
+            array('id' => '110', 'id_menu' => '20', 'name' => 'kategori pekerjaan_create', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:22', 'updated_at' => '2024-05-03 09:37:22'),
+            array('id' => '111', 'id_menu' => '20', 'name' => 'kategori pekerjaan_read', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:22', 'updated_at' => '2024-05-03 09:37:22'),
+            array('id' => '112', 'id_menu' => '20', 'name' => 'kategori pekerjaan_update', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:22', 'updated_at' => '2024-05-03 09:37:22'),
+            array('id' => '113', 'id_menu' => '20', 'name' => 'kategori pekerjaan_delete', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:22', 'updated_at' => '2024-05-03 09:37:22'),
+            array('id' => '114', 'id_menu' => '20', 'name' => 'sub kategori pekerjaan_create', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:43', 'updated_at' => '2024-05-03 09:37:43'),
+            array('id' => '115', 'id_menu' => '20', 'name' => 'sub kategori pekerjaan_read', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:43', 'updated_at' => '2024-05-03 09:37:43'),
+            array('id' => '116', 'id_menu' => '20', 'name' => 'sub kategori pekerjaan_update', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:43', 'updated_at' => '2024-05-03 09:37:43'),
+            array('id' => '117', 'id_menu' => '20', 'name' => 'sub kategori pekerjaan_delete', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:37:43', 'updated_at' => '2024-05-03 09:37:43'),
+            array('id' => '118', 'id_menu' => '20', 'name' => 'item pekerjaan_create', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:38:03', 'updated_at' => '2024-05-03 09:38:03'),
+            array('id' => '119', 'id_menu' => '20', 'name' => 'item pekerjaan_read', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:38:03', 'updated_at' => '2024-05-03 09:38:03'),
+            array('id' => '120', 'id_menu' => '20', 'name' => 'item pekerjaan_update', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:38:03', 'updated_at' => '2024-05-03 09:38:03'),
+            array('id' => '121', 'id_menu' => '20', 'name' => 'item pekerjaan_delete', 'guard_name' => 'web', 'created_at' => '2024-05-03 09:38:03', 'updated_at' => '2024-05-03 09:38:03'),
+            array('id' => '122', 'id_menu' => '21', 'name' => 'harian_read', 'guard_name' => 'web', 'created_at' => '2024-05-05 10:41:04', 'updated_at' => '2024-05-05 10:41:04')
         );
 
         /* `db_saniter`.`personal_access_tokens` */
@@ -652,18 +691,39 @@ class BackupSeeder extends Seeder
             array('permission_id' => '101', 'role_id' => '1'),
             array('permission_id' => '102', 'role_id' => '1'),
             array('permission_id' => '103', 'role_id' => '1'),
-            array('permission_id' => '104', 'role_id' => '1')
+            array('permission_id' => '104', 'role_id' => '1'),
+            array('permission_id' => '105', 'role_id' => '1'),
+            array('permission_id' => '106', 'role_id' => '1'),
+            array('permission_id' => '107', 'role_id' => '1'),
+            array('permission_id' => '108', 'role_id' => '1'),
+            array('permission_id' => '109', 'role_id' => '1'),
+            array('permission_id' => '110', 'role_id' => '1'),
+            array('permission_id' => '111', 'role_id' => '1'),
+            array('permission_id' => '112', 'role_id' => '1'),
+            array('permission_id' => '113', 'role_id' => '1'),
+            array('permission_id' => '114', 'role_id' => '1'),
+            array('permission_id' => '115', 'role_id' => '1'),
+            array('permission_id' => '116', 'role_id' => '1'),
+            array('permission_id' => '117', 'role_id' => '1'),
+            array('permission_id' => '118', 'role_id' => '1'),
+            array('permission_id' => '119', 'role_id' => '1'),
+            array('permission_id' => '120', 'role_id' => '1'),
+            array('permission_id' => '121', 'role_id' => '1'),
+            array('permission_id' => '122', 'role_id' => '1')
         );
 
         /* `db_saniter`.`shift` */
         $shift = array(
-            array('id' => '1', 'nama' => 'Pagi', 'regional_id' => '3', 'is_diff_day' => '0', 'timezone' => 'GMT+08:00', 'jam_masuk' => '09:00:00', 'jam_pulang' => '17:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000', 'terlambat_2' => '40', 'potongan_2' => '25000', 'terlambat_3' => '60', 'potongan_3' => '50000', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:22:59', 'deleted_at' => NULL),
-            array('id' => '2', 'nama' => 'Sore', 'regional_id' => '3', 'is_diff_day' => '0', 'timezone' => 'GMT+08:00', 'jam_masuk' => '15:00:00', 'jam_pulang' => '23:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000', 'terlambat_2' => '40', 'potongan_2' => '25000', 'terlambat_3' => '60', 'potongan_3' => '50000', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:23:34', 'deleted_at' => NULL),
-            array('id' => '3', 'nama' => 'Malam', 'regional_id' => '3', 'is_diff_day' => '1', 'timezone' => 'GMT+08:00', 'jam_masuk' => '23:00:00', 'jam_pulang' => '07:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000', 'terlambat_2' => '40', 'potongan_2' => '25000', 'terlambat_3' => '60', 'potongan_3' => '50000', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:24:03', 'deleted_at' => NULL)
+            array('id' => '1', 'nama' => 'Pagi', 'regional_id' => '3', 'is_diff_day' => '0', 'timezone' => 'GMT+08:00', 'jam_masuk' => '09:00:00', 'jam_pulang' => '17:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000.00', 'terlambat_2' => '40', 'potongan_2' => '25000.00', 'terlambat_3' => '60', 'potongan_3' => '50000.00', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:22:59', 'deleted_at' => NULL),
+            array('id' => '2', 'nama' => 'Sore', 'regional_id' => '3', 'is_diff_day' => '0', 'timezone' => 'GMT+08:00', 'jam_masuk' => '15:00:00', 'jam_pulang' => '23:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000.00', 'terlambat_2' => '40', 'potongan_2' => '25000.00', 'terlambat_3' => '60', 'potongan_3' => '50000.00', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:23:34', 'deleted_at' => NULL),
+            array('id' => '3', 'nama' => 'Malam', 'regional_id' => '3', 'is_diff_day' => '1', 'timezone' => 'GMT+08:00', 'jam_masuk' => '23:00:00', 'jam_pulang' => '07:00:00', 'terlambat_1' => '20', 'potongan_1' => '10000.00', 'terlambat_2' => '40', 'potongan_2' => '25000.00', 'terlambat_3' => '60', 'potongan_3' => '50000.00', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-04-28 17:24:03', 'deleted_at' => NULL)
         );
 
         /* `db_saniter`.`stok_material` */
         $stok_material = array();
+
+        /* `db_saniter`.`sub_kategori_pekerjaan` */
+        $sub_kategori_pekerjaan = array();
 
         /* `db_saniter`.`sub_menu` */
         $sub_menu = array(
@@ -673,7 +733,9 @@ class BackupSeeder extends Seeder
             array('id' => '4', 'id_menu' => '11', 'judul' => 'List', 'order' => '1', 'url' => 'list', 'show' => '1', 'created_at' => '2024-04-07 00:57:23', 'updated_at' => '2024-04-07 00:57:23'),
             array('id' => '5', 'id_menu' => '11', 'judul' => 'Tambah Stok', 'order' => '2', 'url' => 'tambah-stok', 'show' => '1', 'created_at' => '2024-04-07 00:57:36', 'updated_at' => '2024-04-07 00:57:36'),
             array('id' => '6', 'id_menu' => '11', 'judul' => 'Retur', 'order' => '3', 'url' => 'retur', 'show' => '1', 'created_at' => '2024-04-07 00:57:46', 'updated_at' => '2024-04-07 00:57:46'),
-            array('id' => '7', 'id_menu' => '11', 'judul' => 'Histori Penggunaan', 'order' => '4', 'url' => 'histori-penggunaan', 'show' => '1', 'created_at' => '2024-04-21 18:33:01', 'updated_at' => '2024-04-21 18:33:01')
+            array('id' => '7', 'id_menu' => '11', 'judul' => 'Histori Penggunaan', 'order' => '4', 'url' => 'histori-penggunaan', 'show' => '1', 'created_at' => '2024-04-21 18:33:01', 'updated_at' => '2024-04-21 18:33:01'),
+            array('id' => '8', 'id_menu' => '20', 'judul' => 'Pekerja', 'order' => '1', 'url' => 'pekerja', 'show' => '1', 'created_at' => '2024-05-03 09:35:53', 'updated_at' => '2024-05-03 09:35:53'),
+            array('id' => '9', 'id_menu' => '20', 'judul' => 'List Pekerjaan', 'order' => '2', 'url' => 'list-pekerjaan', 'show' => '1', 'created_at' => '2024-05-03 09:36:05', 'updated_at' => '2024-05-03 09:36:05')
         );
 
         /* `db_saniter`.`tgl_kerja` */
@@ -681,10 +743,11 @@ class BackupSeeder extends Seeder
 
         /* `db_saniter`.`users` */
         $users = array(
-            array('id' => '1', 'regional_id' => '3', 'lokasi_id' => '1', 'role_id' => '1', 'name' => 'Admin Saniter', 'email' => 'admin@gmail.com', 'nik' => '5171012103010002', 'alamat_ktp' => 'asd', 'alamat_dom' => 'asd', 'telp' => '0819034078903', 'foto' => 'user-images/default.jpg', 'password' => '$2y$12$Heg5qCjuEY5PMgbGQTlGXesKPjyK5H/Meb2BgbQ46XakoQGco038.', 'two_factor_secret' => NULL, 'two_factor_recovery_codes' => NULL, 'ttd' => 'user-ttd/default.jpg', 'is_active' => '1', 'status' => 'Kontrak', 'created_at' => '2024-04-14 17:03:41', 'updated_at' => '2024-04-22 11:40:23', 'remember_token' => NULL, 'deleted_at' => NULL),
+            array('id' => '1', 'regional_id' => '3', 'lokasi_id' => '3', 'role_id' => '1', 'name' => 'Admin Saniter', 'email' => 'admin@gmail.com', 'nik' => '5171012103010002', 'alamat_ktp' => 'asd', 'alamat_dom' => 'asd', 'telp' => '0819034078903', 'foto' => 'user-images/default.jpg', 'password' => '$2y$12$Heg5qCjuEY5PMgbGQTlGXesKPjyK5H/Meb2BgbQ46XakoQGco038.', 'two_factor_secret' => NULL, 'two_factor_recovery_codes' => NULL, 'ttd' => 'user-ttd/default.jpg', 'is_active' => '1', 'status' => 'Kontrak', 'created_at' => '2024-04-14 17:03:41', 'updated_at' => '2024-05-06 07:40:26', 'remember_token' => NULL, 'deleted_at' => NULL),
             array('id' => '2', 'regional_id' => '3', 'lokasi_id' => '1', 'role_id' => '20', 'name' => 'Teknisi Saniter', 'email' => 'teknisi@gmail.com', 'nik' => '5171012103010002', 'alamat_ktp' => 'asd', 'alamat_dom' => 'asd', 'telp' => '0819034078901', 'foto' => 'user-images/default.jpg', 'password' => '$2y$12$UQ2t2iSkfGwfUwygNkjEg.FiaMFqKdMu58hOM.DKK959bVg90n88a', 'two_factor_secret' => NULL, 'two_factor_recovery_codes' => NULL, 'ttd' => 'user-ttd/default.jpg', 'is_active' => '1', 'status' => 'Kontrak', 'created_at' => '2024-04-14 17:03:41', 'updated_at' => '2024-05-01 23:11:17', 'remember_token' => NULL, 'deleted_at' => NULL),
-            array('id' => '3', 'regional_id' => '3', 'lokasi_id' => '3', 'role_id' => '35', 'name' => 'Staff Saniter', 'email' => 'staff@gmail.com', 'nik' => '5171012103010002', 'alamat_ktp' => 'asd', 'alamat_dom' => 'asd', 'telp' => '0819034078902', 'foto' => 'user-images/default.jpg', 'password' => '$2y$12$QElv7b9jug8LbJcoi8nzuOz77rfbP.wh6Oc/7iRzS7kt0TvtPDbhi', 'two_factor_secret' => NULL, 'two_factor_recovery_codes' => NULL, 'ttd' => 'user-ttd/default.jpg', 'is_active' => '1', 'status' => 'Kontrak', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-05-01 23:11:29', 'remember_token' => NULL, 'deleted_at' => NULL)
+            array('id' => '3', 'regional_id' => '3', 'lokasi_id' => '3', 'role_id' => '35', 'name' => 'Staff Saniter', 'email' => 'staff@gmail.com', 'nik' => '5171012103010002', 'alamat_ktp' => 'asd', 'alamat_dom' => 'asd', 'telp' => '0819034078902', 'foto' => 'user-images/default.jpg', 'password' => '$2y$12$QElv7b9jug8LbJcoi8nzuOz77rfbP.wh6Oc/7iRzS7kt0TvtPDbhi', 'two_factor_secret' => NULL, 'two_factor_recovery_codes' => NULL, 'ttd' => 'user-ttd/default.jpg', 'is_active' => '1', 'status' => 'Kontrak', 'created_at' => '2024-04-14 17:03:42', 'updated_at' => '2024-05-06 07:39:59', 'remember_token' => NULL, 'deleted_at' => NULL)
         );
+
 
         foreach ($area as $item) {
             Area::create($item);

@@ -168,7 +168,7 @@
                                             <x-partials.label title="Volume" />
                                             <div class="input-group">
                                                 <input type="hidden" value="{{ $itemMaterial->satuan }}">
-                                                <input type="text" class="form-control" placeholder="Volume" value="{{ $itemMaterial->volume }}" disabled/>
+                                                <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" placeholder="Volume" value="{{ $itemMaterial->volume }}" disabled/>
                                                 <span class="input-group-text disabled" disabled>{{ $itemMaterial->satuan }}</span>
                                             </div>
                                         </div>
@@ -209,10 +209,11 @@
                                             <x-partials.label title="Volume" />
                                             <div class="input-group">
                                                 <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}" value="{{ $itemMaterial->satuan }}">
-                                                <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume" value="{{ $itemMaterial->volume }}" />
+                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume" value="{{ $itemMaterial->volume }}" />
                                                 <span class="input-group-text">{{ $itemMaterial->satuan }}</span>
                                             </div>
                                             <x-partials.error-message name="volume[]" class="d-block"/>
+                                            <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-1 mb-3">
                                             <x-partials.label title="Aksi" />
@@ -245,10 +246,11 @@
                                             <x-partials.label title="Volume" />
                                             <div class="input-group">
                                                 <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}">
-                                                <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume"/>
+                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume"/>
                                                 <span class="input-group-text">satuan*</span>
                                             </div>
                                             <x-partials.error-message name="volume[]" class="d-block"/>
+                                            <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-1 mb-3">
                                             <x-partials.label title="Aksi" />
@@ -276,7 +278,7 @@
                     <div class="row">
                         <div class="col-12 mb-3">
                             <x-partials.label title="Nomor Denah" />
-                            <input type="text" name="nomor_denah" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ $detail->nomor_denah ?? '' }}" @if ($detail->tgl_selesai_pekerjaan != null) disabled @endif>
+                            <input type="text" name="nomor_denah" oninput="this.value = this.value.replace(/[^0-9,]/g, '')" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ $detail->nomor_denah ?? '' }}" @if ($detail->tgl_selesai_pekerjaan != null) disabled @endif>
                             <x-partials.error-message name="nomor_denah" />
                             <x-partials.input-desc text="Pisahkan dengan tanda ' , ' (koma) " />
                         </div>
@@ -810,53 +812,6 @@
                 }
 
                 return rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            }
-
-            function readExifMetadata(file, callback) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                var exif = EXIF.readFromBinaryFile(new BinaryFile(e.target.result));
-                var orientation = exif.Orientation || 1;
-                callback(orientation);
-                };
-                reader.readAsBinaryString(file);
-            }
-
-            function rotateImage(file, orientation, callback) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                var img = new Image();
-                img.onload = function() {
-                    var canvas = document.createElement("canvas");
-                    var ctx = canvas.getContext("2d");
-                    var width = img.width;
-                    var height = img.height;
-                    // Rotate the image if necessary
-                    if ([5, 6, 7, 8].includes(orientation)) {
-                    canvas.width = height;
-                    canvas.height = width;
-                    } else {
-                    canvas.width = width;
-                    canvas.height = height;
-                    }
-                    switch (orientation) {
-                    case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
-                    case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
-                    case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
-                    case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
-                    case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
-                    case 7: ctx.transform(0, -1, -1, 0, height, width); break;
-                    case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
-                    default: break;
-                    }
-                    ctx.drawImage(img, 0, 0);
-                    // Convert canvas to data URL
-                    var rotatedDataURL = canvas.toDataURL("image/jpeg");
-                    callback(rotatedDataURL);
-                };
-                img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
             }
         </script>
     </x-slot>

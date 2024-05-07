@@ -129,10 +129,14 @@
                             @endfor
 
                             <td style="padding: 5px" width="200px">
-                                <div>{{ $item['Potongan']['waktu_1'] }} Menit ({{ $item['Potongan']['terlambat_1'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_1'], 0, '', '.') }}</div>
-                                <div>{{ $item['Potongan']['waktu_2'] }} Menit ({{ $item['Potongan']['terlambat_2'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_2'], 0, '', '.') }}</div>
-                                <div>{{ $item['Potongan']['waktu_3'] }} Menit ({{ $item['Potongan']['terlambat_3'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_3'], 0, '', '.') }}</div>
-                                <div style="text-align: center"><b>Total = Rp. {{ number_format($item['Potongan']['total'], 0, '', '.') }}</b></div>
+                                @if (!empty($item['Potongan']))
+                                    <div>{{ $item['Potongan']['waktu_1'] }} Menit ({{ $item['Potongan']['terlambat_1'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_1'], 0, '', '.') }}</div>
+                                    <div>{{ $item['Potongan']['waktu_2'] }} Menit ({{ $item['Potongan']['terlambat_2'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_2'], 0, '', '.') }}</div>
+                                    <div>{{ $item['Potongan']['waktu_3'] }} Menit ({{ $item['Potongan']['terlambat_3'] }}x) = Rp. {{ number_format($item['Potongan']['potongan_3'], 0, '', '.') }}</div>
+                                    <div style="text-align: center"><b>Total = Rp. {{ number_format($item['Potongan']['total'], 0, '', '.') }}</b></div>
+                                @else
+                                    <div style="text-align: center">-</div>
+                                @endif
                             </td>
                         </tr>
                     @php

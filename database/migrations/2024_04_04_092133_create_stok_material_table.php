@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('material_id');
             $table->string('kode_material');
             $table->string('nama_material');
-            $table->double('harga');
+            $table->double('harga', 25, 2);
             $table->string('masuk');
             $table->string('sebagian_som')->nullable()->default(0);
             $table->string('sebagian_pm')->nullable()->default(0);

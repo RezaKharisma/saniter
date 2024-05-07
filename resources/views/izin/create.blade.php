@@ -88,6 +88,11 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <x-partials.label title="Keterangan" />
+                            <textarea name="keterangan" rows="4" class="form-control" placeholder="Keterangan" required>{{ old('keterangan') }}</textarea>
+                        </div>
+
                         {{-- Dokumen --}}
                         <div class="">
                             <x-partials.label title="Dokumen Pendukung" required/>

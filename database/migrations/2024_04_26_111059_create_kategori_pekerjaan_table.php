@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kategori_pekerjaan', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_pekerja');
+            // $table->unsignedBigInteger('id_pekerja');
             $table->string('nama');
             $table->timestamps();
         });

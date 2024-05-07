@@ -11,7 +11,7 @@
         </style>
     </x-slot>
 
-    <div class="card">
+    {{-- <div class="card">
         <div class="card-body">
             <x-partials.label title="Nomor" />
             <input type="text" id="nomorDenah" class="form-control" readonly>
@@ -101,5 +101,5 @@
                 }
             });
         </script>
-    </x-slot>
+    </x-slot> --}}
 </x-layouts.app>

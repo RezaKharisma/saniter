@@ -54,6 +54,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Keterangan</th>
                                 <th>File</th>
                                 <th>Aksi</th>
                             </tr>
@@ -65,6 +66,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Keterangan</th>
                                 <th>File</th>
                                 <th>Aksi</th>
                             </tr>
@@ -99,13 +101,26 @@
                                 <div class="row">
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
-                                            <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi1" id="validasi1" >
+                                            <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi1" id="validasi1"  onchange="setInputanStatusValidasiSOM(this)">
                                             <label class="form-check-label" for="defaultCheck1">Validasi SOM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi1nama">Belum Divalidasi</span>
                                     </div>
+                                </div>
+
+                                <div class="col-12 mt-3 d-none" id="inputanStatusValidasiSOM">
+                                    {{-- Select Status Validasi SOM --}}
+                                    <select name="status_validasi_1" id="status_validasiSOM" class="form-control @error('status_validasi_1') is-invalid @enderror">
+                                        <option value="" disabled selected>Pilih status...</option>
+                                        <option @if(old('status_validasi_1') == 'ACC') selected @endif value="ACC">ACC</option>
+                                        <option @if(old('status_validasi_1') == 'Tolak') selected @endif value="Tolak">Tolak</option>
+                                    </select>
+                                    <x-partials.error-message name="status_validasi_1" class="d-block" />
+
+                                    {{-- Input Keterangan --}}
+                                    <textarea name="keterangan_1" id="keterangan_1" rows="3" class="form-control mt-2" placeholder="Keterangan">{{ old('keterangan_1') }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -122,12 +137,24 @@
                                 <div class="row">
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
-                                            <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi2" id="validasi2">
+                                            <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi2" id="validasi2" onchange="setInputanStatusValidasiPM(this)">
                                             <label class="form-check-label" for="defaultCheck1">Validasi PM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi2nama">Belum Divalidasi</span>
+                                    </div>
+                                    <div class="col-12 mt-3 d-none" id="inputanStatusValidasiPM">
+                                        {{-- Select Status Validasi PM --}}
+                                        <select name="status_validasi_2" id="status_validasiPM" class="form-control @error('status_validasi_2') is-invalid @enderror">
+                                            <option value="" disabled selected>Pilih status...</option>
+                                            <option @if(old('status_validasi_2') == 'ACC') selected @endif value="ACC">ACC</option>
+                                            <option @if(old('status_validasi_2') == 'Tolak') selected @endif value="Tolak">Tolak</option>
+                                        </select>
+                                        <x-partials.error-message name="status_validasi_2" class="d-block" />
+
+                                        {{-- Input Keterangan --}}
+                                        <textarea name="keterangan_2" id="keterangan_2" rows="3" class="form-control mt-2" placeholder="Keterangan">{{ old('keterangan_2') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -159,11 +186,32 @@
                     {data: 'userName', name: 'userName'},
                     {data: 'jenis', name: 'jenis'},
                     {data: 'tanggal', name: 'tanggal'},
+                    {data: 'keterangan', name: 'keterangan'},
                     {data: 'file', name: 'file'},
                     {data: 'action', name: 'action'},
                 ],
             })
         });
+
+        function setInputanStatusValidasiSOM(e){
+            if ($(e).is(':checked')) {
+                $('#inputanStatusValidasiSOM').removeClass('d-none');
+                $('#inputanStatusValidasiSOM').addClass('d-block');
+            }else{
+                $('#inputanStatusValidasiSOM').removeClass('d-block');
+                $('#inputanStatusValidasiSOM').addClass('d-none');
+            }
+        }
+
+        function setInputanStatusValidasiPM(e){
+            if ($(e).is(':checked')) {
+                $('#inputanStatusValidasiPM').removeClass('d-none');
+                $('#inputanStatusValidasiPM').addClass('d-block');
+            }else{
+                $('#inputanStatusValidasiPM').removeClass('d-block');
+                $('#inputanStatusValidasiPM').addClass('d-none');
+            }
+        }
     </script>
     <script>
         // Jika tombol delete diklik

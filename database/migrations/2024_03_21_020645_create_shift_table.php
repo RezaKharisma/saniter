@@ -20,11 +20,11 @@ return new class extends Migration
             $table->time('jam_masuk');
             $table->time('jam_pulang');
             $table->integer('terlambat_1');
-            $table->double('potongan_1');
+            $table->double('potongan_1', 25, 2);
             $table->integer('terlambat_2');
-            $table->double('potongan_2');
+            $table->double('potongan_2', 25, 2);
             $table->integer('terlambat_3');
-            $table->double('potongan_3');
+            $table->double('potongan_3', 25, 2);
             $table->timestamps();
             $table->softDeletes();
         });

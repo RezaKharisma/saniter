@@ -19,9 +19,10 @@
         <x-partials.label title="Volume" />
         <div class="input-group">
             <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}">
-            <input type="text" class="form-control" name="volume[]" id="volume-{{ $kode }}" placeholder="Volume" required>
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control" name="volume[]" id="volume-{{ $kode }}" placeholder="Volume" required>
             <span class="input-group-text">satuan*</span>
         </div>
+        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
     </div>
     <div class="col-12 col-sm-12 col-md-1 mb-3">
         <x-partials.label title="Aksi" />

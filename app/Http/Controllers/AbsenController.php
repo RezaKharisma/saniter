@@ -29,9 +29,10 @@ class AbsenController extends Controller
         $countJumlahIzin = JumlahIzin::select('jumlah_izin')->where('tahun', Carbon::now()->format('Y'))->where('user_id', auth()->user()->id)->first();
         $regional = Regional::select('timezone')->where('id', auth()->user()->regional_id)->first();
         $timezone = Carbon::now($regional->timezone);
+        date_default_timezone_set($regional->timezone);
 
         $this->cekAlfa();
-        return view('absen.index', compact('countKehadiranPerBulan', 'countJumlahIzin', 'timezone'));
+        return view('absen.index', compact('countKehadiranPerBulan', 'countJumlahIzin', 'regional', 'timezone'));
     }
 
     public function create()
@@ -781,6 +782,8 @@ class AbsenController extends Controller
             toast('Belum ada absen pada tahun tersebut!', 'warning'); // Toast
             return Redirect::back();
         }
+
+        // dd($result);
 
         $pdf = PDF::loadView('components.print-layouts.absen.model2', ['user' => $result, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end' => Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4', 'landscape');
         return $pdf->stream('rekap_absensi_karyawan_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . ').pdf');

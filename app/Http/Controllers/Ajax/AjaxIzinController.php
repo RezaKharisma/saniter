@@ -67,7 +67,13 @@ class AjaxIzinController extends Controller
 
                     // Jika sudah tervalidasi semua tampilkan tombol sukses
                     if ($row->validasi_1 == 1 && $row->validasi_2 == 1) {
-                        $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Tervalidasi</button>";
+                        if ($row->status_validasi_1 == "ACC" && $row->status_validasi_2 == "ACC") {
+                            $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Diterima</button>";
+                        }
+
+                        if ($row->status_validasi_1 == "Tolak" && $row->status_validasi_2 == "Tolak") {
+                            $btn = "<button class='btn btn-danger btn-sm d-inline' disabled>Tolak</button>";
+                        }
                     } else {
                         if (auth()->user()->can('validasi1_izin') || auth()->user()->can('validasi2_izin')) {
                             $btn = "<button data-bs-toggle='modal' data-bs-target='#modalValid' class='btn btn-info btn-sm d-inline me-1' data-id='" . $row->id . "' onclick='validasiData(this)'>" . $warn . " Validasi</button>";
@@ -241,7 +247,13 @@ class AjaxIzinController extends Controller
 
                     // Jika sudah tervalidasi semua tampilkan tombol sukses
                     if ($row->validasi_1 == 1 && $row->validasi_2 == 1) {
-                        $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Tervalidasi</button>";
+                        if ($row->status_validasi_1 == "ACC" && $row->status_validasi_2 == "ACC") {
+                            $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Diterima</button>";
+                        }
+
+                        if ($row->status_validasi_1 == "Tolak" && $row->status_validasi_2 == "Tolak") {
+                            $btn = "<button class='btn btn-danger btn-sm d-inline' disabled>Tolak</button>";
+                        }
                     } else {
                         if (auth()->user()->can('validasi1_izin') || auth()->user()->can('validasi2_izin')) {
                             $btn = "<button data-bs-toggle='modal' data-bs-target='#modalValid' class='btn btn-info btn-sm d-inline me-1' data-id='" . $row->id . "' onclick='validasiData(this)'>" . $warn . " Validasi</button>";

@@ -340,9 +340,19 @@
 
                                 head.appendChild(style);
 
-                                $(win.document.body).find("title").css("text-align", "center").css("font-size", "5px");
+                                $(win.document.body).find("h1").css("text-align", "center").css("font-size", "24px").css("margin-bottom", "30px").html('Detail Absen');
+
+                                if ($('#start_date').val() != "" && $('#end_date').val() != "") {
+                                    $(win.document.body).find("h1").append('<h5>Tanggal : '+$('#start_date').val()+' - '+$('#end_date').val()+'</h5>')
+                                }
 
                                 $(win.document.body).find("table").addClass("text-nowrap").css("width", "100%");
+
+                                // $(win.document.body)
+                                // .css( 'font-size', '10pt' )
+                                // .prepend(
+                                //     '<h2>Your Custom Titles</h2>'
+                                // );
                             },
                         },
                         // 'excel', 'pdf', 'print'

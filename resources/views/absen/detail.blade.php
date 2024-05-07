@@ -154,7 +154,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 mb-sm-2">
+                <div class="col-md-6 col-lg-4 col-xl-3 mb-2 mb-sm-3 mb-md-3">
                     <div class="card h100">
                         <div class="card-header d-flex align-items-center justify-content-between">
                             <div class="card-title mb-1">

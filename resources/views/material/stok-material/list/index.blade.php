@@ -62,7 +62,7 @@
                             <th>Kode Material</th>
                             <th>Nama Material</th>
                             <th>Stok</th>
-                            <th>Harga</th>
+                            <th>Harga Satuan</th>
                             <th>Tanggal Input</th>
                         </tr>
                     </thead>
@@ -73,7 +73,7 @@
                             <th>Kode Material</th>
                             <th>Nama Material</th>
                             <th>Stok</th>
-                            <th>Harga</th>
+                            <th>Harga Satuan</th>
                             <th>Tanggal Input</th>
                         </tr>
                     </tbody>

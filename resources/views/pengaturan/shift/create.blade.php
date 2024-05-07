@@ -58,9 +58,9 @@
                         @endforeach
                     </select>
                     <x-partials.error-message name="timezone" class="d-block"/>
-                    <div class='form-text mt-1'>
+                    {{-- <div class='form-text mt-1'>
                         Lihat area timezone GMT <a href="#" onclick="openModalTimezone()" data-bs-toggle="modal" data-bs-target="#modalTimezone">Disini.</a>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="col-12 col-sm-12 col-md-4 mb-3 mb-sm-3 mb-md-0">
@@ -164,7 +164,7 @@
     </form>
 </div>
 
-<div class="modal fade" id="modalTimezone" tabindex="-1" aria-modal="true" role="dialog">
+{{-- <div class="modal fade" id="modalTimezone" tabindex="-1" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
                 <div class="modal-header">
@@ -182,7 +182,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 
 <x-slot name="script">
     <script>

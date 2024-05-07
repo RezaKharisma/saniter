@@ -26,9 +26,9 @@ class ShiftController extends Controller
      */
     public function create()
     {
-        $regional = Regional::select('id','nama')->get();
+        $regional = Regional::select('id', 'nama')->get();
         $timezones = $this->timezones();
-        return view('pengaturan.shift.create', compact('regional','timezones'));
+        return view('pengaturan.shift.create', compact('regional', 'timezones'));
     }
 
     /**
@@ -36,16 +36,16 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'regional_id' => 'required',
             'nama' => 'required',
             'jam_masuk' => 'required',
             'jam_pulang' => 'required',
             'timezone' => 'required',
-        ], ['jam_masuk.required' => 'jam masuk wajib diisi.','jam_pulang.required' => 'jam pulang wajib diisi.','regional_id.required' => 'regional wajib diisi.']);
+        ], ['jam_masuk.required' => 'jam masuk wajib diisi.', 'jam_pulang.required' => 'jam pulang wajib diisi.', 'regional_id.required' => 'regional wajib diisi.']);
 
         if ($validator->fails()) {
-            toast('Mohon periksa form kembali!','error');
+            toast('Mohon periksa form kembali!', 'error');
             return Redirect::back()->withInput()->withErrors($validator);
         }
 
@@ -82,10 +82,10 @@ class ShiftController extends Controller
     public function edit(string $id)
     {
         if (auth()->user()->can('shift_update')) {
-            $regional = Regional::select('id','nama')->get();
+            $regional = Regional::select('id', 'nama')->get();
             $shift = Shift::find($id);
             $timezones = $this->timezones();
-            return view('pengaturan.shift.edit', compact('regional','shift','timezones'));
+            return view('pengaturan.shift.edit', compact('regional', 'shift', 'timezones'));
         }
 
         toast('Oops, anda tidak memiliki akses!', 'warning');
@@ -97,16 +97,16 @@ class ShiftController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'regional_id' => 'required',
             'nama' => 'required',
             'jam_masuk' => 'required',
             'jam_pulang' => 'required',
             'timezone' => 'required',
-        ], ['jam_masuk.required' => 'jam masuk wajib diisi.','jam_pulang.required' => 'jam pulang wajib diisi.','regional_id.required' => 'regional wajib diisi.']);
+        ], ['jam_masuk.required' => 'jam masuk wajib diisi.', 'jam_pulang.required' => 'jam pulang wajib diisi.', 'regional_id.required' => 'regional wajib diisi.']);
 
         if ($validator->fails()) {
-            toast('Mohon periksa form kembali!','error');
+            toast('Mohon periksa form kembali!', 'error');
             return Redirect::back()->withInput()->withErrors($validator);
         }
 
@@ -147,102 +147,26 @@ class ShiftController extends Controller
     public function timezones()
     {
         return $timeZone = [
-            ["GMT-12:00", "International Date Line West"],
-            ["GMT-11:00", "Coordinated Universal Time-11"],
-            ["GMT-10:00", "Hawaii"],
-            ["GMT-09:00", "Alaska"],
-            ["GMT-08:00", "Baja California"],
-            ["GMT-08:00", "Pacific Time (US and Canada)"],
-            ["GMT-07:00", "Chihuahua, La Paz, Mazatlan"],
-            ["GMT-07:00", "Arizona"],
-            ["GMT-07:00", "Mountain Time (US and Canada)"],
-            ["GMT-06:00", "Central America"],
-            ["GMT-06:00", "Central Time (US and Canada)"],
-            ["GMT-06:00", "Saskatchewan"],
-            ["GMT-06:00", "Guadalajara, Mexico City, Monterey"],
-            ["GMT-05:00", "Bogota, Lima, Quito"],
-            ["GMT-05:00", "Indiana (East)"],
-            ["GMT-05:00", "Eastern Time (US and Canada)"],
-            ["GMT-04:30", "Caracas"],
-            ["GMT-04:00", "Atlantic Time (Canada)"],
-            ["GMT-04:00", "Asuncion"],
-            ["GMT-04:00", "Georgetown, La Paz, Manaus, San Juan"],
-            ["GMT-04:00", "Cuiaba"],
-            ["GMT-04:00", "Santiago"],
-            ["GMT-03:30", "Newfoundland"],
-            ["GMT-03:00", "Brasilia"],
-            ["GMT-03:00", "Greenland"],
-            ["GMT-03:00", "Cayenne, Fortaleza"],
-            ["GMT-03:00", "Buenos Aires"],
-            ["GMT-03:00", "Montevideo"],
-            ["GMT-02:00", "Coordinated Universal Time-2"],
-            ["GMT-01:00", "Cape Verde"],
-            ["GMT-01:00", "Azores"],
-            ["GMT+00:00", "Casablanca"],
-            ["GMT+00:00", "Monrovia, Reykjavik"],
-            ["GMT+00:00", "Dublin, Edinburgh, Lisbon, London"],
-            ["GMT+00:00", "Coordinated Universal Time"],
-            ["GMT+01:00", "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"],
-            ["GMT+01:00", "Brussels, Copenhagen, Madrid, Paris"],
-            ["GMT+01:00", "West Central Africa"],
-            ["GMT+01:00", "Belgrade, Bratislava, Budapest, Ljubljana, Prague"],
-            ["GMT+01:00", "Sarajevo, Skopje, Warsaw, Zagreb"],
-            ["GMT+01:00", "Windhoek"],
-            ["GMT+02:00", "Athens, Bucharest, Istanbul"],
-            ["GMT+02:00", "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"],
-            ["GMT+02:00", "Cairo"],
-            ["GMT+02:00", "Damascus"],
-            ["GMT+02:00", "Amman"],
-            ["GMT+02:00", "Harare, Pretoria"],
-            ["GMT+02:00", "Jerusalem"],
-            ["GMT+02:00", "Beirut"],
-            ["GMT+03:00", "Baghdad"],
-            ["GMT+03:00", "Minsk"],
-            ["GMT+03:00", "Kuwait, Riyadh"],
-            ["GMT+03:00", "Nairobi"],
-            ["GMT+03:30", "Tehran"],
-            ["GMT+04:00", "Moscow, St. Petersburg, Volgograd"],
-            ["GMT+04:00", "Tbilisi"],
-            ["GMT+04:00", "Yerevan"],
-            ["GMT+04:00", "Abu Dhabi, Muscat"],
-            ["GMT+04:00", "Baku"],
-            ["GMT+04:00", "Port Louis"],
-            ["GMT+04:30", "Kabul"],
-            ["GMT+05:00", "Tashkent"],
-            ["GMT+05:00", "Islamabad, Karachi"],
-            ["GMT+05:30", "Sri Jayewardenepura Kotte"],
-            ["GMT+05:30", "Chennai, Kolkata, Mumbai, New Delhi"],
-            ["GMT+05:45", "Kathmandu"],
-            ["GMT+06:00", "Astana"],
-            ["GMT+06:00", "Dhaka"],
-            ["GMT+06:00", "Yekaterinburg"],
-            ["GMT+06:30", "Yangon"],
-            ["GMT+07:00", "Bangkok, Hanoi, Jakarta"],
-            ["GMT+07:00", "Novosibirsk"],
-            ["GMT+08:00", "Krasnoyarsk"],
-            ["GMT+08:00", "Ulaanbaatar"],
-            ["GMT+08:00", "Beijing, Chongqing, Hong Kong, Urumqi"],
-            ["GMT+08:00", "Perth"],
-            ["GMT+08:00", "Kuala Lumpur, Singapore"],
-            ["GMT+08:00", "Taipei"],
-            ["GMT+09:00", "Irkutsk"],
-            ["GMT+09:00", "Seoul"],
-            ["GMT+09:00", "Osaka, Sapporo, Tokyo"],
-            ["GMT+09:30", "Darwin"],
-            ["GMT+09:30", "Adelaide"],
-            ["GMT+10:00", "Hobart"],
-            ["GMT+10:00", "Yakutsk"],
-            ["GMT+10:00", "Brisbane"],
-            ["GMT+10:00", "Guam, Port Moresby"],
-            ["GMT+10:00", "Canberra, Melbourne, Sydney"],
-            ["GMT+11:00", "Vladivostok"],
-            ["GMT+11:00", "Solomon Islands, New Caledonia"],
-            ["GMT+12:00", "Coordinated Universal Time+12"],
-            ["GMT+12:00", "Fiji, Marshall Islands"],
-            ["GMT+12:00", "Magadan"],
-            ["GMT+12:00", "Auckland, Wellington"],
-            ["GMT+13:00", "Nuku'alofa"],
-            ["GMT+13:00", "Samoa"]
+            ["America/New_York", "GMT-4"],
+            ["America/Los_Angeles", "GMT-7"],
+            ["Europe/London", "GMT+1"],
+            ["Europe/Paris", "GMT+2"],
+            ["Asia/Tokyo", "GMT+9"],
+            ["Asia/Shanghai", "GMT+8"],
+            ["Asia/Dubai", "GMT+4"],
+            ["Australia/Sydney", "GMT+10"],
+            ["Australia/Melbourne", "GMT+10"],
+            ["Asia/Singapore", "GMT+8"],
+            ["America/Chicago", "GMT-5"],
+            ["America/Toronto", "GMT-4"],
+            ["Europe/Berlin", "GMT+2"],
+            ["Europe/Madrid", "GMT+2"],
+            ["America/Mexico_City", "GMT-5"],
+            ["America/Buenos_Aires", "GMT-3"],
+            ["Asia/Hong_Kong", "GMT+8"],
+            ["Asia/Seoul", "GMT+9"],
+            ["Asia/Jakarta", "GMT+7"],
+            ["Africa/Johannesburg", "GMT+2"],
         ];
     }
 }

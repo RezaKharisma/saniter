@@ -1,6 +1,12 @@
 <x-layouts.app title="Histori Penggunaan Material">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Histori Penggunaan Material</h4>
 
+    <ul class="nav nav-pills flex-md-row mb-3 ">
+        <li class="nav-item">
+            <a href="{{ route('stok-material.log-histori.index') }}" class="btn btn-secondary active">Log Update</a>
+        </li>
+    </ul>
+
     <!-- Striped Rows -->
     <div class="card">
         <h5 class="card-header mb-3">Data Histori Penggunaan Material</h5>
@@ -13,6 +19,7 @@
                             <th>Material</th>
                             <th>Jenis Kerusakan</th>
                             <th>Volume</th>
+                            <th>Harga</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
                         </tr>
@@ -24,6 +31,7 @@
                             <th>Material</th>
                             <th>Jenis Kerusakan</th>
                             <th>Volume</th>
+                            <th>Harga</th>
                             <th>Tanggal</th>
                             <th>Aksi</th>
                         </tr>
@@ -46,6 +54,7 @@
                         {data: 'stok_material', name: 'stok_material'},
                         {data: 'jenis_kerusakan', name: 'jenis_kerusakan'},
                         {data: 'volume', name: 'volume'},
+                        {data: 'total_harga', name: 'total_harga'},
                         {data: 'tanggal', name: 'tanggal'},
                         {data: 'action', name: 'action'},
                     ],

@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_sub_kategori_pekerjaan');
             $table->string('nama');
+            $table->decimal('volume');
+            $table->decimal('harga', 25, 2);
+            $table->string('satuan');
             $table->timestamps();
         });
     }

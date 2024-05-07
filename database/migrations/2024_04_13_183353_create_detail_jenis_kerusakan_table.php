@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('jenis_kerusakan_id');
             $table->string('kode_material');
             $table->string('nama');
-            $table->decimal('harga');
+            $table->decimal('harga', 25, 2);
             $table->decimal('volume');
             $table->string('satuan');
-            $table->decimal('total_harga');
+            $table->decimal('total_harga', 25, 2);
             $table->date('tanggal_pengerjaan');
             $table->timestamps();
         });

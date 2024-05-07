@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('pekerja', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('satuan');
+            $table->double('upah', 25, 2);
             $table->timestamps();
         });
     }

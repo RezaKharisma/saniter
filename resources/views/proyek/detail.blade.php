@@ -31,6 +31,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Regional</th>
                                     <th>Lokasi</th>
                                     <th>Jam</th>
                                     <th>Aksi</th>
@@ -40,6 +41,7 @@
                             <tfoot>
                                 <tr>
                                     <th>No</th>
+                                    <th>Regional</th>
                                     <th>Lokasi</th>
                                     <th>Jam</th>
                                     <th>Aksi</th>
@@ -110,6 +112,7 @@
                     // responsive: true,
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
+                        {data: 'regionalName', name: 'regionalName'},
                         {data: 'lokasi', name: 'lokasi'},
                         {data: 'jam', name: 'jam'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},

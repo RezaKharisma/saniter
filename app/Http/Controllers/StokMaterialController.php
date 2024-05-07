@@ -52,6 +52,12 @@ class StokMaterialController extends Controller
         return view('material.stok-material.histori.index', compact('stokMaterial'));
     }
 
+    public function logHistori()
+    {
+        $stokMaterial = StokMaterial::all();
+        return view('material.stok-material.histori.log', compact('stokMaterial'));
+    }
+
     public function indexHistoriPengajuan()
     {
         $stokMaterial = StokMaterial::all();
@@ -84,7 +90,7 @@ class StokMaterialController extends Controller
         $diterima = '';
         $stokMaterial = StokMaterial::where('id', $id)->first();
 
-        // Get dimana stok tersebut diterima spv dan pm, dan juga validasi pm bukan Tolak
+        // Get dimana stok tersebut diterima som dan pm, dan juga validasi pm bukan Tolak
         if ($stokMaterial->diterima_som != 0 && $stokMaterial->diterima_pm != 0 && $stokMaterial->diterima_dir != 0 && $stokMaterial->status_validasi_som != 'Tolak') {
             // select stok material yang merupakan history
             $diterima = StokMaterial::where('history_id', $stokMaterial->history_id)->first();
@@ -562,10 +568,11 @@ class StokMaterialController extends Controller
     public function laporanMaterial()
     {
         $stokMaterial = StokMaterial::select('id', 'kode_material', 'nama_material', 'harga', 'stok_update')
+            ->where('diterima_som', 1)
             ->where('diterima_pm', 1)
-            ->where('diterima_spv', 1)
-            ->where('status_validasi_pm', 'ACC')
-            ->whereNot('status_validasi_pm', 'Tolak')
+            ->where('diterima_dir', 1)
+            ->where('status_validasi_dir', 'ACC')
+            ->whereNot('status_validasi_dir', 'Tolak')
             ->groupBy('kode_material')
             ->get();
 
@@ -574,15 +581,16 @@ class StokMaterialController extends Controller
 
     public function printList(Request $request)
     {
-        $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_spv', 'tanggal_diterima_spv')
+        $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_som', 'tanggal_diterima_som', 'diterima_dir', 'tanggal_diterima_dir')
+            ->where('diterima_som', 1)
             ->where('diterima_pm', 1)
-            ->where('diterima_spv', 1)
-            ->where('status_validasi_pm', 'ACC')
-            ->whereNot('status_validasi_pm', 'Tolak')
+            ->where('diterima_dir', 1)
+            ->where('status_validasi_dir', 'ACC')
+            ->whereNot('status_validasi_dir', 'Tolak')
             ->orderBy('id', 'DESC');
 
         if (!empty($request->start_date) && !empty($request->end_date)) {
-            $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
+            $stokMaterial->whereBetween('tanggal_diterima_dir', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
         }
 
         if ($request->checkAll != "on" && !empty($request->kode_material)) {
@@ -595,23 +603,23 @@ class StokMaterialController extends Controller
         return $pdf->stream('list_material_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . '.pdf');
     }
 
-    public function printPengajuan(Request $request)
-    {
-        $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_spv', 'tanggal_diterima_spv')
-            ->where('diterima_pm', 0)
-            ->orWhere('history', 1)
-            ->orderBy('history', 'ASC')
-            ->orderBy('id', 'DESC');
+    // public function printPengajuan(Request $request)
+    // {
+    //     $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_spv', 'tanggal_diterima_spv')
+    //         ->where('diterima_pm', 0)
+    //         ->orWhere('history', 1)
+    //         ->orderBy('history', 'ASC')
+    //         ->orderBy('id', 'DESC');
 
-        if (!empty($request->start_date) && !empty($request->end_date)) {
-            $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
-        }
+    //     if (!empty($request->start_date) && !empty($request->end_date)) {
+    //         $stokMaterial->whereBetween('tanggal_diterima_pm', [Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'), Carbon::createFromFormat('d/m/Y', $request->end_date)->format('Y-m-d')]);
+    //     }
 
-        $data = $stokMaterial->get();
+    //     $data = $stokMaterial->get();
 
-        dd($data);
+    //     dd($data);
 
-        $pdf = Pdf::loadView('components.print-layouts.material.model2', ['list' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end' => Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4');
-        return $pdf->stream('list_material_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . '.pdf');
-    }
+    //     $pdf = Pdf::loadView('components.print-layouts.material.model2', ['list' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end' => Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4');
+    //     return $pdf->stream('list_material_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . '.pdf');
+    // }
 }

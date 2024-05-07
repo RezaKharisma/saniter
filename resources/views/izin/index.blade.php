@@ -55,6 +55,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Keterangan</th>
                                 <th>Dokumen Pendukung</th>
                                 <th>Aksi</th>
                             </tr>
@@ -66,6 +67,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Keterangan</th>
                                 <th>Dokumen Pendukung</th>
                                 <th>Aksi</th>
                             </tr>
@@ -152,6 +154,7 @@
                     {data: 'userName', name: 'userName'},
                     {data: 'jenis', name: 'jenis'},
                     {data: 'tanggal', name: 'tanggal'},
+                    {data: 'keterangan', name: 'keterangan'},
                     {data: 'file', name: 'file'},
                     {data: 'action', name: 'action'},
                 ],

@@ -104,7 +104,7 @@
                             <td>{{ $item->data->lantai }} - {{ $item->data->listNama }} (Denah Nomor: {{ $item->data->nomor_denah }})</td>
                         </tr>
                     </table>
-                    <table style="margin-top: 20px;margin-bottom: 30px" width="100%" >
+                    <table style="margin-top: 20px;margin-bottom: 30px">
                         <tr>
                             @foreach ($item->foto as $key => $foto)
                                 @if ($key < 6)

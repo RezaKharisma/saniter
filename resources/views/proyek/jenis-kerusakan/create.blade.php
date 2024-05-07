@@ -87,7 +87,94 @@
                             </div>
                         </div>
 
-                        <div id="perbaikanList">
+                        @if (auth()->user()->can('tanggal kerja_input item pekerjaan'))
+                            <div class="mt-5">
+                                <h4 style="text-align: center">PEKERJA</h4>
+                            </div>
+
+                            <div id="pekerjaList">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="divider text-start">
+                                            <div class="divider-text">Pekerja 1</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Nama Pekerja" />
+                                        <select name="nama_pekerja[]" id="nama_pekerja" class="form-control w-100 @error('nama_pekerja') is-invalid @enderror" required>
+                                            <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama pekerja...</option>
+                                            @foreach ($pekerja as $item)
+                                                <option value="{{ $item->id }}" data-upah="{{ $item->upah }}">{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        <x-partials.error-message name="nama_pekerja[]" class="d-block"/>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Volume" />
+                                        <div class="input-group">
+                                            <input type="hidden" name="satuan_pekerja[]" id="satuan_pekerja">
+                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_pekerja') is-invalid @enderror" id="volume_pekerja" name="volume_pekerja[]" placeholder="Volume" required/>
+                                            <span class="input-group-text">satuan*</span>
+                                        </div>
+                                        <x-partials.error-message name="volume_pekerja[]" class="d-block"/>
+                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2 mt-4">
+                                <button type="button" class="btn btn-primary mb-3 mb-sm-3 mb-md-0" onclick="addListPekerja(this)"><i class="bx bx-plus"></i> Tambah Pekerja</button>
+                            </div>
+
+                            <hr class="mt-5 mb-4" style="border: 0.5px solid black"/>
+
+                            <div class="mt-5">
+                                <h4 style="text-align: center">ITEM PEKERJAAN</h4>
+                            </div>
+
+                            <div id="itemPekerjaanList">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="divider text-start">
+                                            <div class="divider-text">Item Pekerjaan 1</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Item Pekerjaan" />
+                                        <select name="item_pekerjaan[]" id="item_pekerjaan" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" required>
+                                            <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih item pekerjaan...</option>
+                                            @foreach ($itemPekerjaan as $item)
+                                                <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        <x-partials.error-message name="item_pekerjaan[]" class="d-block"/>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Volume" />
+                                        <div class="input-group">
+                                            <input type="hidden" name="satuan_item_pekerjaan[]" id="satuan_item_pekerjaan">
+                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_item_pekerjaan') is-invalid @enderror" id="volume_item_pekerjaan" name="volume_item_pekerjaan[]" placeholder="Volume" required/>
+                                            <span class="input-group-text">satuan*</span>
+                                        </div>
+                                        <x-partials.error-message name="volume_item_pekerjaan[]" class="d-block"/>
+                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="mb-2 mt-4">
+                            <button type="button" class="btn btn-primary" onclick="addListItemPekerjaan(this)"><i class="bx bx-plus"></i> Tambah Item Pekerjaan</button>
+                        </div>
+
+                        <hr class="mt-5 mb-4" style="border: 0.5px solid black" />
+
+                        <div class="mt-5">
+                            <h4 style="text-align: center">MATERIAL</h4>
+                        </div>
+
+                        <div id="perbaikanList" class="">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="divider text-start">
@@ -109,38 +196,47 @@
                                     <x-partials.label title="Volume" />
                                     <div class="input-group">
                                         <input type="hidden" name="satuan[]" id="satuan">
-                                        <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume" name="volume[]" placeholder="Volume" required/>
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume') is-invalid @enderror" id="volume" name="volume[]" placeholder="Volume" required/>
                                         <span class="input-group-text">satuan*</span>
                                     </div>
                                     <x-partials.error-message name="volume[]" class="d-block"/>
+                                    <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-3">
-                            <button type="button" class="btn btn-outline-success" id="btnAddMaterial" onclick="addList(this)"><i class="bx bx-plus"></i> Tambah Material</button>
+                            <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addList(this)"><i class="bx bx-plus"></i> Tambah Material</button>
                         </div>
 
-                        <hr class="mt-5 mb-4" />
+                        <hr class="mt-5 mb-4" style="border: 0.5px solid black" />
 
                         <div class="mt-3">
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <x-partials.label title="Nomor Denah" />
-                                    <input type="text" name="nomor_denah" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ old('nomor_denah') }}">
+                                    <input type="text" name="nomor_denah" oninput="this.value = this.value.replace(/[^0-9,]/g, '')" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ old('nomor_denah') }}">
                                     <x-partials.error-message name="nomor_denah" />
                                     <x-partials.input-desc text="Pisahkan dengan tanda ' , ' (koma) " />
                                 </div>
                                 <div class="col-12">
                                     <x-partials.label title="Denah" />
-                                    <div class="card shadow overflow-hidden p-3" style="height: 300px">
+                                    <div class="card shadow">
+                                        <h5 class="card-header">
+                                            {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
+                                        </h5>
+                                        <div class="card-body p-4">
+                                            <img src="{{ asset('storage/'.$detailKerja->denah) }}" class="img-fluid">
+                                        </div>
+                                    </div>
+                                    {{-- <div class="card shadow " style="height: 300px">
                                         <h5 class="card-header">
                                             {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
                                         </h5>
                                         <div class="card-body p-4" id="both-scrollbars-example">
                                             <img src="{{ asset('storage/'.$detailKerja->denah) }}" width="800px">
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -186,6 +282,32 @@
                     theme: "bootstrap-5",
                 });
 
+                $("#nama_pekerja").select2({
+                    theme: "bootstrap-5",
+                    createTag: function (params) {
+                        return {
+                            id: params.term,
+                            text: params.term + $select.data('appendme'),
+                            upah: $select.data('upah'),
+                            newOption: true
+                        }
+                    },
+                    templateResult: formatPekerjaOptionTemplate,
+                });
+
+                $("#item_pekerjaan").select2({
+                    theme: "bootstrap-5",
+                    createTag: function (params) {
+                        return {
+                            id: params.term,
+                            text: params.term + $select.data('appendme'),
+                            harga: $select.data('harga'),
+                            newOption: true
+                        }
+                    },
+                    templateResult: formatItemPekerjaanOptionTemplate,
+                });
+
                 $("#status_kerusakan").select2({
                     theme: "bootstrap-5",
                 });
@@ -206,6 +328,36 @@
                 });
             });
 
+            function formatPekerjaOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+state.text+'</u></div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('upah'))+' (satuan)</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
+            function formatItemPekerjaanOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+state.text+'</u></div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' (satuan)</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
             function formatMaterialOptionTemplate(state) {
 
                 var originalOption = $(state.element);
@@ -225,7 +377,7 @@
             function setMaterialVisible(e){
                 if($(e).val() == "Tanpa Material"){
                     $('#btnAddMaterial').attr('disabled', true);
-                    $('#btnAddMaterial').removeClass('btn-outline-success');
+                    $('#btnAddMaterial').removeClass('btn-primary');
                     $('#btnAddMaterial').addClass('btn-outline-secondary');
                     $('#nama_material').attr('disabled', true);
                     $('#nama_material').val('').trigger('change');
@@ -243,7 +395,7 @@
                 }else{
                     $('#btnAddMaterial').attr('disabled', false);
                     $('#btnAddMaterial').removeClass('btn-outline-secondary');
-                    $('#btnAddMaterial').addClass('btn-outline-success');
+                    $('#btnAddMaterial').addClass('btn-primary');
                     $('#nama_material').attr('disabled', false);
                     $('#volume').attr('disabled', false);
                     $('#satuan').attr('disabled', false);
@@ -266,14 +418,7 @@
                             $(response.list).appendTo("#perbaikanList").hide().fadeIn(200);
                             count.push("#nomor-" + response.kode);
                             $.each(count, function (index, value) {
-
-                                if (index == 0) {
-                                    plus = 2;
-                                }else{
-                                    plus = 1;
-                                }
-
-                                $(value).html("Material " + (index + plus));
+                                $(value).html("Material " + (index + 2));
                             });
                             $("#select-field-" + response.kode).select2({
                                 createTag: function (params) {
@@ -322,6 +467,140 @@
 
                 $.each(count, function (index, value) {
                     $(value).html("Material " + (index + 2));
+                });
+            }
+
+            function addListPekerja(e) {
+                $.ajaxSetup({
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('ajax.getListPekerjaHtml') }}",
+                    dataType: "json",
+                    success: function (response) {
+                        if (count.length <= 8) {
+                            $(response.list).appendTo("#pekerjaList").hide().fadeIn(200);
+                            count.push("#nomor-" + response.kode);
+                            $.each(count, function (index, value) {
+                                $(value).html("Pekerja " + (index + 2));
+                            });
+                            $("#nama_pekerja-" + response.kode).select2({
+                                createTag: function (params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term + $select.data('appendme'),
+                                        upah: $select.data('upah'),
+                                        newOption: true
+                                    }
+                                },
+                                templateResult: formatPekerjaOptionTemplate,
+                                theme: "bootstrap-5",
+                            });
+                        } else {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "center",
+                                icon: "danger",
+                                customClass: {
+                                    popup: "colored-toast",
+                                },
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+
+                            (async () => {
+                                await Toast.fire({
+                                    icon: "error",
+                                    title: "Batas maksimal penginputan perbaikan!",
+                                });
+                            })();
+                        }
+                    },
+                });
+            }
+
+            function deleteListPekerja(e) {
+                count = jQuery.grep(count, function (value) {
+                    return value != "#nomor-" + e.dataset.id;
+                });
+
+                $("#list-" + e.dataset.id).fadeOut(200, function(){
+                    $(this).remove();
+                });
+
+                $.each(count, function (index, value) {
+                    $(value).html("Pekerja " + (index + 2));
+                });
+            }
+
+            function addListItemPekerjaan(e) {
+                $.ajaxSetup({
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('ajax.getListItemPekerjaanHtml') }}",
+                    dataType: "json",
+                    success: function (response) {
+                        if (count.length <= 8) {
+                            $(response.list).appendTo("#itemPekerjaanList").hide().fadeIn(200);
+                            count.push("#nomor-" + response.kode);
+                            $.each(count, function (index, value) {
+                                $(value).html("Pekerja " + (index + 2));
+                            });
+                            $("#item_pekerjaan-" + response.kode).select2({
+                                createTag: function (params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term + $select.data('appendme'),
+                                        upah: $select.data('upah'),
+                                        newOption: true
+                                    }
+                                },
+                                templateResult: formatItemPekerjaanOptionTemplate,
+                                theme: "bootstrap-5",
+                            });
+                        } else {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "center",
+                                icon: "danger",
+                                customClass: {
+                                    popup: "colored-toast",
+                                },
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+
+                            (async () => {
+                                await Toast.fire({
+                                    icon: "error",
+                                    title: "Batas maksimal penginputan perbaikan!",
+                                });
+                            })();
+                        }
+                    },
+                });
+            }
+
+            function deleteListItemPekerjaan(e) {
+                count = jQuery.grep(count, function (value) {
+                    return value != "#nomor-" + e.dataset.id;
+                });
+
+                $("#list-" + e.dataset.id).fadeOut(200, function(){
+                    $(this).remove();
+                });
+
+                $.each(count, function (index, value) {
+                    $(value).html("Pekerja " + (index + 2));
                 });
             }
 

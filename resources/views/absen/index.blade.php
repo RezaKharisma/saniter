@@ -1,5 +1,9 @@
 <x-layouts.app title="Absen">
 
+    <?php
+        date_default_timezone_set($regional->timezone);
+    ?>
+
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Administrasi /</span> Absen</h4>
 
     <div class="row">
@@ -142,10 +146,14 @@
             // Fungsi live jam
             function updateClock (){
                 // Get date dan pisahkan jam, menit, detik
-                var currentTime = new Date( );
+                var timeZone = new Date( );
+                var tzOffset = timeZone.toLocaleString('en-US', {timeZone: "{{ $regional->timezone }}"});
+
+                var currentTime = new Date(tzOffset);
                 var currentHours = currentTime.getHours ( );
                 var currentMinutes = currentTime.getMinutes ( );
                 var currentSeconds = currentTime.getSeconds ( );
+
 
                 // Pad the minutes and seconds with leading zeros, if required
                 currentHours = ( currentHours < 10 ? "0" : "" ) + currentHours;

@@ -48,6 +48,7 @@ class IzinController extends Controller
             'jenis_izin' => 'required',
             'tgl_mulai_izin' => 'required',
             'tgl_akhir_izin' => 'required',
+            'keterangan' => 'required',
             'foto' => 'required',
         ]);
 
@@ -77,6 +78,7 @@ class IzinController extends Controller
                 'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
                 'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
+                'keterangan' => $request->keterangan,
                 'foto' => $this->fileStore($request->file('foto'))
             ];
             Izin::create($data);
@@ -103,6 +105,7 @@ class IzinController extends Controller
             'jenis_izin' => 'required',
             'tgl_mulai_izin' => 'required',
             'tgl_akhir_izin' => 'required',
+            'keterangan' => 'required'
         ]);
 
         // Jika validasi gagal
@@ -132,6 +135,7 @@ class IzinController extends Controller
                 'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
                 'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
+                'keterangan' => $request->keterangan,
                 'foto' => $this->fileStore($request->file('foto'), $izin) ?? $request->oldFoto
             ];
             $izin->update($data);
@@ -143,26 +147,54 @@ class IzinController extends Controller
 
     public function updateValidasi(Request $request, $id)
     {
-        $data = null;
+        $data = array();
+        $update = array();
         if (isset($request->validasi1)) {
             $data = [
                 'validasi_1' => 1,
-                'validasi_1_by' => $request->validasi1
+                'validasi_1_by' => $request->validasi1,
+                'tanggal_diterima_1' => Carbon::now(),
+                'status_validasi_1' => $request->status_validasi_1,
+                'keterangan_1' => $request->keterangan_1
             ];
+            if ($request->status_validasi_1 == "Tolak") {
+                $update = [
+                    'validasi_2' => 1,
+                    'validasi_2_by' => $request->validasi1,
+                    'tanggal_diterima_2' => Carbon::now(),
+                    'status_validasi_2' => $request->status_validasi_1,
+                    'keterangan_2' => $request->keterangan_1
+                ];
+            }
         }
 
         if (isset($request->validasi2)) {
             $data = [
                 'validasi_2' => 1,
-                'validasi_2_by' => $request->validasi2
+                'validasi_2_by' => $request->validasi2,
+                'tanggal_diterima_2' => Carbon::now(),
+                'status_validasi_2' => $request->status_validasi_2,
+                'keterangan_2' => $request->keterangan_2
             ];
+            if ($request->status_validasi_2 == "Tolak") {
+                $update = [
+                    'validasi_1' => 1,
+                    'validasi_1_by' => $request->validasi2,
+                    'tanggal_diterima_1' => Carbon::now(),
+                    'status_validasi_1' => $request->status_validasi_2,
+                    'keterangan_1' => $request->keterangan_2
+                ];
+            }
         }
 
         if ($data != null) {
             $izin = Izin::find($id);
             $izin->update($data);
+            if (!empty($update)) {
+                $izin->update($update);
+            }
 
-            if ($izin->validasi_1 != 0 && $izin->validasi_2 != 0) {
+            if ($izin->validasi_1 != 0 && $izin->validasi_2 != 0 && $izin->status_validasi_1 != "Tolak" && $izin->status_validasi_2 != "Tolak") {
                 $this->duaValidasiDisetujui($id);
             }
 
@@ -209,6 +241,7 @@ class IzinController extends Controller
             ->first();
 
         $jumlahIzin = JumlahIzin::where('user_id', $user->userId)->where('tahun', Carbon::now()->format('Y'))->first();
+
 
         if ($jumlahIzin->jumlah_izin < $izin->total_izin) {
             toast('Sisa cuti telah habis / tidak mencukupi!', 'error');

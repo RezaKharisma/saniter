@@ -14,7 +14,7 @@
                             List Material
                         </button>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <button type="button" disabled class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-profile" aria-controls="navs-top-profile" aria-selected="false">
                             History Pengajuan
                         </button>
@@ -28,7 +28,7 @@
                         <button type="button" disabled class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-messages" aria-controls="navs-top-messages" aria-selected="false">
                             History Penggunaan
                         </button>
-                    </li>
+                    </li> --}}
                 </ul>
 
                 {{-- List --}}
@@ -77,6 +77,7 @@
                         </form>
                     </div>
 
+                    <!--
                     {{-- Pengajuan --}}
                     <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
                         <form method="POST" target="_blank" id="formFilter" action="{{ route('laporan.material.printPengajuan') }}">
@@ -156,6 +157,8 @@
                             </div>
                         </div>
                     </div>
+                    -->
+
                 </div>
             </div>
         </div>

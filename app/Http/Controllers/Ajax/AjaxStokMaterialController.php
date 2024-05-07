@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ajax;
 use App\Http\Controllers\Controller;
 use App\Models\Api\NamaMaterial;
 use App\Models\HistoryStokMaterial;
+use App\Models\LogHistoryStokMaterial;
 use App\Models\StokMaterial;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Query\Builder;
@@ -312,7 +313,7 @@ class AjaxStokMaterialController extends Controller
     public function getHistoriStokMaterial(Request $request)
     {
         if ($request->ajax()) {
-            $histori = HistoryStokMaterial::select('stok_material.nama_material', 'stok_material.kode_material', 'jenis_kerusakan.id', 'detail_jenis_kerusakan.nama', 'history_stok_material.volume', 'history_stok_material.satuan', 'history_stok_material.created_at')
+            $histori = HistoryStokMaterial::select('stok_material.nama_material', 'stok_material.kode_material', 'detail_jenis_kerusakan.total_harga', 'jenis_kerusakan.id', 'detail_jenis_kerusakan.nama', 'history_stok_material.volume', 'history_stok_material.satuan', 'history_stok_material.created_at')
                 ->join('stok_material', 'history_stok_material.kode_material', '=', 'stok_material.kode_material')
                 ->join('detail_jenis_kerusakan', 'history_stok_material.detail_jenis_kerusakan_id', '=', 'detail_jenis_kerusakan.id')
                 ->join('jenis_kerusakan', 'detail_jenis_kerusakan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
@@ -332,13 +333,62 @@ class AjaxStokMaterialController extends Controller
                 ->addColumn('volume', function ($row) {
                     return $row->volume . ' satuan';
                 })
+                ->addColumn('total_harga', function ($row) {
+                    return "Rp. " . number_format($row->total_harga, 0, '', '.');
+                })
                 ->addColumn('tanggal', function ($row) {
                     return Carbon::parse($row->created_at)->isoFormat('dddd, D MMMM Y');
                 })
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete.
                     return "<a class='btn btn-info btn-sm' href='" . route('jenis-kerusakan.detail', $row->id) . "'><i class='bx bx-detail'></i></a>";
                 })
-                ->rawColumns(['action', 'stok_material', 'jenis_kerusakan', 'volume', 'tanggal'])
+                ->rawColumns(['action', 'stok_material', 'jenis_kerusakan', 'volume', 'tanggal', 'total_harga'])
+                ->make(true);
+        }
+    }
+
+    public function getLogHistoriStokMaterial(Request $request)
+    {
+        if ($request->ajax()) {
+            $logHistory = LogHistoryStokMaterial::select('users.name', 'jenis_kerusakan.id', 'jenis_kerusakan.nama_kerusakan', 'stok_material.nama_material', 'stok_material.kode_material', 'log_update_history_material.volume', 'log_update_history_material.satuan', 'log_update_history_material.tanggal')
+                ->join('users', 'log_update_history_material.user_id', '=', 'users.id')
+                ->join('stok_material', 'log_update_history_material.kode_material', '=', 'stok_material.kode_material')
+                ->join('jenis_kerusakan', 'log_update_history_material.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                ->orderBy('log_update_history_material.id', 'DESC')
+                ->get();
+
+            // $histori = LogHistoryStokMaterial::select('users.name', 'stok_material.nama_material', 'stok_material.kode_material', 'detail_jenis_kerusakan.total_harga', 'jenis_kerusakan.id', 'detail_jenis_kerusakan.nama', 'log_update_history_material.volume', 'log_update_history_material.satuan', 'log_update_history_material.tanggal')
+            //     ->join('stok_material', 'log_update_history_material.kode_material', '=', 'stok_material.kode_material')
+            //     ->join('detail_jenis_kerusakan', 'log_update_history_material.detail_jenis_kerusakan_id', '=', 'detail_jenis_kerusakan.id')
+            //     ->join('jenis_kerusakan', 'detail_jenis_kerusakan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+            //     ->join('users', 'log_update_history_material.user_id', '=', 'users.id')
+            //     ->orderBy('id', 'DESC')
+            //     ->get();
+
+            // Return datatables
+            return DataTables::of($logHistory)
+                ->addIndexColumn()
+                ->addColumn('stok_material', function ($row) {
+                    $html = "<span style='color: red;'>Kembali</span><div style='font-weight: bold;'>$row->kode_material</div><div>$row->nama_material</div>";
+                    return $html;
+                })
+                ->addColumn('jenis_kerusakan', function ($row) {
+                    return 'Perbaikan ' . $row->nama_kerusakan;
+                })
+                ->addColumn('users', function ($row) {
+                    return $row->name;
+                })
+                ->addColumn('volume', function ($row) {
+                    return $row->volume . ' satuan';
+                })
+                ->addColumn('tanggal', function ($row) {
+                    $html = Carbon::parse($row->tanggal)->isoFormat('dddd, D MMMM Y') . "<br/>" . Carbon::parse($row->tanggal)->isoFormat('LT') . " " . ucfirst(Carbon::parse($row->tanggal)->isoFormat('A'));
+                    return $html;
+                })
+                ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete.
+                    return "<a class='btn btn-info btn-sm' href='" . route('jenis-kerusakan.detail', $row->id) . "'><i class='bx bx-detail'></i></a>";
+                })
+                ->rawColumns(['action', 'stok_material', 'jenis_kerusakan', 'volume', 'tanggal', 'users'])
                 ->make(true);
         }
     }

@@ -55,13 +55,13 @@
                     <select name="timezone" id="timezone" class="form-control @error('timezone') is-invalid @enderror" required>
                         <option value="" selected disabled>Pilih timezone...</option>
                         @foreach ($timezones as $key => $item)
-                            <option value="{{ $item[0] }}" @if(old('timezone') == $item[0]) selected @endif>({{ $item[0] }}) {{ $item[1] }}</option>
+                            <option value="{{ $item[0] }}" @if(old('timezone') == $item[0] || $shift->timezone == $item[0]) selected @endif>({{ $item[0] }}) {{ $item[1] }}</option>
                         @endforeach
                     </select>
                     <x-partials.error-message name="timezone" class="d-block"/>
-                    <div class='form-text mt-1'>
+                    {{-- <div class='form-text mt-1'>
                         Lihat area timezone GMT <a href="#" onclick="openModalTimezone()" data-bs-toggle="modal" data-bs-target="#modalTimezone">Disini.</a>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="col-12 col-sm-12 col-md-4 mb-3 mb-sm-3 mb-md-0">
@@ -162,6 +162,26 @@
     </form>
 </div>
 
+{{-- <div class="modal fade" id="modalTimezone" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCenterTitle">Denah</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body ">
+                    <img src="{{ asset('assets/img/timezone-map/map.png') }}" class="img-fluid">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> --}}
+
 <x-slot name="script">
     <script>
         $(document).ready(function () {
@@ -186,6 +206,10 @@
                 dateFormat: "H:i",
                 time_24hr: true
             });
+
+            formatRupiah($('input[name=potongan_1]'));
+            formatRupiah($('input[name=potongan_2]'));
+            formatRupiah($('input[name=potongan_3]'));
         });
 
         function formatRupiah(e){

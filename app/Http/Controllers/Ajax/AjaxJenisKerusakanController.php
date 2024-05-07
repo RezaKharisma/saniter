@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Models\FotoKerusakan;
+use App\Models\ItemPekerjaan;
+use App\Models\Pekerja;
 use App\Models\StokMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -27,6 +29,39 @@ class AjaxJenisKerusakanController extends Controller
             $kode = bin2hex(random_bytes(10));
 
             $list = view('components.list.list-perbaikan', compact('stokMaterial', 'kode'))->render();
+
+            return response()->json([
+                'status' => 'success',
+                'list' => $list,
+                'kode' => $kode,
+            ]);
+        }
+    }
+
+    public function getListPekerjaHtml(Request $request)
+    {
+        if ($request->ajax()) {
+            $pekerja = Pekerja::all();
+
+            $kode = bin2hex(random_bytes(10));
+
+            $list = view('components.list.list-pekerja', compact('pekerja', 'kode'))->render();
+
+            return response()->json([
+                'status' => 'success',
+                'list' => $list,
+                'kode' => $kode,
+            ]);
+        }
+    }
+    public function getListItemPekerjaanHtml(Request $request)
+    {
+        if ($request->ajax()) {
+            $itemPekerjaan = ItemPekerjaan::all();
+
+            $kode = bin2hex(random_bytes(10));
+
+            $list = view('components.list.list-item-pekerjaan', compact('itemPekerjaan', 'kode'))->render();
 
             return response()->json([
                 'status' => 'success',

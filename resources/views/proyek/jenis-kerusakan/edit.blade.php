@@ -168,10 +168,11 @@
                                             <x-partials.label title="Volume" />
                                             <div class="input-group">
                                                 <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}" value="{{ $itemMaterial->satuan }}">
-                                                <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume" value="{{ $itemMaterial->volume }}" />
+                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume" value="{{ $itemMaterial->volume }}" />
                                                 <span class="input-group-text">{{ $itemMaterial->satuan }}</span>
                                             </div>
                                             <x-partials.error-message name="volume[]" class="d-block"/>
+                                            <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-1 mb-3">
                                             <x-partials.label title="Aksi" />
@@ -204,10 +205,11 @@
                                             <x-partials.label title="Volume" />
                                             <div class="input-group">
                                                 <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}">
-                                                <input type="text" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume"/>
+                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume') is-invalid @enderror" id="volume-{{ $kode }}" name="volume[]" placeholder="Volume"/>
                                                 <span class="input-group-text">satuan*</span>
                                             </div>
                                             <x-partials.error-message name="volume[]" class="d-block"/>
+                                            <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                         </div>
                                         <div class="col-12 col-sm-12 col-md-1 mb-3">
                                             <x-partials.label title="Aksi" />
@@ -232,7 +234,7 @@
                     <div class="row">
                         <div class="col-12 mb-3">
                             <x-partials.label title="Nomor Denah" />
-                            <input type="text" name="nomor_denah" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ $detail->nomor_denah ?? '' }}">
+                            <input type="text" name="nomor_denah" oninput="this.value = this.value.replace(/[^0-9,]/g, '')" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ $detail->nomor_denah ?? '' }}">
                             <x-partials.error-message name="nomor_denah" />
                             <x-partials.input-desc text="Pisahkan dengan tanda ' , ' (koma) " />
                         </div>
