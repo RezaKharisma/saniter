@@ -302,7 +302,7 @@ class AjaxStokMaterialController extends Controller
 
                     // Tombol detail
                     $btn = $btn . "<a href=" . route('stok-material.pengajuan.detailPengajuan', $row->id) . " class='btn btn-info btn-sm'><i class='bx bx-detail'></i></a>";
-                    $btn = $btn . "<form action=" . route('stok-material.pengajuan.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
+                    // $btn = $btn . "<form action=" . route('stok-material.pengajuan.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     return $btn;
                 })
                 ->rawColumns(['action', 'oleh', 'kode_material', 'status'])

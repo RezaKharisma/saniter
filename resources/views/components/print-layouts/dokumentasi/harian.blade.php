@@ -38,7 +38,7 @@
 
 
         @page {
-            margin-top: 0px;
+            margin-top: 20px;
             margin-bottom: 10px;
             margin-left: 10px !important;
             margin-right: 10px !important;
@@ -55,7 +55,7 @@
 <body>
 
     @foreach ($data as $key => $itemKerusakan)
-    <div style=" @if(!$loop->last) page-break-after:always; @endif margin-top: 20px;">
+    <div style=" @if(!$loop->last) page-break-after:always; @endif">
         <table style="margin: auto" border="1" width="100%" class="table">
             <tr align="center" >
                 <th style="padding: 10px" colspan="3">
@@ -153,9 +153,23 @@
                             <li style="margin-bottom: 10px">
                                 <span class="d-block">({{ $item['jenis_kerusakan']['nama_kerusakan'] }}) {{ ucfirst($item['jenis_kerusakan']['deskripsi']) }}</span>
                                 <ul style="padding-left: 0px;list-style-type: none">
-                                    @foreach ($item['detail_kerusakan'] as $item)
-                                        <li>- {{ $item['nama_material'] }}</li>
-                                    @endforeach
+                                    @if (isset($item['detail_pekerja']))
+                                        @foreach ($item['detail_pekerja'] as $item_pekerja)
+                                        <li>- {{ $item_pekerja['nama'] }}</li>
+                                        @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_item_pekerjaan']))
+                                        @foreach ($item['detail_item_pekerjaan'] as $item_pekerjaan)
+                                        <li>- {{ $item_pekerjaan['nama'] }}</li>
+                                        @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_kerusakan']))
+                                        @foreach ($item['detail_kerusakan'] as $item_kerusakan)
+                                        <li>- {{ $item_kerusakan['nama_material'] }}</li>
+                                        @endforeach
+                                    @endif
                                 </ul>
                             </li>
                         @endforeach
@@ -165,17 +179,43 @@
                     <ol style="margin-left:0px !important;padding-left: 0px !important;list-style-type: none">
                         @foreach ($itemKerusakan as $item)
                             <li style="margin-left:0px !important;padding-left: 0px !important;margin-bottom: 10px">
-                                <span class="d-block">&nbsp;</span>
+                                <span class="d-block">-</span>
                                 <ul style="margin-left:0px !important;padding-left: 0px !important;list-style-type: none">
-                                    @foreach ($item['detail_kerusakan'] as $itemDetail)
+                                    @if (isset($item['detail_pekerja']))
+                                    @foreach ($item['detail_pekerja'] as $item_pekerja)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">
-                                            @if ($itemDetail != null)
-                                                {{ $itemDetail['volume'] }} (satuan)
+                                            @if ($item_pekerja != null)
+                                                {{ $item_pekerja['volume'] }} (satuan)
                                             @else
                                                 asdasd
                                             @endif
                                         </li>
                                     @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_item_pekerjaan']))
+                                    @foreach ($item['detail_item_pekerjaan'] as $item_pekerjaan)
+                                        <li style="margin-left:0px !important;padding-left: 0px !important;">
+                                            @if ($item_pekerjaan != null)
+                                                {{ $item_pekerjaan['volume'] }} (satuan)
+                                            @else
+                                                asdasd
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_kerusakan']))
+                                    @foreach ($item['detail_kerusakan'] as $item_kerusakan)
+                                        <li style="margin-left:0px !important;padding-left: 0px !important;">
+                                            @if ($item_kerusakan != null)
+                                                {{ $item_kerusakan['volume'] }} (satuan)
+                                            @else
+                                                asdasd
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                    @endif
                                 </ul>
                             </li>
                         @endforeach
@@ -187,9 +227,23 @@
                             <li style="margin-left:0px !important;padding-left: 0px !important;margin-bottom: 10px">
                                 <span class="d-block">{{ $item['jenis_kerusakan']['namaArea'] }} - Nomor Denah ({{ $item['jenis_kerusakan']['nomor_denah'] }})</span>
                                 <ul style="margin-left:0px !important;padding-left: 0px !important;list-style-type: none">
-                                    @foreach ($item['detail_kerusakan'] as $itemDetail)
+                                    @if (isset($item['detail_pekerja']))
+                                    @foreach ($item['detail_pekerja'] as $item_pekerja)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">#&nbsp;</li>
                                     @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_item_pekerjaan']))
+                                    @foreach ($item['detail_item_pekerjaan'] as $item_pekerjaan)
+                                        <li style="margin-left:0px !important;padding-left: 0px !important;">#&nbsp;</li>
+                                    @endforeach
+                                    @endif
+
+                                    @if (isset($item['detail_kerusakan']))
+                                    @foreach ($item['detail_kerusakan'] as $ittem_kerusakan)
+                                        <li style="margin-left:0px !important;padding-left: 0px !important;">#&nbsp;</li>
+                                    @endforeach
+                                    @endif
                                 </ul>
                             </li>
                         @endforeach
@@ -204,7 +258,7 @@
                 <td style="border-top: 1px solid white !important"></td>
             </tr>
             <tr>
-                <td colspan="5" style="padding: 10px;">Keterangan : </td>
+                <td colspan="5" style="padding-left: 10px; padding-top: 20px; padding-bottom: 20px">Keterangan : </td>
             </tr>
             <tr>
                 <td colspan="5">

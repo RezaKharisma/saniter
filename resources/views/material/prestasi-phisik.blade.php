@@ -10,18 +10,22 @@
             <div class="card">
                 <h5 class="card-header mb-3">Form Prestasi Phisik</h5>
                 <div class="card-body">
-                    <form method="POST" target="_blank" id="formFilter" action="{{ route('dokumentasi.model1') }}">
+                    <form method="POST" target="_blank" id="formFilter" action="{{ route('prestasi-phisik.model1') }}">
                         @csrf
 
-                        {{-- Tanggal --}}
                         <div class="row mb-2">
-                            <div class="col-12 col-sm-12 col-md-6 mb-3">
-                                <x-partials.label title="Tanggal Awal" />
-                                <input type="text" class="form-control" id="start_date" name="start_date" placeholder="Tanggal Mulai" autocomplete="off" />
+                            <div class="col-6">
+                                <x-partials.label title="Bulan" />
+                                <select name="bulan" id="bulan" class="form-control" required>
+                                    <option value="" selected disabled>Pilih bulan...</option>
+                                    @foreach ($bulan as $key => $item)
+                                    <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <div class="col-12 col-sm-12 col-md-6 mb-3">
-                                <x-partials.label title="Tanggal Akhir" />
-                                <input type="text" class="form-control" id="end_date" name="end_date" placeholder="Tanggal Akhir" autocomplete="off" />
+                            <div class="col-6 mb-3">
+                                <x-partials.label title="Tahun" />
+                                <input type="number" class="form-control" name="tahun" placeholder="Tahun" autocomplete="off" required />
                             </div>
                             <div class="col-auto">
                                 <x-partials.label title="Export" /><br />
@@ -41,7 +45,7 @@
         <script src="{{ asset('assets/vendor/libs/jquery-ui/jquery-ui.js') }}"></script>
         <script>
             $(document).ready(function () {
-                $("#area_id").select2({
+                $("#bulan").select2({
                     theme: "bootstrap-5",
                 });
 

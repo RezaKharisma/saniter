@@ -12,12 +12,11 @@
     <a href="{{ route('jenis-kerusakan.index', $detailKerja->id) }}" class="btn btn-secondary mb-3"><i class="bx bx-arrow-back me-1"></i> Kembali</a>
 
     <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <h5 class="card-header mb-0">Form Kerusakan</h5>
-
-                <form method="post" action="{{ route('jenis-kerusakan.store') }}" enctype="multipart/form-data">
-                    @csrf
+        <form method="post" action="{{ route('jenis-kerusakan.store') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header mb-0">Form Kerusakan</h5>
                     <div class="card-body">
                         <input type="hidden" name="detail_tgl_kerja_id" value="{{ $detailKerja->id }}" />
 
@@ -64,7 +63,7 @@
                             <textarea name="deskripsi" rows="4" class="form-control" placeholder="Deskripsi">{{ old('deskripsi') }}</textarea>
                         </div>
 
-                        <hr class="mt-5 mb-4" />
+                        {{-- <hr class="mt-5 mb-4" /> --}}
 
                         <div class="mb-2">
                             <div class="col-12">
@@ -86,94 +85,98 @@
                                 <x-partials.error-message name="perbaikan" />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        @if (auth()->user()->can('tanggal kerja_input item pekerjaan'))
-                            <div class="mt-5">
-                                <h4 style="text-align: center">PEKERJA</h4>
-                            </div>
-
-                            <div id="pekerjaList">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="divider text-start">
-                                            <div class="divider-text">Pekerja 1</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
-                                        <x-partials.label title="Nama Pekerja" />
-                                        <select name="nama_pekerja[]" id="nama_pekerja" class="form-control w-100 @error('nama_pekerja') is-invalid @enderror" required>
-                                            <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama pekerja...</option>
-                                            @foreach ($pekerja as $item)
-                                                <option value="{{ $item->id }}" data-upah="{{ $item->upah }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        <x-partials.error-message name="nama_pekerja[]" class="d-block"/>
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
-                                        <x-partials.label title="Volume" />
-                                        <div class="input-group">
-                                            <input type="hidden" name="satuan_pekerja[]" id="satuan_pekerja">
-                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_pekerja') is-invalid @enderror" id="volume_pekerja" name="volume_pekerja[]" placeholder="Volume" required/>
-                                            <span class="input-group-text">satuan*</span>
-                                        </div>
-                                        <x-partials.error-message name="volume_pekerja[]" class="d-block"/>
-                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+            @if (auth()->user()->can('tanggal kerja_input item pekerjaan'))
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header">Pekerja</h5>
+                    <div class="card-body">
+                        <div id="pekerjaList">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider text-start">
+                                        <div class="divider-text">Pekerja 1</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mb-2 mt-4">
-                                <button type="button" class="btn btn-primary mb-3 mb-sm-3 mb-md-0" onclick="addListPekerja(this)"><i class="bx bx-plus"></i> Tambah Pekerja</button>
-                            </div>
 
-                            <hr class="mt-5 mb-4" style="border: 0.5px solid black"/>
-
-                            <div class="mt-5">
-                                <h4 style="text-align: center">ITEM PEKERJAAN</h4>
-                            </div>
-
-                            <div id="itemPekerjaanList">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="divider text-start">
-                                            <div class="divider-text">Item Pekerjaan 1</div>
-                                        </div>
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Nama Pekerja" />
+                                    <select name="nama_pekerja[]" id="nama_pekerja" class="form-control w-100 @error('nama_pekerja') is-invalid @enderror" required>
+                                        <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama pekerja...</option>
+                                        @foreach ($pekerja as $item)
+                                            <option value="{{ $item->id }}" data-upah="{{ $item->upah }}">{{ $item->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-partials.error-message name="nama_pekerja[]" class="d-block"/>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Volume" />
+                                    <div class="input-group">
+                                        <input type="hidden" name="satuan_pekerja[]" id="satuan_pekerja">
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_pekerja') is-invalid @enderror" id="volume_pekerja" name="volume_pekerja[]" placeholder="Volume" required/>
+                                        <span class="input-group-text">satuan*</span>
                                     </div>
-
-                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
-                                        <x-partials.label title="Item Pekerjaan" />
-                                        <select name="item_pekerjaan[]" id="item_pekerjaan" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" required>
-                                            <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih item pekerjaan...</option>
-                                            @foreach ($itemPekerjaan as $item)
-                                                <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        <x-partials.error-message name="item_pekerjaan[]" class="d-block"/>
-                                    </div>
-                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
-                                        <x-partials.label title="Volume" />
-                                        <div class="input-group">
-                                            <input type="hidden" name="satuan_item_pekerjaan[]" id="satuan_item_pekerjaan">
-                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_item_pekerjaan') is-invalid @enderror" id="volume_item_pekerjaan" name="volume_item_pekerjaan[]" placeholder="Volume" required/>
-                                            <span class="input-group-text">satuan*</span>
-                                        </div>
-                                        <x-partials.error-message name="volume_item_pekerjaan[]" class="d-block"/>
-                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
-                                    </div>
+                                    <x-partials.error-message name="volume_pekerja[]" class="d-block"/>
+                                    <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
                                 </div>
                             </div>
-                        @endif
-
-                        <div class="mb-2 mt-4">
-                            <button type="button" class="btn btn-primary" onclick="addListItemPekerjaan(this)"><i class="bx bx-plus"></i> Tambah Item Pekerjaan</button>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary mb-3 mb-sm-3 mb-md-0" onclick="addListPekerja(this)"><i class="bx bx-plus"></i> Tambah Pekerja</button>
+                    </div>
+                </div>
+            </div>
 
-                        <hr class="mt-5 mb-4" style="border: 0.5px solid black" />
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header">Item Pekerjaan</h5>
+                    <div class="card-body">
+                        <div id="itemPekerjaanList">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider text-start">
+                                        <div class="divider-text">Item Pekerjaan 1</div>
+                                    </div>
+                                </div>
 
-                        <div class="mt-5">
-                            <h4 style="text-align: center">MATERIAL</h4>
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Item Pekerjaan" />
+                                    <select name="item_pekerjaan[]" id="item_pekerjaan" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" required>
+                                        <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih item pekerjaan...</option>
+                                        @foreach ($itemPekerjaan as $item)
+                                            <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">{{ $item->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-partials.error-message name="item_pekerjaan[]" class="d-block"/>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Volume" />
+                                    <div class="input-group">
+                                        <input type="hidden" name="satuan_item_pekerjaan[]" id="satuan_item_pekerjaan">
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_item_pekerjaan') is-invalid @enderror" id="volume_item_pekerjaan" name="volume_item_pekerjaan[]" placeholder="Volume" required/>
+                                        <span class="input-group-text">satuan*</span>
+                                    </div>
+                                    <x-partials.error-message name="volume_item_pekerjaan[]" class="d-block"/>
+                                    <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" onclick="addListItemPekerjaan(this)"><i class="bx bx-plus"></i> Tambah Item Pekerjaan</button>
+                    </div>
+                </div>
+            </div>
+            @endif
 
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header">Material</h5>
+                    <div class="card-body">
                         <div id="perbaikanList" class="">
                             <div class="row">
                                 <div class="col-12">
@@ -204,52 +207,54 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addList(this)"><i class="bx bx-plus"></i> Tambah Material</button>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addList(this)"><i class="bx bx-plus"></i> Tambah Material</button>
-                        </div>
-
-                        <hr class="mt-5 mb-4" style="border: 0.5px solid black" />
-
-                        <div class="mt-3">
-                            <div class="row">
-                                <div class="col-12 mb-3">
-                                    <x-partials.label title="Nomor Denah" />
-                                    <input type="text" name="nomor_denah" oninput="this.value = this.value.replace(/[^0-9,]/g, '')" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ old('nomor_denah') }}">
-                                    <x-partials.error-message name="nomor_denah" />
-                                    <x-partials.input-desc text="Pisahkan dengan tanda ' , ' (koma) " />
-                                </div>
-                                <div class="col-12">
-                                    <x-partials.label title="Denah" />
-                                    <div class="card shadow">
-                                        <h5 class="card-header">
-                                            {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
-                                        </h5>
-                                        <div class="card-body p-4">
-                                            <img src="{{ asset('storage/'.$detailKerja->denah) }}" class="img-fluid">
-                                        </div>
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Denah
+                    </h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <x-partials.label title="Nomor Denah" />
+                                <input type="text" name="nomor_denah" oninput="this.value = this.value.replace(/[^0-9,]/g, '')" class="form-control @error('nomor_denah') is-invalid @enderror" id="nomor_denah" value="{{ old('nomor_denah') }}">
+                                <x-partials.error-message name="nomor_denah" />
+                                <x-partials.input-desc text="Pisahkan dengan tanda ' , ' (koma) " />
+                            </div>
+                            <div class="col-12">
+                                <x-partials.label title="Denah" />
+                                <div class="card shadow">
+                                    <h5 class="card-header">
+                                        {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
+                                    </h5>
+                                    <div class="card-body p-4 text-center">
+                                        <img src="{{ asset('storage/'.$detailKerja->denah) }}" class="img-fluid" height="300px">
                                     </div>
-                                    {{-- <div class="card shadow " style="height: 300px">
-                                        <h5 class="card-header">
-                                            {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
-                                        </h5>
-                                        <div class="card-body p-4" id="both-scrollbars-example">
-                                            <img src="{{ asset('storage/'.$detailKerja->denah) }}" width="800px">
-                                        </div>
-                                    </div> --}}
                                 </div>
+                                {{-- <div class="card shadow " style="height: 300px">
+                                    <h5 class="card-header">
+                                        {{ $detailKerja->lantai }} - {{ $detailKerja->nama }}
+                                    </h5>
+                                    <div class="card-body p-4" id="both-scrollbars-example">
+                                        <img src="{{ asset('storage/'.$detailKerja->denah) }}" width="800px">
+                                    </div>
+                                </div> --}}
                             </div>
                         </div>
-
                     </div>
-
                     <div class="card-footer">
                         <a href="{{ route('jenis-kerusakan.index', $detailKerja->id) }}" class="btn btn-secondary">Kembali</a>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <x-slot name="script">
@@ -528,7 +533,7 @@
                     return value != "#nomor-" + e.dataset.id;
                 });
 
-                $("#list-" + e.dataset.id).fadeOut(200, function(){
+                $("#list-pekerja-" + e.dataset.id).fadeOut(200, function(){
                     $(this).remove();
                 });
 
@@ -595,7 +600,7 @@
                     return value != "#nomor-" + e.dataset.id;
                 });
 
-                $("#list-" + e.dataset.id).fadeOut(200, function(){
+                $("#list-item-pekerjaan-" + e.dataset.id).fadeOut(200, function(){
                     $(this).remove();
                 });
 

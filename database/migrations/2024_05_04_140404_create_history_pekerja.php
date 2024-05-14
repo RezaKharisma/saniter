@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('history_pekerja', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pekerja_id');
-            $table->unsignedBigInteger('detail_jenis_kerusakan_id');
+            $table->unsignedBigInteger('detail_pekerja_id');
             $table->date('tanggal');
             $table->double('volume');
             $table->string('satuan');

@@ -421,6 +421,7 @@ Route::group(['middleware' => ['auth', 'timezone']], function () {
 
         // Prestasi Phisik
         Route::get('/laporan/prestasi-phisik', 'prestasiPhisik')->name('laporan.phisik')->middleware('permission:prestasi phisik_read');
+        Route::post('/laporan/prestasi-phisik/model1', 'prestasiPhisikModel1')->name('prestasi-phisik.model1')->middleware('permission:prestasi phisik_read');
     });
 
     /*

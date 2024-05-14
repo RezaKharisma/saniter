@@ -5,26 +5,28 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Area;
 use App\Models\User;
+use App\Models\Pekerja;
 use App\Models\AreaList;
+use App\Models\TglKerja;
 use App\Models\StokMaterial;
 use Illuminate\Http\Request;
+use App\Models\DetailPekerja;
+use App\Models\FotoKerusakan;
+use App\Models\ItemPekerjaan;
 use App\Models\DetailTglKerja;
+use App\Models\HistoryPekerja;
 use App\Models\JenisKerusakan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Api\NamaMaterial;
 use App\Models\DetailItemPekerjaan;
 use App\Models\HistoryStokMaterial;
 use App\Models\DetailJenisKerusakan;
-use App\Models\DetailPekerja;
-use App\Models\FotoKerusakan;
-use App\Models\ItemPekerjaan;
+use App\Models\HistoryPrestasiPhisik;
+use Intervention\Image\Facades\Image;
 use App\Models\LogHistoryStokMaterial;
-use App\Models\Pekerja;
-use App\Models\TglKerja;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Facades\Image;
 
 class JenisKerusakanController extends Controller
 {
@@ -42,6 +44,8 @@ class JenisKerusakanController extends Controller
             ->join('users', 'jenis_kerusakan.dikerjakan_oleh', '=', 'users.id')
             ->orderBy('id', 'DESC')
             ->get();
+
+        $jenisKerusakan = $this->cekAdaItemPekerjaan($jenisKerusakan);
 
         return view('proyek.jenis-kerusakan.index', compact('detailKerja', 'area', 'jenisKerusakan'));
     }
@@ -187,8 +191,8 @@ class JenisKerusakanController extends Controller
                     'item_pekerjaan_id' => $item,
                     'nama' => $request->perbaikan,
                     'harga' => floatval($this->getHargaItemPekerjaan($item)),
-                    'volume' => $request->volume_pekerja[$key] ?? '0',
-                    'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                    'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                    'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
                     'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
                 ]);
             }
@@ -220,6 +224,14 @@ class JenisKerusakanController extends Controller
             ->where('jenis_kerusakan_id', $id)
             ->get();
 
+        $detailPekerja = DetailPekerja::where('jenis_kerusakan_id', $id)->get();
+
+        $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $id)->get();
+
+        $pekerja = Pekerja::all();
+
+        $itemPekerjaans = ItemPekerjaan::all();
+
         $teknisi = User::select('users.id', 'users.name')->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.name', 'Teknisi')->get();
 
         $jenisKerusakan = JenisKerusakan::select('jenis_kerusakan.id as jenisKerusakanID', 'detail_tgl_kerja.id as detailKerjaID', 'list_area.lantai', 'list_area.nama', 'list_area.denah', 'jenis_kerusakan.tgl_selesai_pekerjaan')
@@ -238,7 +250,7 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.detail', compact('detail', 'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan'));
+        return view('proyek.jenis-kerusakan.detail', compact('detail', 'detailPekerja', 'detailItemPekerjaan', 'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans'));
     }
 
     public function edit($id)
@@ -263,6 +275,14 @@ class JenisKerusakanController extends Controller
             ->where('jenis_kerusakan_id', $id)
             ->get();
 
+        $detailPekerja = DetailPekerja::where('jenis_kerusakan_id', $id)->get();
+
+        $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $id)->get();
+
+        $pekerja = Pekerja::all();
+
+        $itemPekerjaans = ItemPekerjaan::all();
+
         $teknisi = User::select('users.id', 'users.name')->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.name', 'Teknisi')->get();
 
         $jenisKerusakan = JenisKerusakan::select('jenis_kerusakan.id as jenisKerusakanID', 'detail_tgl_kerja.id as detailKerjaID', 'list_area.lantai', 'list_area.nama', 'list_area.denah', 'jenis_kerusakan.tgl_selesai_pekerjaan')
@@ -281,7 +301,7 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.edit', compact('detail', 'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan'));
+        return view('proyek.jenis-kerusakan.edit', compact('detail', 'detailPekerja', 'detailItemPekerjaan',  'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans'));
     }
 
     public function update(Request $request, $id)
@@ -302,6 +322,38 @@ class JenisKerusakanController extends Controller
 
             // Jika validasi gagal
             if ($validator2->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
+        if ($request->nama_pekerja && $request->satuan_pekerja && $request->volume_pekerja) {
+            $validator3 = Validator::make($request->all(), [
+                'nama_pekerja' => 'required',
+                'satuan_pekerja' => '',
+                'volume_pekerja' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator3->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
+        if ($request->item_pekerjaan && $request->satuan_item_pekerjaan && $request->volume_item_pekerjaan) {
+            $validator4 = Validator::make($request->all(), [
+                'item_pekerjaan' => 'required',
+                'satuan_item_pekerjaan' => '',
+                'volume_item_pekerjaan' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator4->fails()) {
                 toast('Mohon periksa form kembali!', 'error'); // Toast
                 return Redirect::back()
                     ->withErrors($validator)
@@ -343,7 +395,6 @@ class JenisKerusakanController extends Controller
 
             if ($request->nama_material != null) {
                 DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
-                $detailKerusakan = new DetailJenisKerusakan();
                 foreach ($request->nama_material as $key => $item) {
                     DetailJenisKerusakan::create([
                         'jenis_kerusakan_id' => $jenisKerusakan->id,
@@ -359,6 +410,40 @@ class JenisKerusakanController extends Controller
             } else {
                 DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
                 $data['status_kerusakan'] = 'Tanpa Material';
+            }
+
+            if ($request->nama_pekerja != null) {
+                DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+                foreach ($request->nama_pekerja as $key => $item) {
+                    DetailPekerja::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'pekerja_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'upah' => floatval($this->getUpahPekerja($item)),
+                        'volume' => $request->volume_pekerja[$key] ?? '0',
+                        'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                        'total_harga' => floatval($this->getUpahPekerja($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+                }
+            } else {
+                DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+            }
+
+            if ($request->item_pekerjaan != null) {
+                DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+                foreach ($request->item_pekerjaan as $key => $item) {
+                    DetailItemPekerjaan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'item_pekerjaan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaItemPekerjaan($item)),
+                        'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                        'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+                }
+            } else {
+                DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
             }
 
             $jenisKerusakan->update($data);
@@ -403,6 +488,78 @@ class JenisKerusakanController extends Controller
                 $data['status_kerusakan'] = 'Tanpa Material';
             }
 
+            if ($request->nama_pekerja != null) {
+                $getPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPekerja::where('detail_pekerja_id', $i->id)->delete();
+                    DetailPekerja::find($i->id)->delete();
+                }
+
+                foreach ($request->nama_pekerja as $key => $item) {
+                    $detailPekerja = DetailPekerja::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'pekerja_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'upah' => floatval($this->getUpahPekerja($item)),
+                        'volume' => $request->volume_pekerja[$key] ?? '0',
+                        'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                        'total_harga' => floatval($this->getUpahPekerja($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+
+                    HistoryPekerja::create([
+                        'pekerja_id' => $item,
+                        'detail_pekerja_id' => $detailPekerja->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_pekerja[$key] ?? '0',
+                        'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPekerja::where('detail_pekerja_id', $i->id)->delete();
+                    DetailPekerja::find($i->id)->delete();
+                }
+            }
+
+            if ($request->item_pekerjaan != null) {
+                $getItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getItemPekerjaan as $i) {
+                    HistoryPrestasiPhisik::where('detail_item_pekerjaan_id', $i->id)->delete();
+                    DetailItemPekerjaan::find($i->id)->delete();
+                }
+
+                foreach ($request->item_pekerjaan as $key => $item) {
+                    $detailItemPekerjaan = DetailItemPekerjaan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'item_pekerjaan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaItemPekerjaan($item)),
+                        'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                        'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+
+                    HistoryPrestasiPhisik::create([
+                        'item_pekerjaan_id' => $item,
+                        'detail_item_pekerjaan_id' => $detailItemPekerjaan->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                        'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getItemPekerjaan as $i) {
+                    HistoryPrestasiPhisik::where('detail_item_pekerjaan_id', $i->id)->delete();
+                    DetailItemPekerjaan::find($i->id)->delete();
+                }
+            }
+
             $jenisKerusakan->update($data);
         } else {
             $jenisKerusakan->update([
@@ -443,6 +600,77 @@ class JenisKerusakanController extends Controller
                 DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
                 $data['status_kerusakan'] = 'Tanpa Material';
             }
+
+            if ($request->nama_pekerja != null) {
+                $getPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPekerja::where('detail_pekerja_id', $i->id)->delete();
+                    DetailPekerja::find($i->id)->delete();
+                }
+                foreach ($request->nama_pekerja as $key => $item) {
+                    $detailPekerja = DetailPekerja::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'pekerja_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'upah' => floatval($this->getUpahPekerja($item)),
+                        'volume' => $request->volume_pekerja[$key] ?? '0',
+                        'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                        'total_harga' => floatval($this->getUpahPekerja($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+
+                    HistoryPekerja::create([
+                        'pekerja_id' => $item,
+                        'detail_pekerja_id' => $detailPekerja->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_pekerja[$key] ?? '0',
+                        'satuan' => $request->satuan_pekerja[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPekerja::where('detail_pekerja_id', $i->id)->delete();
+                    DetailPekerja::find($i->id)->delete();
+                }
+            }
+
+            if ($request->item_pekerjaan != null) {
+                $getItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getItemPekerjaan as $i) {
+                    HistoryPrestasiPhisik::where('detail_item_pekerjaan_id', $i->id)->delete();
+                    DetailItemPekerjaan::find($i->id)->delete();
+                }
+
+                foreach ($request->item_pekerjaan as $key => $item) {
+                    $detailItemPekerjaan = DetailItemPekerjaan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'item_pekerjaan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaItemPekerjaan($item)),
+                        'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                        'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                    ]);
+
+                    HistoryPrestasiPhisik::create([
+                        'item_pekerjaan_id' => $item,
+                        'detail_item_pekerjaan_id' => $detailItemPekerjaan->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
+                        'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getItemPekerjaan as $i) {
+                    HistoryPrestasiPhisik::where('detail_item_pekerjaan_id', $i->id)->delete();
+                    DetailItemPekerjaan::find($i->id)->delete();
+                }
+            }
         }
 
         toast('Data berhasil tersimpan!', 'success');
@@ -453,9 +681,13 @@ class JenisKerusakanController extends Controller
     {
         $jenisKerusakan = JenisKerusakan::findOrFail($id);
         $detailKerusakan = DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id);
+        $detailPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id);
+        $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id);
         Storage::disk('public')->delete($jenisKerusakan->foto);
         $jenisKerusakan->delete();
         $detailKerusakan->delete();
+        $detailPekerja->delete();
+        $detailItemPekerjaan->delete();
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('jenis-kerusakan.index', $request->detail_tgl_kerusakan_id); // Redirect kembali
     }
@@ -657,7 +889,8 @@ class JenisKerusakanController extends Controller
         }
 
         $detail = array();
-        // $history = array();
+        $pekerja = array();
+        $itemPekerjaan = array();
         foreach ($jenis_kerusakan as $key => $item) {
             $data[$item->tglKerja][$key]['jenis_kerusakan'] = $item;
 
@@ -666,18 +899,33 @@ class JenisKerusakanController extends Controller
                 ->join('stok_material', 'detail_jenis_kerusakan.kode_material', '=', 'stok_material.kode_material')
                 ->get();
 
+            $detail_pekerja = DetailPekerja::where('jenis_kerusakan_id', $item->id)
+                ->join('pekerja', 'detail_pekerja.pekerja_id', '=', 'pekerja.id')
+                ->get();
+
+            $detail_item_pekerjaan = DetailItemPekerjaan::select('detail_item_pekerjaan.volume', 'detail_item_pekerjaan.satuan', 'item_pekerjaan.nama')
+                ->where('jenis_kerusakan_id', $item->id)
+                ->join('item_pekerjaan', 'detail_item_pekerjaan.item_pekerjaan_id', '=', 'item_pekerjaan.id')
+                ->get();
+
             foreach ($detail_kerusakan as $itemDetailKerusakan) {
                 array_push($detail, $itemDetailKerusakan);
-                // $historyStokMaterial = HistoryStokMaterial::where('detail_jenis_kerusakan_id', $itemDetailKerusakan->id)->get();
-                // foreach ($historyStokMaterial as $itemHistoryStokMaterial) {
-                //     array_push($history, $itemHistoryStokMaterial);
-                // }
+            }
+
+            foreach ($detail_pekerja as $itemPekerja) {
+                array_push($pekerja, $itemPekerja);
+            }
+
+            foreach ($detail_item_pekerjaan as $itemItemPekerjaan) {
+                array_push($itemPekerjaan, $itemItemPekerjaan);
             }
 
             $data[$item->tglKerja][$key]['detail_kerusakan'] = $detail;
-            // $data[$item->tglKerja][$key]['history'] = $history;
+            $data[$item->tglKerja][$key]['detail_pekerja'] = $pekerja;
+            $data[$item->tglKerja][$key]['detail_item_pekerjaan'] = $itemPekerjaan;
             $detail = array();
-            // $history = array();
+            $pekerja = array();
+            $itemPekerjaan = array();
         }
 
         // dd($data);
@@ -687,10 +935,28 @@ class JenisKerusakanController extends Controller
             return Redirect::back();
         }
 
-        // $data = json_encode($jenis_kerusakan, true);
-
         $pdf = Pdf::loadView('components.print-layouts.dokumentasi.harian', ['data' => $data])->setPaper('a4', 'landscape');
-        // $pdf = Pdf::loadView('components.print-layouts.dokumentasi.harian')->setPaper('a4', 'landscape');
         return $pdf->stream('dokumentasi_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . ').pdf');
+    }
+
+    protected function cekAdaItemPekerjaan($jenisKerusakan)
+    {
+        $detail['kerusakan'] = array();
+        $detail['item_pekerjaan'][] = 0;
+        foreach ($jenisKerusakan as $key => $value) {
+            $pekerja = DetailPekerja::where('jenis_kerusakan_id', $value->id)->get();
+            $itemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $value->id)->get();
+
+            if (count($pekerja) > 0 || count($itemPekerjaan) > 0) {
+                if (auth()->user()->can('tanggal kerja_all data')) {
+                    $detail['item_pekerjaan'][$key] = true;
+                    array_push($detail['kerusakan'], $value);
+                }
+            } else {
+                $detail['item_pekerjaan'][$key] = false;
+                array_push($detail['kerusakan'], $value);
+            }
+        }
+        return $detail;
     }
 }

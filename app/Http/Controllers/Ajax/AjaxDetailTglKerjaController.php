@@ -24,22 +24,17 @@ class AjaxDetailTglKerjaController extends Controller
 
             $tgl = DetailTglKerja::select('detail_tgl_kerja.*', 'regional.nama as regionalName')
                 ->where('tgl_kerja_id', $this->tglKerjaId)
-                ->where('regional.id', auth()->user()->regional_id)
                 ->join('list_area', 'detail_tgl_kerja.list_area_id', '=', 'list_area.id')
                 ->join('area', 'list_area.area_id', '=', 'area.id')
                 ->join('regional', 'area.regional_id', '=', 'regional.id')
                 ->orderBy('detail_tgl_kerja.id', 'DESC');
 
-            if (auth()->user()->can('tanggal kerja_all data')) {
+            if (!auth()->user()->can('tanggal kerja_all data')) {
                 $tgl->where('regional.id', auth()->user()->regional_id);
             }
 
-            $data = $tgl->get();
-
-            $detailPekerja = DetailPekerja::where('jenis_kerusakan_id', $tgl->id);
-
             // Return datatables
-            return DataTables::of($data)
+            return DataTables::of($tgl->get())
                 ->addIndexColumn()
                 ->addColumn('jam', function ($row) {
                     return Carbon::parse($row->created_at)->isoFormat('LT') . " " . ucfirst(Carbon::parse($row->created_at)->isoFormat('A'));
@@ -104,24 +99,5 @@ class AjaxDetailTglKerjaController extends Controller
                 'data' => $listArea
             ]);
         }
-    }
-
-    protected function cekAdaItemPekerjaan($detailTglKerja)
-    {
-        $result = true;
-        foreach ($detailTglKerja as $value) {
-            $pekerja = DetailPekerja::where('jenis_pekerja_id', $value->id)->get();
-            $itemPekerjaan = DetailItemPekerjaan::where('jenis_pekerja_id', $value->id)->get();
-
-            if (count($pekerja) > 0) {
-                $result = false;
-            }
-
-            if (count($itemPekerjaan) > 0) {
-                $result = false;
-            }
-        }
-
-        return $result;
     }
 }

@@ -34,7 +34,7 @@
             </div>
 
             <div class="row">
-                @forelse ($jenisKerusakan as $item)
+                @forelse ($jenisKerusakan['kerusakan'] as $key => $item)
                     <div class="col-12 col-sm-6 col-md-6 col-xl-4 mb-4">
                         <div class="card h-100">
                             <div class="card-header flex-grow-0">
@@ -57,10 +57,12 @@
                             </div>
                             <div class="card-body mb-0">
                                 <h5 class="text-truncate">Perbaikan {{ $item->nama_kerusakan }}</h5>
+                                @if ($item->tgl_selesai_pekerjaan != null)
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-success">Selesai</span>
+                                </div>
+                                @endif
                                 <div class="d-flex gap-2">
-                                    @if ($item->tgl_selesai_pekerjaan != null)
-                                        <span class="badge bg-success">Selesai</span>
-                                    @endif
                                     @if ($item->status_kerusakan == "Perbaikan")
                                         <span class="badge bg-label-primary">{{ $item->status_kerusakan }}</span>
                                     @elseif($item->status_kerusakan == "Dengan Material")
@@ -69,6 +71,24 @@
                                         <span class="badge bg-label-primary">{{ $item->status_kerusakan }}</span>
                                     @endif
                                 </div>
+                                @if ($jenisKerusakan['item_pekerjaan'][$key] == true)
+                                <div class="d-flex gap-2 mt-2">
+                                    <span class="badge bg-label-primary">Dengan Item Kerusakan</span>
+                                </div>
+                                @endif
+
+                                @if ($jenisKerusakan['item_pekerjaan'][$key] == false)
+                                <div class="d-flex gap-2 mt-2">
+                                    <span>&nbsp;</span>
+                                </div>
+                                @endif
+
+                                @if ($item->tgl_selesai_pekerjaan == null)
+                                <div class="d-flex gap-2 mt-2">
+                                    <span>&nbsp;</span>
+                                </div>
+                                @endif
+
                                 <div class="d-flex mt-3 mb-0" style="height: 40px">
                                     <p class="small" style="text-align: justify">{{ Str::limit($item->deskripsi, 100) }}@if($item->deskripsi != "-").@endif</p>
                                 </div>

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('history_prestasi_phisik', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('item_pekerjaan_id');
-            $table->unsignedBigInteger('detail_jenis_kerusakan_id');
+            $table->unsignedBigInteger('detail_item_pekerjaan_id');
             $table->date('tanggal');
             $table->double('volume');
             $table->string('satuan');

@@ -1,4 +1,4 @@
-<div class="row" id="list-{{ $kode }}">
+<div class="row" id="list-pekerja-{{ $kode }}">
 
     <div class="col-12">
         <div class="divider text-start">

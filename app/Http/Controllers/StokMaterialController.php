@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Api\NamaMaterial;
 use App\Models\Retur;
+use Carbon\CarbonPeriod;
 use App\Models\StokMaterial;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
+use App\Models\DetailPekerja;
 use Ramsey\Uuid\Type\Decimal;
+use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Api\NamaMaterial;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Models\DetailItemPekerjaan;
+use App\Models\DetailJenisKerusakan;
+use App\Models\ItemPekerjaan;
+use App\Models\KategoriPekerjaan;
+use App\Models\SubKategoriPekerjaan;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class StokMaterialController extends Controller
 {
@@ -562,7 +569,21 @@ class StokMaterialController extends Controller
 
     public function prestasiPhisik()
     {
-        return view('material.prestasi-phisik');
+        $bulan = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+        ];
+        return view('material.prestasi-phisik', compact('bulan'));
     }
 
     public function laporanMaterial()
@@ -601,6 +622,70 @@ class StokMaterialController extends Controller
 
         $pdf = Pdf::loadView('components.print-layouts.material.model1', ['list' => $data, 'start' => Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y'), 'end' => Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y')])->setPaper('a4');
         return $pdf->stream('list_material_(' . Carbon::createFromFormat('d/m/Y', $request->start_date)->isoFormat('D MMMM Y') . ' - ' . Carbon::createFromFormat('d/m/Y', $request->end_date)->isoFormat('D MMMM Y') . '.pdf');
+    }
+
+    public function prestasiPhisikModel1(Request $request)
+    {
+        $awalMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfWeek()->format('Y-m-d H:i:s');
+        $akhirMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->endOfWeek()->format('Y-m-d H:i:s');
+
+        $awalBulan = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfMonth();
+        $perbedaan_minggu = Carbon::now()->diffInWeeks($awalBulan);
+        $mingguKe = $perbedaan_minggu + 1;
+
+        $dataKerusakan = array();
+        $dataPekerja = array();
+        $dataItemPekerjaan = array();
+
+        $kategori_pekerjaan = KategoriPekerjaan::all();
+
+        $dataKategori = array();
+        foreach ($kategori_pekerjaan as $kategori) {
+            $dataSubKategori = array();
+            $sub_pekerjaan = SubKategoriPekerjaan::where('id_kategori_pekerjaan', $kategori->id)->get();
+
+            foreach ($sub_pekerjaan as $sub) {
+                $dataItemPekerjaan = array();
+                $item_pekerjaan = ItemPekerjaan::where('id_sub_kategori_pekerjaan', $sub->id)->get();
+
+                foreach ($item_pekerjaan as $item) {
+
+                    $total = 0;
+
+                    $itemPekerjaan = DetailItemPekerjaan::where('detail_item_pekerjaan.item_pekerjaan_id', $item->id)
+                        ->join('jenis_kerusakan', 'detail_item_pekerjaan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                        ->join('item_pekerjaan', 'detail_item_pekerjaan.item_pekerjaan_id', '=', 'item_pekerjaan.id')
+                        ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
+                        ->get();
+
+                    foreach ($itemPekerjaan as $ip) {
+                        $total += floatval($total) + floatval($ip->volume);
+                    }
+
+                    $i['volume'] = str_replace(".", ",", $item->volume);
+                    $i['satuan'] = $item->satuan;
+                    $i['harga'] = number_format($item->harga, 0, '', '');
+                    $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
+                    $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
+
+                    $dataItemPekerjaan[$item->nama] = $i;
+                }
+
+                $dataSubKategori[$sub->nama] = $dataItemPekerjaan;
+            }
+            $dataKategori[$kategori->nama] = $dataSubKategori;
+        }
+
+        $detailJenisKerusakan = DetailJenisKerusakan::
+
+
+            // dd($subKategoriPekerjaan);
+
+            //     array_push($data, $waktu);
+            // }
+
+            $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $mingguKe])->setPaper('a4');
+        return $pdf->stream('prestasi-phisik(' . $awalMinggu . ' - ' . $akhirMinggu . '.pdf');
     }
 
     // public function printPengajuan(Request $request)
