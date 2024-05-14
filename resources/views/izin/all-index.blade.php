@@ -3,7 +3,11 @@
     <x-slot name="style">
         <style>
             input[type=checkbox]:checked{
-                background-color: #71dd37 !important;
+                background-color: #71dd37;
+            }
+
+            .redCheck:checked{
+                background-color: red !important;
             }
 
             .btnPrimary{
@@ -47,13 +51,14 @@
             </h5>
             <div style="position: relative">
                 <div class="table-responsive text-nowrap">
-                    <table class="table table-hover" id="tabel-izin">
+                    <table class="table table-hover" id="tabel-izin" width="100%">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Tanggal Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>File</th>
                                 <th>Aksi</th>
@@ -66,6 +71,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Tanggal Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>File</th>
                                 <th>Aksi</th>
@@ -108,6 +114,20 @@
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi1nama">Belum Divalidasi</span>
                                     </div>
+                                    <div class="d-none" id="deskripsiValidasi1">
+                                        <table>
+                                            <tr height="50px">
+                                                <td>Status</td>
+                                                <td>:</td>
+                                                <td id="status1"></td>
+                                            </tr>
+                                            <tr height="50px">
+                                                <td>Keterangan</td>
+                                                <td>:</td>
+                                                <td id="keterangan1"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div class="col-12 mt-3 d-none" id="inputanStatusValidasiSOM">
@@ -144,6 +164,21 @@
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi2nama">Belum Divalidasi</span>
                                     </div>
+                                    <div class="d-none" id="deskripsiValidasi2">
+                                        <table>
+                                            <tr height="50px">
+                                                <td>Status</td>
+                                                <td>:</td>
+                                                <td id="status2"></td>
+                                            </tr>
+                                            <tr height="50px">
+                                                <td>Keterangan</td>
+                                                <td>:</td>
+                                                <td id="keterangan2"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
                                     <div class="col-12 mt-3 d-none" id="inputanStatusValidasiPM">
                                         {{-- Select Status Validasi PM --}}
                                         <select name="status_validasi_2" id="status_validasiPM" class="form-control @error('status_validasi_2') is-invalid @enderror">
@@ -186,6 +221,7 @@
                     {data: 'userName', name: 'userName'},
                     {data: 'jenis', name: 'jenis'},
                     {data: 'tanggal', name: 'tanggal'},
+                    {data: 'tanggal-pengajuan', name: 'tanggal-pengajuan'},
                     {data: 'keterangan', name: 'keterangan'},
                     {data: 'file', name: 'file'},
                     {data: 'action', name: 'action'},
@@ -266,6 +302,18 @@
             $('#validasi2').prop('disabled', false);
             $('#validasi1nama').html('Belum Divalidasi');
             $('#validasi2nama').html('Belum Divalidasi');
+
+            $('#deskripsiValidasi1').removeClass('d-block')
+            $('#deskripsiValidasi1').addClass('d-none')
+            $('#status1').html('')
+            $('#keterangan1').html('')
+            $('#validasi1').removeClass('redCheck')
+
+            $('#deskripsiValidasi2').removeClass('d-block')
+            $('#deskripsiValidasi2').addClass('d-none')
+            $('#status2').html('')
+            $('#keterangan2').html('')
+            $('#validasi2').removeClass('redCheck')
         }
     </script>
 
@@ -287,12 +335,29 @@
                 $('#validasi2').prop('checked', true);
                 $('#validasi2').prop('disabled', true);
                 $('#validasi2nama').html(response.validasi2nama)
+                $('#deskripsiValidasi2').removeClass('d-none')
+                $('#deskripsiValidasi2').addClass('d-block')
+                $('#status2').html(response.validasi2status)
+                $('#keterangan2').html(response.validasi2keterangan)
+
+                if (response.validasi2status == "Tolak") {
+                    $('#validasi2').addClass('redCheck')
+                }
+
             }
 
             if (response.validasi1) {
                 $('#validasi1').prop('checked', true);
                 $('#validasi1').prop('disabled', true);
                 $('#validasi1nama').html(response.validasi1nama)
+                $('#deskripsiValidasi1').removeClass('d-none')
+                $('#deskripsiValidasi1').addClass('d-block')
+                $('#status1').html(response.validasi1status)
+                $('#keterangan1').html(response.validasi1keterangan)
+
+                if (response.validasi1status == "Tolak") {
+                    $('#validasi1').addClass('redCheck')
+                }
             }
         }
     </script>

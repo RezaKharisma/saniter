@@ -178,6 +178,25 @@
                     }
                 });
             }
+
+            // Jika tombol delete diklik
+            $(document).on("click", "button.btn-logout", function () {
+                var form = $(this).closest("form");
+                event.preventDefault();
+                Swal.fire({ // SweetAlert
+                    title: "Keluar",
+                    text: "Anda yakin akan keluar?",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yakin",
+                    cancelButtonText: "Batal",
+                }).then((result) => {
+                    if (result.isConfirmed) { // Jika iyaa form akan tersubmit
+                        form.submit();
+                    }
+                });
+            });
         </script>
 
         {{ $script ?? null }}

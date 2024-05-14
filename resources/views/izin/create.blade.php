@@ -95,8 +95,8 @@
 
                         {{-- Dokumen --}}
                         <div class="">
-                            <x-partials.label title="Dokumen Pendukung" required/>
-                            <x-partials.input-file name="foto" id="foto" required/>
+                            <x-partials.label title="Dokumen Pendukung"/>
+                            <x-partials.input-file name="foto" id="foto"/>
                             <x-partials.error-message name="foto" class="d-block" />
                         </div>
 

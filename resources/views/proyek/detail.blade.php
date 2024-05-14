@@ -34,6 +34,7 @@
                                     <th>Regional</th>
                                     <th>Lokasi</th>
                                     <th>Jam</th>
+                                    <th>Total Kerusakan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -44,6 +45,7 @@
                                     <th>Regional</th>
                                     <th>Lokasi</th>
                                     <th>Jam</th>
+                                    <th>Total Kerusakan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </tfoot>
@@ -115,7 +117,11 @@
                         {data: 'regionalName', name: 'regionalName'},
                         {data: 'lokasi', name: 'lokasi'},
                         {data: 'jam', name: 'jam'},
+                        {data: 'total', name: 'total'},
                         {data: 'action', name: 'action', orderable: false, searchable: false},
+                    ],
+                    columnDefs: [
+                        {targets: [4], className: 'text-center'}
                     ]
                 })
 

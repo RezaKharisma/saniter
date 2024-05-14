@@ -193,7 +193,7 @@ class JenisKerusakanController extends Controller
                     'harga' => floatval($this->getHargaItemPekerjaan($item)),
                     'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
                     'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
-                    'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                    'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_item_pekerjaan[$key]),
                 ]);
             }
         }
@@ -439,7 +439,7 @@ class JenisKerusakanController extends Controller
                         'harga' => floatval($this->getHargaItemPekerjaan($item)),
                         'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
                         'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
-                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_item_pekerjaan[$key]),
                     ]);
                 }
             } else {
@@ -540,7 +540,7 @@ class JenisKerusakanController extends Controller
                         'harga' => floatval($this->getHargaItemPekerjaan($item)),
                         'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
                         'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
-                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_item_pekerjaan[$key]),
                     ]);
 
                     HistoryPrestasiPhisik::create([
@@ -652,7 +652,7 @@ class JenisKerusakanController extends Controller
                         'harga' => floatval($this->getHargaItemPekerjaan($item)),
                         'volume' => $request->volume_item_pekerjaan[$key] ?? '0',
                         'satuan' => $request->satuan_item_pekerjaan[$key] ?? '0',
-                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_pekerja[$key]),
+                        'total_harga' => floatval($this->getHargaItemPekerjaan($item)) * floatval($request->volume_item_pekerjaan[$key]),
                     ]);
 
                     HistoryPrestasiPhisik::create([

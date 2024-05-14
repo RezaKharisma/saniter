@@ -49,7 +49,7 @@ class IzinController extends Controller
             'tgl_mulai_izin' => 'required',
             'tgl_akhir_izin' => 'required',
             'keterangan' => 'required',
-            'foto' => 'required',
+            // 'foto' => 'required',
         ]);
 
         // Jika validasi gagal
@@ -78,8 +78,8 @@ class IzinController extends Controller
                 'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
                 'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
-                'keterangan' => $request->keterangan,
-                'foto' => $this->fileStore($request->file('foto'))
+                'keterangan' => $request->keterangan ?? '-',
+                'foto' => $this->fileStore($request->file('foto')) ?? 0
             ];
             Izin::create($data);
 
@@ -135,7 +135,7 @@ class IzinController extends Controller
                 'tgl_mulai_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_mulai_izin)->format('Y-m-d'),
                 'tgl_akhir_izin' => Carbon::createFromFormat('d/m/Y', $request->tgl_akhir_izin)->format('Y-m-d'),
                 'total_izin' => $total_izin,
-                'keterangan' => $request->keterangan,
+                'keterangan' => $request->keterangan ?? '-',
                 'foto' => $this->fileStore($request->file('foto'), $izin) ?? $request->oldFoto
             ];
             $izin->update($data);

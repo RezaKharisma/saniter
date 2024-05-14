@@ -393,7 +393,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addListPekerja(this)"><i class="bx bx-plus"></i> Tambah Pekerja</button>
+                        <button type="button" class="btn btn-primary" onclick="addListPekerja(this)"><i class="bx bx-plus"></i> Tambah Pekerja</button>
                     </div>
                 </div>
             </div>
@@ -410,7 +410,7 @@
                                     $kode = bin2hex(random_bytes(10));
                                 @endphp
                                 <input type="hidden" name="kodeListItemPekerjaan[]" value="{{ $kode }}">
-                                <div class="row" id="list-{{ $kode }}">
+                                <div class="row" id="list-item-pekerjaan-{{ $kode }}">
                                     <div class="col-12">
                                         <div class="divider text-start">
                                             <div class="divider-text" id="nomorItemPekerjaan-{{ $kode }}">Item Pekerjaan {{ $key+1 }}</div>
@@ -447,7 +447,7 @@
                                     $kode = bin2hex(random_bytes(10));
                                 @endphp
                                 <input type="hidden" name="kodeListItemPekerjaan[]" value="{{ $kode }}">
-                                <div class="row" id="list-{{ $kode }}">
+                                <div class="row" id="list-item-pekerjaan-{{ $kode }}">
                                     <div class="col-12">
                                         <div class="divider text-start">
                                             <div class="divider-text" id="nomorItemPekerjaan-{{ $kode }}">Item Pekerjaan 1</div>
@@ -483,7 +483,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addListItemPekerjaan(this)"><i class="bx bx-plus"></i> Tambah Item Pekerjaan</button>
+                        <button type="button" class="btn btn-primary" onclick="addListItemPekerjaan(this)"><i class="bx bx-plus"></i> Tambah Item Pekerjaan</button>
                     </div>
                 </div>
             </div>
@@ -1175,6 +1175,10 @@
                         });
                     }
 
+                    $('#item_pekerjaan-'+e.dataset.id).val('').trigger('change');
+                    $('#satuan_item_pekerjaan-'+e.dataset.id).val('');
+                    $('#volume_item_pekerjaan-'+e.dataset.id).val('');
+
                     if (index == 0) {
                         plus = 1;
                     }else{
@@ -1188,7 +1192,9 @@
             $('#btnSimpanPerubahan').on('click', function () {
                 $('#btnStatus').val('simpanPerubahanSOM')
 
-                var submit = false;
+                var submit1 = false;
+                var submit2 = false;
+                var submit3 = false;
 
                 if($('#status_kerusakan').val() != "Tanpa Material"){
                     $.each(count, function (index, value) {
@@ -1196,19 +1202,48 @@
                             $('#select-field-'+value.replace('#nomor-','')).addClass('is-invalid');
                             $('#volume-'+value.replace('#nomor-','')).addClass('is-invalid');
                             $(value).css('color','red');
-                            submit = false;
+                            submit1 = false;
                         }else{
                             $('#select-field-'+value.replace('#nomor-','')).removeClass('is-invalid');
                             $('#volume-'+value.replace('#nomor-','')).removeClass('is-invalid');
                             $(value).css('color','');
-                            submit = true;
+                            submit1 = true;
                         }
                     });
                 }else{
-                    submit = true;
+                    submit1 = true;
                 }
 
-                if (submit == true) {
+                $.each(countPekerja, function (index, value) {
+                    if($('#nama_pekerja-'+value.replace('#nomorPekerja-','')).val() == '' || $('#volume_pekerja-'+value.replace('#nomorPekerja-','')).val() == ''){
+                        $('#nama_pekerja-'+value.replace('#nomorPekerja-','')).addClass('is-invalid');
+                        $('#volume_pekerja-'+value.replace('#nomorPekerja-','')).addClass('is-invalid');
+                        $(value).css('color','red');
+                        submit2 = false;
+                    }else{
+                        $('#nama_pekerja-'+value.replace('#nomorPekerja-','')).removeClass('is-invalid');
+                        $('#volume_pekerja-'+value.replace('#nomorPekerja-','')).removeClass('is-invalid');
+                        $(value).css('color','');
+                        submit2 = true;
+                    }
+                });
+
+                $.each(countItemPekerjaan, function (index, value) {
+                    if($('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).val() == '' || $('#volume_item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).val() == ''){
+                        $('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).addClass('is-invalid');
+                        $('#volume_item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).addClass('is-invalid');
+                        $(value).css('color','red');
+                        submit3 = false;
+                    }else{
+                        $('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).removeClass('is-invalid');
+                        $('#volume_item_pekerjaan--'+value.replace('#nomorItemPekerjaan-','')).removeClass('is-invalid');
+                        $(value).css('color','');
+                        submit3 = true;
+                    }
+                });
+
+
+                if (submit1 == true && submit2 == true && submit3 == true) {
                     $('#formUpdate').submit();
                 }else{
                     const Toast = Swal.mixin({
@@ -1225,7 +1260,7 @@
                     (async () => {
                         await Toast.fire({
                             icon: "error",
-                            title: "Pastikan material diisi lengkap!",
+                            title: "Pastikan form diisi lengkap!",
                         });
                     })();
                 }

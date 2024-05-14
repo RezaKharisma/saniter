@@ -6,6 +6,10 @@
                 background-color: #71dd37 !important;
             }
 
+            .redCheck:checked{
+                background-color: red !important;
+            }
+
             .btnPrimary{
                 color: #696cff !important;
                 border-color: rgba(0, 0, 0, 0) !important;
@@ -55,6 +59,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Tanggal Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>Dokumen Pendukung</th>
                                 <th>Aksi</th>
@@ -67,6 +72,7 @@
                                 <th>Nama</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
+                                <th>Tanggal Pengajuan</th>
                                 <th>Keterangan</th>
                                 <th>Dokumen Pendukung</th>
                                 <th>Aksi</th>
@@ -102,11 +108,25 @@
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
                                             <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi1" id="validasi1" >
-                                            <label class="form-check-label" for="defaultCheck1">Validasi 1</label>
+                                            <label class="form-check-label" for="defaultCheck1">Validasi SOM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi1nama">Belum Divalidasi</span>
+                                    </div>
+                                    <div class="d-none" id="deskripsiValidasi1">
+                                        <table>
+                                            <tr height="50px">
+                                                <td>Status</td>
+                                                <td>:</td>
+                                                <td id="status1"></td>
+                                            </tr>
+                                            <tr height="50px">
+                                                <td>Keterangan</td>
+                                                <td>:</td>
+                                                <td id="keterangan1"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -120,11 +140,25 @@
                                     <div class="col-12 justify-content-center d-flex mb-3">
                                         <div class="form-check d-block">
                                             <input class="form-check-input" type="checkbox" value="{{ auth()->user()->name }}" name="validasi2" id="validasi2">
-                                            <label class="form-check-label" for="defaultCheck1">Validasi 2</label>
+                                            <label class="form-check-label" for="defaultCheck1">Validasi PM</label>
                                         </div>
                                     </div>
                                     <div class="col-12 justify-content-center d-flex">
                                         <span class="badge bg-label-secondary w-100" id="validasi2nama">Belum Divalidasi</span>
+                                    </div>
+                                    <div class="d-none" id="deskripsiValidasi2">
+                                        <table>
+                                            <tr height="50px">
+                                                <td>Status</td>
+                                                <td>:</td>
+                                                <td id="status2"></td>
+                                            </tr>
+                                            <tr height="50px">
+                                                <td>Keterangan</td>
+                                                <td>:</td>
+                                                <td id="keterangan2"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -154,6 +188,7 @@
                     {data: 'userName', name: 'userName'},
                     {data: 'jenis', name: 'jenis'},
                     {data: 'tanggal', name: 'tanggal'},
+                    {data: 'tanggal-pengajuan', name: 'tanggal-pengajuan'},
                     {data: 'keterangan', name: 'keterangan'},
                     {data: 'file', name: 'file'},
                     {data: 'action', name: 'action'},
@@ -214,31 +249,65 @@
             $('#validasi2').prop('disabled', false);
             $('#validasi1nama').html('Belum Divalidasi');
             $('#validasi2nama').html('Belum Divalidasi');
+
+            $('#deskripsiValidasi1').removeClass('d-block')
+            $('#deskripsiValidasi1').addClass('d-none')
+            $('#status1').html('')
+            $('#keterangan1').html('')
+            $('#validasi1').removeClass('redCheck')
+
+            $('#deskripsiValidasi2').removeClass('d-block')
+            $('#deskripsiValidasi2').addClass('d-none')
+            $('#status2').html('')
+            $('#keterangan2').html('')
+            $('#validasi2').removeClass('redCheck')
         }
     </script>
 
-    <script>
-        function checkValid(response){
-            resetValid()
-            if ($.isFunction(validasi1)) {
-                validasi1();
-            }
-            if ($.isFunction(validasi2)) {
+<script>
+    function checkValid(response){
+        resetValid()
+        if ($.isFunction(validasi1)) {
+            validasi1();
+        }
+        if ($.isFunction(validasi2)) {
+            if (response.validasi1 == 0) {
+                $('#validasi1').prop('disabled', true);
+                $('#validasi2').prop('disabled', true);
+            }else{
                 validasi2();
             }
-            if (response.validasi2) {
-                $('#validasi2').prop('checked', true);
-                $('#validasi2').prop('disabled', true);
-                $('#validasi2nama').html(response.validasi2nama)
+        }
+        if (response.validasi2) {
+            $('#validasi2').prop('checked', true);
+            $('#validasi2').prop('disabled', true);
+            $('#validasi2nama').html(response.validasi2nama)
+            $('#deskripsiValidasi2').removeClass('d-none')
+            $('#deskripsiValidasi2').addClass('d-block')
+            $('#status2').html(response.validasi2status)
+            $('#keterangan2').html(response.validasi2keterangan)
+
+            if (response.validasi2status == "Tolak") {
+                $('#validasi2').addClass('redCheck')
             }
 
-            if (response.validasi1) {
-                $('#validasi1').prop('checked', true);
-                $('#validasi1').prop('disabled', true);
-                $('#validasi1nama').html(response.validasi1nama)
+        }
+
+        if (response.validasi1) {
+            $('#validasi1').prop('checked', true);
+            $('#validasi1').prop('disabled', true);
+            $('#validasi1nama').html(response.validasi1nama)
+            $('#deskripsiValidasi1').removeClass('d-none')
+            $('#deskripsiValidasi1').addClass('d-block')
+            $('#status1').html(response.validasi1status)
+            $('#keterangan1').html(response.validasi1keterangan)
+
+            if (response.validasi1status == "Tolak") {
+                $('#validasi1').addClass('redCheck')
             }
         }
-    </script>
+    }
+</script>
 
     @can('validasi1_izin')
         <script>

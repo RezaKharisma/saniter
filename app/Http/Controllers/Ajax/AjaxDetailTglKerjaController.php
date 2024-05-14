@@ -36,6 +36,10 @@ class AjaxDetailTglKerjaController extends Controller
             // Return datatables
             return DataTables::of($tgl->get())
                 ->addIndexColumn()
+                ->addColumn('total', function($row){
+                    $jenisKerusakan = JenisKerusakan::where('detail_tgl_kerja_id', $row->id)->get();
+                    return count($jenisKerusakan);
+                })
                 ->addColumn('jam', function ($row) {
                     return Carbon::parse($row->created_at)->isoFormat('LT') . " " . ucfirst(Carbon::parse($row->created_at)->isoFormat('A'));
                 })
@@ -66,7 +70,7 @@ class AjaxDetailTglKerjaController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['action', 'lokasi', 'tanggal', 'jam'])
+                ->rawColumns(['action', 'lokasi', 'tanggal', 'jam', 'total'])
                 ->make(true);
         }
     }

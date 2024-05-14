@@ -28,16 +28,24 @@ class AjaxIzinController extends Controller
             return DataTables::of($izin)
                 ->addIndexColumn()
                 ->addColumn('file', function ($row) {
-                    $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
+                    if ($row->foto === 0) {
+                        $button = "<button class='btn btn-secondary' disabled >Tidak Ada File</button>";
+                    }else{
+                        $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
+                    }
                     return $button;
                 })
                 ->addColumn('tanggal', function ($row) {
                     $result = "
                     <div class='me-2'>
                         <small class='text-muted d-block mb-1'>Total Hari : " . $row->total_izin . "</small>
-                        <h6 class='mb-0'>(" . Carbon::parse($row->tgl_mulai_izin)->format('d F Y') . " - " . Carbon::parse($row->tgl_akhir_izin)->format('d F Y') . ")</h6>
+                        <h6 class='mb-0'>(" . Carbon::parse($row->tgl_mulai_izin)->isoFormat('D MMMM Y') . " - " . Carbon::parse($row->tgl_akhir_izin)->isoFormat('D MMMM Y') . ")</h6>
                     </div>
                     ";
+                    return $result;
+                })
+                ->addColumn('tanggal-pengajuan', function ($row) {
+                    $result = Carbon::parse($row->created_at)->isoFormat('D MMMM Y');
                     return $result;
                 })
                 ->addColumn('jenis', function ($row) {
@@ -68,11 +76,11 @@ class AjaxIzinController extends Controller
                     // Jika sudah tervalidasi semua tampilkan tombol sukses
                     if ($row->validasi_1 == 1 && $row->validasi_2 == 1) {
                         if ($row->status_validasi_1 == "ACC" && $row->status_validasi_2 == "ACC") {
-                            $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Diterima</button>";
+                            $btn = "<button class='btn btn-success btn-sm d-inline' data-bs-toggle='modal' data-bs-target='#modalValid' data-id='" . $row->id . "' onclick='validasiData(this)'>Diterima</button>";
                         }
 
                         if ($row->status_validasi_1 == "Tolak" && $row->status_validasi_2 == "Tolak") {
-                            $btn = "<button class='btn btn-danger btn-sm d-inline' disabled>Tolak</button>";
+                            $btn = "<button class='btn btn-danger btn-sm d-inline' data-bs-toggle='modal' data-bs-target='#modalValid' data-id='" . $row->id . "' onclick='validasiData(this)'>Tolak</button>";
                         }
                     } else {
                         if (auth()->user()->can('validasi1_izin') || auth()->user()->can('validasi2_izin')) {
@@ -93,7 +101,7 @@ class AjaxIzinController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['action', 'tanggal', 'file', 'jenis'])
+                ->rawColumns(['action', 'tanggal', 'tanggal-pengajuan', 'file', 'jenis'])
                 ->make(true);
         }
     }
@@ -108,8 +116,12 @@ class AjaxIzinController extends Controller
                 'id' => $izin->id,
                 'validasi1' => $izin->validasi_1,
                 'validasi1nama' => $izin->validasi_1_by,
+                'validasi1status' => $izin->status_validasi_1,
+                'validasi1keterangan' => $izin->keterangan_1,
                 'validasi2' => $izin->validasi_2,
-                'validasi2nama' => $izin->validasi_2_by
+                'validasi2nama' => $izin->validasi_2_by,
+                'validasi2status' => $izin->status_validasi_2,
+                'validasi2keterangan' => $izin->keterangan_2
             ]);
         }
     }
@@ -208,16 +220,24 @@ class AjaxIzinController extends Controller
             return DataTables::of($izin)
                 ->addIndexColumn()
                 ->addColumn('file', function ($row) {
-                    $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
+                    if ($row->foto === "0") {
+                        $button = "<button class='btn btn-secondary btn-sm ' disabled >Tidak Ada File</button>";
+                    }else{
+                        $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
+                    }
                     return $button;
                 })
                 ->addColumn('tanggal', function ($row) {
                     $result = "
                     <div class='me-2'>
                         <small class='text-muted d-block mb-1'>Total Hari : " . $row->total_izin . "</small>
-                        <h6 class='mb-0'>(" . Carbon::parse($row->tgl_mulai_izin)->format('d F Y') . " - " . Carbon::parse($row->tgl_akhir_izin)->format('d F Y') . ")</h6>
+                        <h6 class='mb-0'>(" . Carbon::parse($row->tgl_mulai_izin)->isoFormat('D MMMM Y') . " - " . Carbon::parse($row->tgl_akhir_izin)->isoFormat('D MMMM Y') . ")</h6>
                     </div>
                     ";
+                    return $result;
+                })
+                ->addColumn('tanggal-pengajuan', function ($row) {
+                    $result = Carbon::parse($row->created_at)->isoFormat('D MMMM Y');
                     return $result;
                 })
                 ->addColumn('jenis', function ($row) {
@@ -248,11 +268,11 @@ class AjaxIzinController extends Controller
                     // Jika sudah tervalidasi semua tampilkan tombol sukses
                     if ($row->validasi_1 == 1 && $row->validasi_2 == 1) {
                         if ($row->status_validasi_1 == "ACC" && $row->status_validasi_2 == "ACC") {
-                            $btn = "<button class='btn btn-success btn-sm d-inline' disabled>Diterima</button>";
+                            $btn = "<button class='btn btn-success btn-sm d-inline' data-bs-toggle='modal' data-bs-target='#modalValid' data-id='" . $row->id . "' onclick='validasiData(this)'>Diterima</button>";
                         }
 
                         if ($row->status_validasi_1 == "Tolak" && $row->status_validasi_2 == "Tolak") {
-                            $btn = "<button class='btn btn-danger btn-sm d-inline' disabled>Tolak</button>";
+                            $btn = "<button class='btn btn-danger btn-sm d-inline' data-bs-toggle='modal' data-bs-target='#modalValid' data-id='" . $row->id . "' onclick='validasiData(this)'>Tolak</button>";
                         }
                     } else {
                         if (auth()->user()->can('validasi1_izin') || auth()->user()->can('validasi2_izin')) {
@@ -273,7 +293,7 @@ class AjaxIzinController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['action', 'tanggal', 'file', 'jenis'])
+                ->rawColumns(['action', 'tanggal', 'tanggal-pengajuan', 'file', 'jenis'])
                 ->make(true);
         }
     }
