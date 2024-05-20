@@ -676,7 +676,7 @@ class StokMaterialController extends Controller
             $dataKategori[$kategori->nama] = $dataSubKategori;
         }
 
-        $detailJenisKerusakan = DetailJenisKerusakan::
+        // $detailJenisKerusakan = DetailJenisKerusakan::
 
 
             // dd($subKategoriPekerjaan);
@@ -684,8 +684,8 @@ class StokMaterialController extends Controller
             //     array_push($data, $waktu);
             // }
 
-            $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $mingguKe])->setPaper('a4');
-        return $pdf->stream('prestasi-phisik(' . $awalMinggu . ' - ' . $akhirMinggu . '.pdf');
+        $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $mingguKe])->setPaper('a4');
+        return $pdf->stream('prestasi-phisik(' . $awalMinggu . ' - ' . $akhirMinggu . '.pdf', array("Attachment" => true));
     }
 
     // public function printPengajuan(Request $request)

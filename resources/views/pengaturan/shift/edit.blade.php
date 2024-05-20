@@ -95,14 +95,14 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <x-input-number title="Menit" name='terlambat_1' placeholder='Menit Keterlambatan' value="{{ old('terlambat_1') ?? $shift->terlambat_1 }}"/>
+                                    <x-input-number title="Menit" name='terlambat_1' placeholder='Menit Keterlambatan' value="{{ old('terlambat_1') ?? $shift->terlambat_1 }}" required/>
                                     <x-partials.error-message name="terlambat_1" class="d-block"/>
                                 </div>
                                 <div class="col-12">
                                     <x-partials.label title="Potongan" />
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text" @error('potongan_1') style="border: solid red 1px;" @enderror>Rp. </span>
-                                        <input type="text" name="potongan_1" class="form-control @error('potongan_1') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_1') ?? $shift->potongan_1 }}"/>
+                                        <input type="text" name="potongan_1" class="form-control @error('potongan_1') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_1') ?? $shift->potongan_1 }}" required/>
                                     </div>
                                     <x-partials.error-message name="potongan_1" class="d-block"/>
                                 </div>
@@ -116,14 +116,14 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <x-input-number title="Menit" name='terlambat_2' placeholder='Menit Keterlambatan' value="{{ old('terlambat_2') ?? $shift->terlambat_2 }}"/>
+                                    <x-input-number title="Menit" name='terlambat_2' placeholder='Menit Keterlambatan' value="{{ old('terlambat_2') ?? $shift->terlambat_2 }}" required/>
                                     <x-partials.error-message name="terlambat_2" class="d-block"/>
                                 </div>
                                 <div class="col-12">
                                     <x-partials.label title="Potongan" />
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text" @error('potongan_2') style="border: solid red 1px;" @enderror>Rp. </span>
-                                        <input type="text" name="potongan_2" class="form-control @error('potongan_2') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_2') ?? $shift->potongan_2 }}"/>
+                                        <input type="text" name="potongan_2" class="form-control @error('potongan_2') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_2') ?? $shift->potongan_2 }}" required/>
                                     </div>
                                     <x-partials.error-message name="potongan_2" class="d-block"/>
                                 </div>
@@ -137,14 +137,14 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <x-input-number title="Menit" name='terlambat_3' placeholder='Menit Keterlambatan' value="{{ old('terlambat_3') ?? $shift->terlambat_3 }}"/>
+                                    <x-input-number title="Menit" name='terlambat_3' placeholder='Menit Keterlambatan' value="{{ old('terlambat_3') ?? $shift->terlambat_3 }}" required/>
                                     <x-partials.error-message name="terlambat_3" class="d-block"/>
                                 </div>
                                 <div class="col-12">
                                     <x-partials.label title="Potongan" />
                                     <div class="input-group input-group-merge">
                                         <span class="input-group-text" @error('potongan_3') style="border: solid red 1px;" @enderror>Rp. </span>
-                                        <input type="text" name="potongan_3" class="form-control @error('potongan_3') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_3') ?? $shift->potongan_3 }}"/>
+                                        <input type="text" name="potongan_3" class="form-control @error('potongan_3') is-invalid @enderror" placeholder="Pemotongan Upah" onkeyup="formatRupiah(this)" value="{{ old('potongan_3') ?? $shift->potongan_3 }}" required/>
                                     </div>
                                     <x-partials.error-message name="potongan_3" class="d-block"/>
                                 </div>
