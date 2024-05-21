@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\DetailItemPekerjaan;
 use App\Models\DetailJenisKerusakan;
+use App\Models\DetailTglKerja;
 use App\Models\ItemPekerjaan;
 use App\Models\KategoriPekerjaan;
+use App\Models\Pekerja;
 use App\Models\SubKategoriPekerjaan;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
@@ -626,15 +628,20 @@ class StokMaterialController extends Controller
 
     public function prestasiPhisikModel1(Request $request)
     {
-        $awalMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfWeek()->format('Y-m-d H:i:s');
-        $akhirMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->endOfWeek()->format('Y-m-d H:i:s');
+        $awalMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfMonth()->addWeeks($request->mingguKe - 1)->startOfWeek(Carbon::MONDAY);
+        $akhirMinggu = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfMonth()->addWeeks($request->mingguKe - 1)->endOfWeek(Carbon::SUNDAY);
 
         $awalBulan = Carbon::now()->month($request->bulan)->year($request->tahun)->startOfMonth();
-        $perbedaan_minggu = Carbon::now()->diffInWeeks($awalBulan);
-        $mingguKe = $perbedaan_minggu + 1;
+        $akhirBulan = Carbon::now()->month($request->bulan)->year($request->tahun)->endOfMonth();
 
-        $dataKerusakan = array();
-        $dataPekerja = array();
+        if ($awalMinggu->format('d') != '01') {
+            $awalMinggu = $awalBulan;
+        }
+
+        if ($akhirMinggu->greaterThan($akhirBulan)) {
+            $akhirMinggu = $akhirBulan;
+        }
+
         $dataItemPekerjaan = array();
 
         $kategori_pekerjaan = KategoriPekerjaan::all();
@@ -676,15 +683,66 @@ class StokMaterialController extends Controller
             $dataKategori[$kategori->nama] = $dataSubKategori;
         }
 
-        // $detailJenisKerusakan = DetailJenisKerusakan::
+        $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_som', 'tanggal_diterima_som', 'diterima_dir', 'tanggal_diterima_dir')
+            ->where('diterima_som', 1)
+            ->where('diterima_pm', 1)
+            ->where('diterima_dir', 1)
+            ->where('status_validasi_dir', 'ACC')
+            ->whereNot('status_validasi_dir', 'Tolak')
+            ->orderBy('id', 'DESC')
+            ->get();
 
+        foreach ($stokMaterial as $stok) {
+            $total = 0;
 
-            // dd($subKategoriPekerjaan);
+            $detailJenisKerusakan = DetailJenisKerusakan::select('detail_jenis_kerusakan.volume', 'detail_jenis_kerusakan.satuan', 'detail_jenis_kerusakan.harga', 'stok_material.nama_material')
+                ->join('jenis_kerusakan', 'detail_jenis_kerusakan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                ->join('stok_material', 'detail_jenis_kerusakan.kode_material', '=', 'stok_material.kode_material')
+                ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
+                ->where('detail_jenis_kerusakan.kode_material', $stok->kode_material)
+                ->get();
 
-            //     array_push($data, $waktu);
-            // }
+            foreach ($detailJenisKerusakan as $jenisKerusakan) {
+                $total += floatval($total) + floatval($jenisKerusakan->volume);
+            }
 
-        $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $mingguKe])->setPaper('a4');
+            $i['volume'] = '1,00';
+            $i['satuan'] = $stok->satuan;
+            $i['harga'] = number_format($stok->harga, 0, '', '');
+            $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
+            $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
+
+            $dataKategori['Perlengkapan Material']['Material'][$stok->nama_material] = $i;
+        }
+
+        $pekerja = Pekerja::all();
+
+        foreach ($pekerja as $pkj) {
+            $total = 0;
+
+            $detailPekerja = DetailPekerja::select('detail_pekerja.volume', 'detail_pekerja.satuan', 'detail_pekerja.upah', 'pekerja.nama')
+                ->join('jenis_kerusakan', 'detail_pekerja.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                ->join('pekerja', 'detail_pekerja.pekerja_id', '=', 'pekerja.id')
+                ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
+                ->where('detail_pekerja.pekerja_id', $pkj->id)
+                ->get();
+
+            foreach ($detailPekerja as $pekerja) {
+                $total += floatval($total) + floatval($pekerja->volume);
+            }
+
+            $i['volume'] = '1,00';
+            $i['satuan'] = $pkj->satuan;
+            $i['harga'] = number_format($pkj->upah, 0, '', '');
+            $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
+            $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
+
+            $dataKategori['Upah']['Upah'][$pkj->nama] = $i;
+        }
+
+        // dd($dataKategori);
+
+        $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $request->mingguKe])->setPaper('a4');
         return $pdf->stream('prestasi-phisik(' . $awalMinggu . ' - ' . $akhirMinggu . '.pdf', array("Attachment" => true));
     }
 

@@ -20,7 +20,7 @@
         <div class="input-group">
             <input type="hidden" name="satuan[]" id="satuan-{{ $kode }}">
             <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control" name="volume[]" id="volume-{{ $kode }}" placeholder="Volume" required>
-            <span class="input-group-text">satuan*</span>
+            <span class="input-group-text" id="satuan-{{ $kode }}HTML">satuan*</span>
         </div>
         <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
     </div>

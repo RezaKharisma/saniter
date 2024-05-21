@@ -57,6 +57,7 @@
             margin-top: 10px;
             margin-left: 10px;
             margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         body{
@@ -92,11 +93,9 @@
         <tbody>
             @php
                 $no = 1;
+                $total = 0;
             @endphp
             @foreach ($list as $keyKategori => $kategori)
-            @php
-                $subTotal = 0;
-            @endphp
                 <tr>
                     <td align="center">{{ intToRoman($no) }}</td>
                     <td>{{ $keyKategori }}</td>
@@ -108,6 +107,7 @@
                 </tr>
                 @php
                     $noSub = 1;
+                    $subTotal = 0;
                 @endphp
                 @foreach ($kategori as $keySubKategori => $subKategori)
                     <tr>
@@ -123,46 +123,44 @@
                         $noItem = 1;
                     @endphp
                     @foreach ($subKategori as $keyItemPekerjaan => $itemPekerjaan)
+                    @php
+                        $subTotal = floatval($subTotal) + $itemPekerjaan['totalHargaDipilih'];
+                    @endphp
                         <tr>
                             <td align="center">{{ $noItem }}</td>
                             <td>---- {{ $keyItemPekerjaan }}</td>
-                            <td>{{ $itemPekerjaan['volume'] }}</td>
-                            <td>{{ $itemPekerjaan['satuan'] }}</td>
-                            <td align="center">{{ $itemPekerjaan['totalMingguDipilih'] }}</td>
+                            <td align="center">{{ $itemPekerjaan['volume'] }}</td>
+                            <td align="center">{{ $itemPekerjaan['satuan'] }}</td>
+                            <td align="center">{{ floatval($itemPekerjaan['totalMingguDipilih']) }}</td>
                             <td align="right">{{ $itemPekerjaan['harga'] }}</td>
-                            <td align="right">{{ $itemPekerjaan['totalHargaDipilih'] }}</td>
+                            <td align="right">{{ $itemPekerjaan['totalHargaDipilih'] != 0 ? $itemPekerjaan['totalHargaDipilih'] : "-" }}</td>
                         </tr>
+                        @if ($loop->last)
+                            <tr>
+                                <td colspan="5"></td>
+                                <td align="right" style="font-weight: bold; border-right: 1px solid white;border-left: 1px solid white">Sub Total</td>
+                                <td align="right" style="font-weight: bold">{{ $subTotal != 0 ? $subTotal : '-' }}</td>
+                            </tr>
+                        @endif
                     @php
                         $noItem++;
-                        $subTotal += floatval($subTotal) + $itemPekerjaan['totalHargaDipilih'];
                     @endphp
                     @endforeach
                 @php
                     $noSub++;
+                    $total = floatval($total) + floatval($subTotal);
+                    $subTotal = 0;
                 @endphp
                 @endforeach
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td align="right" style="font-weight: bold">Sub Total</td>
-                    <td align="right" style="font-weight: bold">{{ $subTotal }}</td>
+                    <td colspan="5"></td>
+                    <td align="right" style="font-weight: bold; border-right: 1px solid white;border-left: 1px solid white">TOTAL</td>
+                    <td align="right" style="font-weight: bold">{{ $total }}</td>
                 </tr>
             @php
                 $no++;
             @endphp
             @endforeach
-            <tr>
-                <td>{{ intToRoman($no) }}</td>
-                <td>Material</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
 </body>

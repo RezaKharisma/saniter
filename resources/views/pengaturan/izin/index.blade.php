@@ -4,24 +4,34 @@
 <div class="row">
     <div class="col-md-12">
 
-    <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu untuk melihat data!</div>
-
-        <ul class="nav nav-pills flex-md-row mb-3">
-            @foreach ($regional as $item)
-                <li class="nav-item">
-                    <a class="nav-link btn-regional" href="#" data-id="{{ $item->id }}" onclick="getIzin(this)"><i class="bx bx-plus-circle me-1"></i> Regional {{ $item->nama }}</a>
-                </li>
-            @endforeach
-        </ul>
 
         <a href="{{ route('pengaturan.izin.create') }}" class="btn btn-primary mb-3">
             <i class="bx bx-plus"></i> Tambah Jumlah Izin
         </a>
 
+        <div class="alert alert-warning alertRegional" role="alert">Pilih regional terlebih dahulu untuk melihat data!</div>
+        {{-- <ul class="nav nav-pills flex-md-row mb-3">
+            @foreach ($regional as $item)
+                <li class="nav-item">
+                    <a class="nav-link btn-regional" href="#" data-id="{{ $item->id }}" onclick="getIzin(this)"><i class="bx bx-plus-circle me-1"></i> Regional {{ $item->nama }}</a>
+                </li>
+            @endforeach
+        </ul> --}}
+
         <div class="card mb-4">
             <h5 class="card-header">
                 Jumlah Izin
             </h5>
+
+            <div class="card-body">
+                <x-partials.label title="Regional" />
+                <select name="" id="regional" class="form-control" onchange="getIzin(this)">
+                    <option value="" selected disabled>Pilih regional...</option>
+                    @foreach ($regional as $item)
+                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
 
             <div style="position: relative">
                 <div class="table-responsive text-nowrap">
@@ -85,6 +95,10 @@
     <script>
         var tableIzin;
         $(document).ready(function () {
+            $('#regional').select2({
+                theme: 'bootstrap-5'
+            });
+
             tableIzin = $('#izin-table').DataTable();
         });
 
@@ -95,7 +109,7 @@
             $('.btn-regional').removeClass('active');
 
             // Menambah class active pada btn regional yg dipilih
-            $(e).addClass('active');
+            // $(e).addClass('active');
 
             // Mengatur ajax csrf
             $.ajaxSetup({
@@ -108,7 +122,7 @@
                 type: "POST",
                 url: "{{ route('ajax.getJumlahIzin') }}",
                 data: {
-                    id: e.dataset.id // Mengambil id pada event
+                    id: $(e).val() // Mengambil id pada event
                 },
                 dataType: "json",
                 success: function (response) { // Jika ajax sukses dan memberikan respon

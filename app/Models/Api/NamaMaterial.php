@@ -18,27 +18,38 @@ class NamaMaterial extends Model
 
     public function __construct()
     {
+        // $client = new Client();
+        // $guzzleResponse = $client->get('https://api.qrm15.com/logistik/liststockmaterial', [
+        //     'headers' => [
+        //         'q-tech-KEY' => 'Qrm!5@Bali123'
+        //     ],
+        // ]);
+
+        // dd(json_decode($guzzleResponse->getBody(), true));
+
         $this->_client = new Client([
             'base_uri' => 'https://api.qrm15.com/logistik/liststockmaterial',
             'http_errors' => false,
             'protocols'       => ['http', 'https']
         ]);
 
-        $response = $this->_client->request('GET', 'liststockmaterial',[
+        $response = $this->_client->request('GET', 'liststockmaterial', [
             'query' => [
                 'q-tech-KEY'    => 'Qrm!5@Bali123'
             ]
         ]);
 
-        $result = json_decode($response->getBody()->getContents(),true);
+        $result = json_decode($response->getBody()->getContents(), true);
         $this->stokmaterial = $result['stokmaterial'];
     }
 
-    public function getAllMaterial(){
+    public function getAllMaterial()
+    {
         return $this->stokmaterial;
     }
 
-    public function getNamaMaterialById($id){
+    public function getNamaMaterialById($id)
+    {
         $data = array();
         foreach ($this->stokmaterial as $row) {
             if ($row['id'] == $id) {

@@ -30,7 +30,7 @@ class AjaxIzinController extends Controller
                 ->addColumn('file', function ($row) {
                     if ($row->foto === 0) {
                         $button = "<button class='btn btn-secondary' disabled >Tidak Ada File</button>";
-                    }else{
+                    } else {
                         $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
                     }
                     return $button;
@@ -97,7 +97,7 @@ class AjaxIzinController extends Controller
                     }
 
                     if (auth()->user()->can('izin_delete') && ($row->validasi_1 != 1 || $row->validasi_2 != 1)) {
-                        $btn = $btn . "<form action=" . route('izin.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn . "<form action=" . route('izin.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })
@@ -164,10 +164,10 @@ class AjaxIzinController extends Controller
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete.
                     $btn = '';
                     if (auth()->user()->can('jumlah izin_update')) {
-                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalIzinEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='" . $row->jumlahIzin_id . "' onclick='editData(this)'>Ubah</button>";
+                        $btn = "<button data-bs-toggle='modal' data-bs-target='#modalIzinEdit' class='btn btn-warning btn-sm d-inline me-1' data-id='" . $row->jumlahIzin_id . "' onclick='editData(this)'><i class='bx bx-edit'></i></button>";
                     }
                     if (auth()->user()->can('jumlah izin_delete')) {
-                        $btn = $btn . "<form action=" . route('pengaturan.izin.delete', $row->jumlahIzin_id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn . "<form action=" . route('pengaturan.izin.delete', $row->jumlahIzin_id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })
@@ -222,7 +222,7 @@ class AjaxIzinController extends Controller
                 ->addColumn('file', function ($row) {
                     if ($row->foto === "0") {
                         $button = "<button class='btn btn-secondary btn-sm ' disabled >Tidak Ada File</button>";
-                    }else{
+                    } else {
                         $button = "<a href='" . asset('storage/' . $row->foto) . "' class='btn btn-secondary btn-sm' target='_blank'><span class='tf-icons bx bx-download'></span> Download</a>";
                     }
                     return $button;
@@ -281,15 +281,15 @@ class AjaxIzinController extends Controller
 
                         if (auth()->user()->can('izin_update')) {
                             if (auth()->user()->hasRole('Teknisi') && ($row->validasi_1 == 1 || $row->validasi_2 == 1)) {
-                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline disabled' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline disabled' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' ><i class='bx bx-edit'></i></a>";
                             } else {
-                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' ><i class='bx bx-edit'></i></a>";
                             }
                         }
                     }
 
                     if (auth()->user()->can('izin_delete') && ($row->validasi_1 != 1 || $row->validasi_2 != 1)) {
-                        $btn = $btn . "<form action=" . route('izin.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'>Hapus</button></form>";
+                        $btn = $btn . "<form action=" . route('izin.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     }
                     return $btn;
                 })

@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
 
-                                    @if ($item->tgl_selesai_pekerjaan != null && auth()->user()->can('jenis kerusakan_update'))
+                                    @if ($item->tgl_selesai_pekerjaan != null && auth()->user()->can('tanggal kerja_input item pekerjaan'))
                                         <a href="{{ route('jenis-kerusakan.edit', $item->id) }}" class="btn btn-warning w-100 d-grid me-2">Update</a>
                                     @endif
 

@@ -104,10 +104,10 @@
 
                                 <div class="col-12 col-sm-12 col-md-5 mb-3">
                                     <x-partials.label title="Nama Pekerja" />
-                                    <select name="nama_pekerja[]" id="nama_pekerja" class="form-control w-100 @error('nama_pekerja') is-invalid @enderror" required>
+                                    <select name="nama_pekerja[]" id="nama_pekerja" class="form-control w-100 @error('nama_pekerja') is-invalid @enderror" onchange="fillSatuan('nama_pekerja','satuan_pekerja')">
                                         <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama pekerja...</option>
                                         @foreach ($pekerja as $item)
-                                            <option value="{{ $item->id }}" data-upah="{{ $item->upah }}">{{ $item->nama }}</option>
+                                            <option value="{{ $item->id }}" data-upah="{{ $item->upah }}" data-satuan="{{ $item->satuan }}">{{ $item->nama }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message name="nama_pekerja[]" class="d-block"/>
@@ -116,8 +116,8 @@
                                     <x-partials.label title="Volume" />
                                     <div class="input-group">
                                         <input type="hidden" name="satuan_pekerja[]" id="satuan_pekerja">
-                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_pekerja') is-invalid @enderror" id="volume_pekerja" name="volume_pekerja[]" placeholder="Volume" required/>
-                                        <span class="input-group-text">satuan*</span>
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_pekerja') is-invalid @enderror" id="volume_pekerja" name="volume_pekerja[]" placeholder="Volume"/>
+                                        <span class="input-group-text" id="satuan_pekerjaHTML">satuan*</span>
                                     </div>
                                     <x-partials.error-message name="volume_pekerja[]" class="d-block"/>
                                     <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
@@ -145,10 +145,10 @@
 
                                 <div class="col-12 col-sm-12 col-md-5 mb-3">
                                     <x-partials.label title="Item Pekerjaan" />
-                                    <select name="item_pekerjaan[]" id="item_pekerjaan" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" required>
+                                    <select name="item_pekerjaan[]" id="item_pekerjaan" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" onchange="fillSatuan('item_pekerjaan','satuan_item_pekerjaan')">
                                         <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih item pekerjaan...</option>
                                         @foreach ($itemPekerjaan as $item)
-                                            <option value="{{ $item->id }}" data-harga="{{ $item->harga }}">{{ $item->nama }}</option>
+                                            <option value="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message name="item_pekerjaan[]" class="d-block"/>
@@ -157,8 +157,8 @@
                                     <x-partials.label title="Volume" />
                                     <div class="input-group">
                                         <input type="hidden" name="satuan_item_pekerjaan[]" id="satuan_item_pekerjaan">
-                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_item_pekerjaan') is-invalid @enderror" id="volume_item_pekerjaan" name="volume_item_pekerjaan[]" placeholder="Volume" required/>
-                                        <span class="input-group-text">satuan*</span>
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_item_pekerjaan') is-invalid @enderror" id="volume_item_pekerjaan" name="volume_item_pekerjaan[]" placeholder="Volume"/>
+                                        <span class="input-group-text" id="satuan_item_pekerjaanHTML">satuan*</span>
                                     </div>
                                     <x-partials.error-message name="volume_item_pekerjaan[]" class="d-block"/>
                                     <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
@@ -187,10 +187,10 @@
 
                                 <div class="col-12 col-sm-12 col-md-5 mb-3">
                                     <x-partials.label title="Nama Material" />
-                                    <select name="nama_material[]" id="nama_material" class="form-control w-100 @error('nama_material') is-invalid @enderror" required>
+                                    <select name="nama_material[]" id="nama_material" class="form-control w-100 @error('nama_material') is-invalid @enderror" required onchange="fillSatuan('nama_material','satuan')">
                                         <option value="" data-kode_material="0" data-harga="0" selected disabled>Pilih nama material...</option>
                                         @foreach ($stokMaterial as $item)
-                                            <option value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}">{{ $item->nama_material }}</option>
+                                            <option value="{{ $item->kode_material }}" data-kode_material="{{ $item->kode_material }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_material }}</option>
                                         @endforeach
                                     </select>
                                     <x-partials.error-message name="nama_material[]" class="d-block"/>
@@ -200,7 +200,7 @@
                                     <div class="input-group">
                                         <input type="hidden" name="satuan[]" id="satuan">
                                         <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume') is-invalid @enderror" id="volume" name="volume[]" placeholder="Volume" required/>
-                                        <span class="input-group-text">satuan*</span>
+                                        <span class="input-group-text" id="satuanHTML">satuan*</span>
                                     </div>
                                     <x-partials.error-message name="volume[]" class="d-block"/>
                                     <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
@@ -267,6 +267,8 @@
 
         <script>
             var count = [];
+            var satuanPekerja = [];
+            var satuanItemPekerjaan = [];
 
             $(document).ready(() => {
                 $("#nama_material").select2({
@@ -607,6 +609,13 @@
                 $.each(count, function (index, value) {
                     $(value).html("Pekerja " + (index + 2));
                 });
+            }
+
+            function fillSatuan(select, id){
+                console.log(id);
+                satuan = $('#'+select).find(':selected').data('satuan');
+                $('#'+id).val(satuan);
+                $('#'+id+'HTML').html(satuan);
             }
 
             function formatRupiah(angka, prefix = null){

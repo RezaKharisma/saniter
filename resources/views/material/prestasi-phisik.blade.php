@@ -14,7 +14,7 @@
                         @csrf
 
                         <div class="row mb-2">
-                            <div class="col-6">
+                            <div class="col-4">
                                 <x-partials.label title="Bulan" />
                                 <select name="bulan" id="bulan" class="form-control" required>
                                     <option value="" selected disabled>Pilih bulan...</option>
@@ -23,9 +23,20 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 mb-3">
+                            <div class="col-4 mb-3">
+                                <x-partials.label title="Minggu Ke" />
+                                <select name="mingguKe" id="minggu" class="form-control" required>
+                                    <option value="" selected disabled>Pilih minggu...</option>
+                                    <option value="1">Minggu Pertama</option>
+                                    <option value="2">Minggu Kedua</option>
+                                    <option value="3">Minggu Ketiga</option>
+                                    <option value="4">Minggu Keempat</option>
+                                    <option value="5">Minggu Kelima</option>
+                                </select>
+                            </div>
+                            <div class="col-4 mb-3">
                                 <x-partials.label title="Tahun" />
-                                <input type="number" class="form-control" name="tahun" placeholder="Tahun" autocomplete="off" required />
+                                <input type="number" class="form-control" name="tahun" placeholder="Tahun" autocomplete="off" required value="{{ Carbon\Carbon::now()->format('Y') }}" />
                             </div>
                             <div class="col-auto">
                                 <x-partials.label title="Export" /><br />
@@ -46,6 +57,10 @@
         <script>
             $(document).ready(function () {
                 $("#bulan").select2({
+                    theme: "bootstrap-5",
+                });
+
+                $("#minggu").select2({
                     theme: "bootstrap-5",
                 });
 
