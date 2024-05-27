@@ -153,7 +153,7 @@ class JenisKerusakanController extends Controller
             'tgl_selesai_pekerjaan' => null,
             'status_kerusakan' => $request->status_kerusakan,
             'dikerjakan_oleh' => $request->dikerjakan_oleh,
-            'created_by' => auth()->user()->name,
+            'created_by' => auth()->user()->id,
         ]);
 
         if ($request->nama_material != null) {

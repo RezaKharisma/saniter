@@ -152,15 +152,16 @@
                     $subTotal = 0;
                 @endphp
                 @endforeach
-                <tr>
-                    <td colspan="5"></td>
-                    <td align="right" style="font-weight: bold; border-right: 1px solid white;border-left: 1px solid white">TOTAL</td>
-                    <td align="right" style="font-weight: bold">{{ $total }}</td>
-                </tr>
             @php
                 $no++;
             @endphp
             @endforeach
+
+            <tr>
+                <td colspan="5"></td>
+                <td align="right" style="font-weight: bold; border-right: 1px solid white;border-left: 1px solid white">TOTAL</td>
+                <td align="right" style="font-weight: bold">{{ $total }}</td>
+            </tr>
         </tbody>
     </table>
 </body>

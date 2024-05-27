@@ -396,7 +396,7 @@
                 // Set webcam untuk mengambil gambar absen
                 Webcam.set({
                     crop_width: 500,
-                    crop_height: 500,
+                    crop_height: 600,
                     align: 'center',
                     image_format: 'jpeg',
                     jpeg_quality: 90,

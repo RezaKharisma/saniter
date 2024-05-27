@@ -20,7 +20,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Tanggal</th>
-                                        <th>Total Pengerjaan</th>
+                                        <th>Total Lokasi Pengerjaan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -29,7 +29,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Tanggal</th>
-                                        <th>Total Pengerjaan</th>
+                                        <th>Total Lokasi Pengerjaan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </tfoot>

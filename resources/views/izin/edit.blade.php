@@ -20,6 +20,9 @@
                 <form method="post" action="{{ route('izin.update', $izin->id) }}" enctype="multipart/form-data" id="formSubmit">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="cekTanggalAwal" value="{{ $izin->tgl_mulai_izin }}">
+                    <input type="hidden" name="cekTanggalAkhir" value="{{ $izin->tgl_akhir_izin }}">
+
                     <div class="card-body">
 
                         {{-- Nama Lengkap --}}
@@ -65,6 +68,11 @@
                                 <x-partials.label title="Total Hari"/>
                                 <input type="text" class="form-control" id="total" placeholder="Total" disabled value="{{ $izin->total_izin }}"/>
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <x-partials.label title="Keterangan" />
+                            <textarea name="keterangan" rows="4" class="form-control" placeholder="Keterangan" required>{{ old('keterangan') ?? $izin->keterangan }}</textarea>
                         </div>
 
                         {{-- Dokumen --}}

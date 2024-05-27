@@ -19,7 +19,8 @@ class NamaMaterialController extends Controller
     }
 
     // Ambil data submenu untuk datatable
-    public function getNamaMaterial(Request $request){
+    public function getNamaMaterial(Request $request)
+    {
         if ($request->ajax()) {
             $materialAll = new NamaMaterial();
             $namaMaterial = $materialAll->getNamaMaterialById($request->id);
