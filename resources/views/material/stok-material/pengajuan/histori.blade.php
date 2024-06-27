@@ -18,7 +18,7 @@
                             <th>#</th>
                             <th>Kode Material</th>
                             <th>Nama Material</th>
-                            <th>Stok Masuk</th>
+                            <th>Stok Pengajuan</th>
                             <th>Status</th>
                             <th>Dibuat Oleh</th>
                             <th>Aksi</th>
@@ -30,7 +30,7 @@
                             <th>#</th>
                             <th>Kode Material</th>
                             <th>Nama Material</th>
-                            <th>Stok Masuk</th>
+                            <th>Stok Pengajuan</th>
                             <th>Status</th>
                             <th>Dibuat Oleh</th>
                             <th>Aksi</th>

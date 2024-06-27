@@ -71,15 +71,15 @@
                         <div class="mb-3" id="alertSisaJumlahIzin"></div>
 
                         {{-- Tanggal Izin --}}
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-12 col-sm-12 col-md-5 mb-3">
                                 <x-partials.label title="Tanggal Mulai" required/>
-                                <input type="text" class="form-control" id="start_time" name="tgl_mulai_izin" placeholder="Tanggal Mulai" onchange="tanggalAkhir(this)" required autocomplete="off"/>
+                                <input type="text" class="form-control" id="start_time" name="tgl_mulai_izin" placeholder="Tanggal Mulai" onchange="tanggalAkhir(this)" inputmode='none' required autocomplete="off"/>
                                 <x-partials.error-message name="tgl_mulai_izin" class="d-block" />
                             </div>
                             <div class="col-12 col-sm-12 col-md-5 mb-3">
                                 <x-partials.label title="Tanggal Akhir" required/>
-                                <input type="text" class="form-control" id="end_time" name="tgl_akhir_izin"  placeholder="Tanggal Akhir" onchange="totalHari(this)" required autocomplete="off"/>
+                                <input type="text" class="form-control" id="end_time" name="tgl_akhir_izin"  placeholder="Tanggal Akhir" onchange="totalHari(this)" inputmode='none' required autocomplete="off"/>
                                 <x-partials.error-message name="tgl_akhir_izin" class="d-block" />
                             </div>
                             <div class="col-12 col-sm-12 col-md-2">

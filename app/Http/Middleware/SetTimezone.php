@@ -22,11 +22,6 @@ class SetTimezone
             $jamTimezoneUser = $regional->timezone;
             config(['app.timezone' => $jamTimezoneUser]);
             date_default_timezone_set($jamTimezoneUser);
-
-            // $timezone = Auth::user()->timezone; // Ambil zona waktu preferensi pengguna
-            // if ($timezone) {
-            //     date_default_timezone_set($timezone); // Atur zona waktu
-            // }
         }
 
         return $next($request);

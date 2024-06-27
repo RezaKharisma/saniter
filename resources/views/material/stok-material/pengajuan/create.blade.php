@@ -21,24 +21,24 @@
                 </h5>
                 <form method="post" action="{{ route('stok-material.pengajuan.store') }}" enctype="multipart/form-data" id="formSubmit">
                     @csrf
+                    <input type="hidden" name="typeForm" value="SANITER">
+
                     <div id="cardFormPengajuan">
 
                         @php
                             $kode = bin2hex(random_bytes(10));
                         @endphp
 
-                        <input type="hidden" name="kode_material[]" id="kode_material-{{ $kode }}">
-                        <input type="hidden" name="nama_material[]" id="nama_material-{{ $kode }}">
-
                         <div class="card-body">
 
                             {{-- Nama Material --}}
                             <div class="mb-3">
                                 <x-partials.label title="Nama Material" required/>
+                                <input type="hidden" name="nama_material[]" id="nama_material-{{ $kode }}">
                                 <select name="material_id[]" data-kode="{{ $kode }}" class="form-control @error('material_id')is-invalid @enderror" id="select-field" required data-placeholder="Pilih nama..." onchange="getNamaMaterial(this)">
                                     <option></option>
                                     @foreach ($namaMaterial as $item)
-                                        <option value="{{ $item['id'] }}">{{ $item['kode_material'] }} | {{ $item['nama_material'] }}</option>
+                                        <option value="{{ $item['id'] }}">{{ ucwords($item['nama_material']) }}</option>
                                     @endforeach
                                 </select>
                                 <x-partials.error-message name="material_id" class="d-block" />
@@ -47,19 +47,19 @@
                             <div class="mb-3">
                                 <div class="row">
 
-                                    {{-- Jenis Pekerjaan --}}
-                                    <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                        <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan[]' id="jenis_pekerjaan-{{ $kode }}" readonly />
+                                    {{-- Kode Material --}}
+                                    <div class="col-12 col-sm-12 col-sm-12 mb-3">
+                                        <x-input-text title="Kode Material" name='kode_material[]' id="kode_material-{{ $kode }}" readonly/>
                                     </div>
 
-                                    {{-- Jenis Material --}}
-                                    <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                        <x-input-text title="Jenis Material" name='jenis_material[]' id="jenis_material-{{ $kode }}" readonly />
+                                    {{-- Kategori Material --}}
+                                    <div class="col-12 col-sm-12 col-sm-12 mb-3">
+                                        <x-input-text title="Kategori Material" name='kategori_material[]' id="kategori_material-{{ $kode }}" readonly />
                                     </div>
 
-                                    {{-- Stok Logistik (qty) --}}
-                                    <div class="col-12 col-sm-4 col-sm-6 mb-3 mb-sm-0">
-                                        <x-input-text title="Stok Gudang Logistik" name='qty[]' id="qty-{{ $kode }}" readonly />
+                                    {{-- Satuan Material --}}
+                                    <div class="col-12 col-sm-4 col-sm-6 mb-3">
+                                        <x-input-text title="Satuan" name='satuan[]' id="satuan-{{ $kode }}" readonly />
                                     </div>
 
                                     {{-- Harga --}}
@@ -68,6 +68,7 @@
                                         <x-input-text title="Harga" name="display[]" id="harga-{{ $kode }}" readonly/>
                                         <x-partials.input-desc text='Harga satuan.' />
                                     </div>
+
                                 </div>
                             </div>
 
@@ -112,7 +113,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('ajax.getListMaterialHtml') }}",
+                    url: "{{ route('ajax.getListMaterialSaniterHtml') }}",
                     dataType: "json",
                     beforeSend: function () {
                         $(e).prop('disabled', true);
@@ -148,15 +149,16 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('material.getNamaMaterial') }}",
+                    url: "{{ route('ajax.getNamaMaterialSaniter') }}",
                     data: {
                         id: $(e).val()
                     },
                     dataType: "json",
                     beforeSend: function() {
-                        $('#jenis_pekerjaan-'+kode).val('');
-                        $('#jenis_material-'+kode).val('');
-                        $('#qty-'+kode).val('');
+                        $('#kode_material-'+kode).val('');
+                        $('#kategori_material-'+kode).val('');
+                        $('#nama_material-'+kode).val('');
+                        $('#satuan-'+kode).val('');
                         $('#harga-'+kode).val('');
                         $("#stokMasuk-"+kode).val('');
                         $("#stokMasuk-"+kode).prop('disabled', true);
@@ -193,18 +195,17 @@
                             icon: 'success',
                             title: 'Berhasil!',
                         })})()
-
                         $("#stokMasuk-"+kode).prop('disabled', false);
                     },
                     success: function (response) {
                         var data = response.data;
+                        var harga = data.harga.toString();
                         $('#kode_material-'+kode).val(data.kode_material);
                         $('#nama_material-'+kode).val(data.nama_material);
-                        $('#jenis_pekerjaan-'+kode).val(data.jenis_pekerjaan);
-                        $('#jenis_material-'+kode).val(data.jenis_material);
-                        $('#qty-'+kode).val(data.qty);
-                        $('#hargaSubmit-'+kode).val(data.harga_beli.replace(/[_\W]+/g, ""));
-                        $('#harga-'+kode).val('Rp. '+ formatRupiah(data.harga_beli.replace(/[_\W]+/g, "")));
+                        $('#kategori_material-'+kode).val(data.kategori_material);
+                        $('#satuan-'+kode).val(data.satuan);
+                        $('#hargaSubmit-'+kode).val(harga.replace(/[_\W]+/g, ""));
+                        $('#harga-'+kode).val('Rp. '+ formatRupiah(harga.replace(/[_\W]+/g, "")));
 
                     }
                 });
@@ -234,8 +235,9 @@
                     $('#select-field').removeClass('is-invalid');
                     $('#stokMasuk-'+kode).removeClass('is-invalid');
                     $('#select-field-'+kode).removeClass('is-invalid');
+                    $('#kode_material-'+kode).removeClass('is-invalid');
 
-                    if ($('#select-field').val() === '' || $('#stokMasuk-'+kode).val() === '' || $('#select-field-'+kode).val() === '') {
+                    if ($('#select-field').val() === '' || $('#stokMasuk-'+kode).val() === '' || $('#select-field-'+kode).val() === '' || $('#kode_material-'+kode).val() === '') {
 
                         if ($('#select-field').val() === '') {
                             $('#select-field').addClass('is-invalid');
@@ -267,51 +269,7 @@
                         })})()
                         submit = false;
                     }else{
-                        var stokMasuk = parseInt($('#stokMasuk-'+kode).val());
-                        var stokLogistik = parseInt($('#qty-'+kode).val());
-                        var harga = parseInt($('#hargaSubmit-'+kode).val());
-
-                        if (harga > 5000000) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'center',
-                                icon: 'danger',
-                                customClass: {
-                                    popup: 'colored-toast',
-                                },
-                                showConfirmButton: false,
-                                timer: 4000,
-                            })
-
-                            ;(async () => {
-                            await Toast.fire({
-                                icon: 'warning',
-                                title: 'Harga material melebihi Rp. 5.000.00, Silakan mengajukan ke bagian logistik',
-                            })})()
-                            $('#stokMasuk-'+kode).addClass('is-invalid');
-                            submit = false;
-                        }
-
-                        if (stokMasuk > stokLogistik) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'center',
-                                icon: 'danger',
-                                customClass: {
-                                    popup: 'colored-toast',
-                                },
-                                showConfirmButton: false,
-                                timer: 1000,
-                            })
-
-                            ;(async () => {
-                            await Toast.fire({
-                                icon: 'error',
-                                title: 'Stok Gudang Logistik Tidak Mencukupi!',
-                            })})()
-                            $('#stokMasuk-'+kode).addClass('is-invalid');
-                            submit = false;
-                        }
+                        submit = true;
                     }
                 });
 

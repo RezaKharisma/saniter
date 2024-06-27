@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
-use App\Models\Api\NamaMaterial;
+use App\Models\NamaMaterial;
+use App\Models\Api\NamaMaterial as NamaMaterialAPI;
 use App\Models\HistoryStokMaterial;
 use App\Models\LogHistoryStokMaterial;
 use App\Models\StokMaterial;
@@ -93,19 +94,18 @@ class AjaxStokMaterialController extends Controller
         if ($request->ajax()) {
             // Select dimana data belum divalidasi PM
             $stokMaterial = StokMaterial::where('diterima_dir', 0)
-                // ->orWhere('history', 0)
                 ->orderBy('history', 'ASC')
                 ->orderBy('id', 'DESC')
                 ->get();
-
-            $namaMaterial = new NamaMaterial();
-            $this->namaMaterial = $namaMaterial->getAllMaterial();
 
             // Return datatables
             return DataTables::of($stokMaterial)
                 ->addIndexColumn()
                 ->addColumn('kode_material', function ($row) {
                     return $row->kode_material;
+                })
+                ->addColumn('kategori', function ($row) {
+                    return ucfirst(strtolower($row->kategori));
                 })
                 ->addColumn('oleh', function ($row) {
                     return $row->created_by . "<p class='text-muted mb-0'>" . Carbon::parse($row->created_at)->isoFormat('dddd, D MMMM Y') . "</p>";
@@ -116,18 +116,18 @@ class AjaxStokMaterialController extends Controller
                 ->addColumn('status', function ($row) {
                     // Validasi SOM
                     if ($row->status_validasi_som == "Tolak") {
-                        $html = "<span class='badge bg-danger d-block w-100'>SOM | Tolak</span>";
+                        $html = "<span class='badge bg-danger d-block w-100 mb-1'>SOM | Tolak</span>";
                     }
                     if ($row->status_validasi_som == "ACC") {
-                        $html = "<span class='badge bg-success d-block  w-100'>SOM | ACC</span>";
+                        $html = "<span class='badge bg-success d-block w-100 mb-1'>SOM | ACC</span>";
                     }
 
                     if ($row->status_validasi_som == "ACC Sebagian") {
-                        $html = "<span class='badge bg-warning d-block w-100'>SOM | ACC Sebagian</span>";
+                        $html = "<span class='badge bg-warning d-block w-100 mb-1'>SOM | ACC Sebagian</span>";
                     }
 
                     if ($row->status_validasi_som == "Belum Validasi") {
-                        $html = "<span class='badge bg-secondary d-block w-100'>SOM | Belum Validasi</span>";
+                        $html = "<span class='badge bg-secondary d-block w-100 mb-1'>SOM | Belum Validasi</span>";
                     }
 
                     // Validasi PM
@@ -193,7 +193,7 @@ class AjaxStokMaterialController extends Controller
                     $btn = $btn . "<form action=" . route('stok-material.pengajuan.delete', $row->id) . " method='POST' class='d-inline'>" . csrf_field() . method_field('DELETE') . " <button type='submit' class='btn btn-danger btn-sm confirm-delete'><i class='bx bx-trash'></i></button></form>";
                     return $btn;
                 })
-                ->rawColumns(['action', 'oleh', 'kode_material', 'status'])
+                ->rawColumns(['action', 'oleh', 'kode_material', 'status', 'kategori'])
                 ->make(true);
         }
     }
@@ -210,7 +210,7 @@ class AjaxStokMaterialController extends Controller
                 ->orderBy('id', 'DESC')
                 ->get();
 
-            $namaMaterial = new NamaMaterial();
+            $namaMaterial = new NamaMaterialAPI();
             $this->namaMaterial = $namaMaterial->getAllMaterial();
 
             // Return datatables
@@ -396,7 +396,7 @@ class AjaxStokMaterialController extends Controller
     public function getListHtml(Request $request)
     {
         if ($request->ajax()) {
-            $material = new NamaMaterial();
+            $material = new NamaMaterialAPI();
             $namaMaterial = $material->getAllMaterial();
 
             $kode = bin2hex(random_bytes(10));
@@ -407,6 +407,36 @@ class AjaxStokMaterialController extends Controller
                 'status' => 'success',
                 'list' => $list,
                 'kode' => $kode,
+            ]);
+        }
+    }
+
+    public function getListSaniterHtml(Request $request)
+    {
+        if ($request->ajax()) {
+            $namaMaterial = NamaMaterial::all();
+
+            $kode = bin2hex(random_bytes(10));
+
+            $list = view('components.list.list-material-saniter', compact('namaMaterial', 'kode'))->render();
+
+            return response()->json([
+                'status' => 'success',
+                'list' => $list,
+                'kode' => $kode,
+            ]);
+        }
+    }
+
+    public function getNamaMaterialSaniter(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $namaMaterial = NamaMaterial::find($request->id);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $namaMaterial
             ]);
         }
     }

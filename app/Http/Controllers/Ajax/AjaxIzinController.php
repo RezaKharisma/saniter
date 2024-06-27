@@ -89,9 +89,9 @@ class AjaxIzinController extends Controller
 
                         if (auth()->user()->can('izin_update')) {
                             if (auth()->user()->hasRole('Teknisi') && ($row->validasi_1 == 1 || $row->validasi_2 == 1)) {
-                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline disabled' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline disabled' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' ><i class='bx bx-edit'></i></a>";
                             } else {
-                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' >Ubah</a>";
+                                $btn = $btn . "<a class='btn btn-warning btn-sm d-inline' href='" . route('izin.edit', $row->id) . "' style='padding: 7px;padding-top: 5.5px; padding-left: 10px;padding-right: 10px' ><i class='bx bx-edit'></i></a>";
                             }
                         }
                     }

@@ -17,13 +17,14 @@ use App\Http\Controllers\AreaListController;
 use App\Http\Controllers\TglKerjaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PekerjaanController;
+use App\Http\Controllers\PeralatanController;
 use App\Http\Controllers\StokMaterialController;
 use App\Http\Controllers\Ajax\AjaxAreaController;
 use App\Http\Controllers\Ajax\AjaxIzinController;
 use App\Http\Controllers\Ajax\AjaxMenuController;
-use App\Http\Controllers\Ajax\AjaxRoleController;
 
 // All
+use App\Http\Controllers\Ajax\AjaxRoleController;
 use App\Http\Controllers\Ajax\AjaxUserController;
 use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\RoleController;
@@ -36,13 +37,14 @@ use App\Http\Controllers\Settings\ShiftController;
 use App\Http\Controllers\Ajax\AjaxLokasiController;
 use App\Http\Controllers\Ajax\AjaxPekerjaController;
 use App\Http\Controllers\API\NamaMaterialController;
-use App\Http\Controllers\Settings\SubMenuController;
 
 // API
+use App\Http\Controllers\Settings\SubMenuController;
 use App\Http\Controllers\Ajax\AjaxAreaListController;
 use App\Http\Controllers\Ajax\AjaxRegionalController;
 use App\Http\Controllers\Ajax\AjaxTglKerjaController;
 use App\Http\Controllers\Settings\RegionalController;
+use App\Http\Controllers\Ajax\AjaxPeralatanController;
 use App\Http\Controllers\Settings\PengaturanController;
 use App\Http\Controllers\Settings\PermissionController;
 use App\Http\Controllers\Ajax\AjaxStokMaterialController;
@@ -65,6 +67,11 @@ use App\Http\Controllers\Ajax\AjaxJenisKerusakanController;
 
 Route::get('/mail', function () {
     return view('vendor.mail.html.layout');
+});
+
+Route::get('/generate', function () {
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    echo 'ok';
 });
 
 // Login
@@ -405,6 +412,7 @@ Route::group(['middleware' => ['auth', 'timezone']], function () {
         Route::get('/material/stok-material/histori-pengajuan', 'indexHistoriPengajuan')->name('stok-material.pengajuan.histori')->middleware('permission:stok material pengajuan_read');
         Route::get('/material/stok-material/tambah-stok', 'indexPengajuan')->name('stok-material.pengajuan.index')->middleware('permission:stok material pengajuan_read');
         Route::get('/material/stok-material/tambah-stok/create', 'createPengajuan')->name('stok-material.pengajuan.create')->middleware('permission:stok material pengajuan_create');
+        Route::get('/material/stok-material/tambah-stok-q-tech/create', 'createPengajuanQTech')->name('stok-material.pengajuan.qtech.create')->middleware('permission:stok material pengajuan_create');
         Route::post('/material/stok-material/tambah-stok/store', 'storePengajuan')->name('stok-material.pengajuan.store')->middleware('permission:stok material pengajuan_create');
         Route::get('/material/stok-material/tambah-stok/{id}/detail', 'detailPengajuan')->name('stok-material.pengajuan.detailPengajuan')->middleware('permission:stok material pengajuan_update');
         Route::put('/material/stok-material/tambah-stok/{id}/update', 'updatePengajuan')->name('stok-material.pengajuan.update')->middleware('permission:stok material pengajuan_update');
@@ -435,6 +443,8 @@ Route::group(['middleware' => ['auth', 'timezone']], function () {
         Route::get('/ajax/getHistoriStokMaterial', 'getHistoriStokMaterial')->name('ajax.getHistoriStokMaterial')->middleware('permission:stok material histori_read');
         Route::get('/ajax/getLogHistoriStokMaterial', 'getLogHistoriStokMaterial')->name('ajax.getLogHistoriStokMaterial')->middleware('permission:stok material histori_read');
         Route::get('/ajax/getListMaterialHtml', 'getListHtml')->name('ajax.getListMaterialHtml')->middleware('permission:jenis kerusakan_read');
+        Route::get('/ajax/getListMaterialSaniterHtml', 'getListSaniterHtml')->name('ajax.getListMaterialSaniterHtml')->middleware('permission:jenis kerusakan_read');
+        Route::post('/ajax/getNamaMaterialSaniter', 'getNamaMaterialSaniter')->name('ajax.getNamaMaterialSaniter')->middleware('permission:jenis kerusakan_read');
     });
 
     /*
@@ -524,6 +534,7 @@ Route::group(['middleware' => ['auth', 'timezone']], function () {
         Route::get('/ajax/getListHtml', 'getListHtml')->name('ajax.getListHtml')->middleware('permission:jenis kerusakan_read');
         Route::get('/ajax/getListPekerjaHtml', 'getListPekerjaHtml')->name('ajax.getListPekerjaHtml')->middleware('permission:jenis kerusakan_read');
         Route::get('/ajax/getListItemPekerjaanHtml', 'getListItemPekerjaanHtml')->name('ajax.getListItemPekerjaanHtml')->middleware('permission:jenis kerusakan_read');
+        Route::get('/ajax/getListPeralatanHtml', 'getListPeralatanHtml')->name('ajax.getListPeralatanHtml')->middleware('permission:jenis kerusakan_read');
         Route::post('/ajax/uploadFotoJenisKerusakan', 'uploadFotoJenisKerusakan')->name('ajax.uploadFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
         Route::post('/ajax/getFotoJenisKerusakan', 'getFotoJenisKerusakan')->name('ajax.getFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
         Route::post('/ajax/deleteFotoJenisKerusakan', 'deleteFotoJenisKerusakan')->name('ajax.deleteFotoJenisKerusakan')->middleware('permission:jenis kerusakan_read');
@@ -579,6 +590,27 @@ Route::group(['middleware' => ['auth', 'timezone']], function () {
         Route::post('/ajax/getEditSubKategoriPekerja', 'getEditSubKategoriPekerja')->name('ajax.getEditSubKategoriPekerja')->middleware('permission:sub kategori pekerjaan_update');
         Route::post('/ajax/getItemPekerja', 'getItemPekerja')->name('ajax.getItemPekerja')->middleware('permission:item pekerjaan_read');
         Route::post('/ajax/getEditItemPekerja', 'getEditItemPekerja')->name('ajax.getEditItemPekerja')->middleware('permission:item pekerjaan_update');
+    });
+
+    /*
+    | Route Peralatan
+    | ----------------------
+    */
+    Route::controller(PeralatanController::class)->group(function () {
+        Route::get('/proyek/peralatan', 'index')->name('peralatan.index')->middleware('permission:peralatan_read');
+        Route::get('/proyek/peralatan/create', 'create')->name('peralatan.create')->middleware('permission:peralatan_create');
+        Route::post('/proyek/peralatan', 'store')->name('peralatan.store')->middleware('permission:peralatan_create');
+        Route::put('/proyek/peralatan/{id}/update', 'update')->name('peralatan.update')->middleware('permission:peralatan_update');
+        Route::delete('/proyek/peralatan/{id}/delete', 'delete')->name('peralatan.delete')->middleware('permission:peralatan_delete');
+    });
+
+    /*
+    | Route Ajax Peralatan
+    | ----------------------
+    */
+    Route::controller(AjaxPeralatanController::class)->group(function () {
+        Route::post('/ajax/getPeralatan', 'getPeralatan')->name('ajax.getPeralatan')->middleware('permission:peralatan_read');
+        Route::post('/ajax/getEditPeralatan', 'getEditPeralatan')->name('ajax.getEditPeralatan')->middleware('permission:peralatan_update');
     });
 
     /*

@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class AbsenController extends Controller
 {
@@ -449,9 +450,14 @@ class AbsenController extends Controller
         $image_type = $image_type_aux[1];
         $image_base64 = base64_decode($image_parts[1]);
         $fileName = uniqid() . '.png';
-
         $file = $folderPath . $fileName;
+        
         Storage::disk('public')->put($file, $image_base64);
+        
+        $imagePath = Storage::disk('public')->path($file);
+        $compressedImage = Image::make($imagePath);
+        
+        $compressedImage->save($imagePath);
         return $file;
     }
 

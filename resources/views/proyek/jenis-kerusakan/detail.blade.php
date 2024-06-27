@@ -345,7 +345,7 @@
                                 @endforelse
 
                             @else
-                                <input type="hidden" id="countUpdate" value="{{ count($detailMaterial) }}">
+                                <input type="hidden" id="countUpdate" value="{{ count($detailItemPekerjaan) }}">
                                 @forelse ($detailItemPekerjaan as $key => $itemPekerjaan)
                                     @php
                                         $kode = bin2hex(random_bytes(10));
@@ -400,7 +400,7 @@
                                             <select name="item_pekerjaan[]" id="item_pekerjaan-{{ $kode }}" class="form-control w-100 @error('item_pekerjaan') is-invalid @enderror" required onchange="fillSatuan('item_pekerjaan-{{ $kode }}','satuan_item_pekerjaan-{{ $kode }}')">
                                                 <option value="" selected disabled>Pilih item pekerjaan...</option>
                                                 @foreach ($itemPekerjaans as $item)
-                                                    <option value="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama }}</option>
+                                                    <option @if($itemPekerjaan->item_pekerjaan_id == $item->id) selected @endif  value="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama }}</option>
                                                 @endforeach
                                             </select>
                                             <x-partials.error-message name="item_pekerjaan[]" class="d-block"/>
@@ -566,6 +566,139 @@
             </div>
         </div>
 
+        {{-- DETAIL PERALATAN --}}
+        <div class="col-12 order-2 order-md-1 mb-3">
+            <div class="card">
+                <h5 class="card-header mb-2">Detail Peralatan</h5>
+                <div class="card-body">
+                    <div id="peralatanList">
+                        @if ($detail->tgl_selesai_pekerjaan != null)
+
+                            @forelse ($detailPeralatan as $key => $itemPeralatan)
+                                @php
+                                    $kode = bin2hex(random_bytes(10));
+                                @endphp
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="divider text-start">
+                                            <div class="divider-text">Peralatan {{ $key+1 }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-6 mb-3">
+                                        <x-partials.label title="Nama Peralatan" />
+                                        <select class="form-control w-100" disabled>
+                                            <option value="" selected disabled>Pilih nama peralatan...</option>
+                                            @foreach ($peralatan as $item)
+                                                <option @if($itemPeralatan->peralatan_id == $item->id) selected @endif value="{{ $item->id }}">{{ $item->nama_peralatan }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-6 mb-3">
+                                        <x-partials.label title="Volume" />
+                                        <div class="input-group">
+                                            <input type="hidden" value="{{ $itemPeralatan->satuan }}">
+                                            <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" placeholder="Volume" value="{{ $itemPeralatan->volume }}" disabled/>
+                                            <span class="input-group-text disabled" disabled>{{ $itemPeralatan->satuan }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-info mt-0" role="alert">Tidak menggunakan peralatan.</div>
+                                    </div>
+                                </div>
+                            @endforelse
+
+                        @else
+                            <input type="hidden" id="countUpdate" value="{{ count($detailPeralatan) }}">
+                            @forelse ($detailPeralatan as $key => $itemPeralatan)
+                                @php
+                                    $kode = bin2hex(random_bytes(10));
+                                @endphp
+                                <input type="hidden" name="kodeListPeralatan[]" value="{{ $kode }}">
+                                <div class="row" id="list-peralatan-{{ $kode }}">
+                                    <div class="col-12">
+                                        <div class="divider text-start">
+                                            <div class="divider-text" id="nomorPeralatan-{{ $kode }}">Peralatan {{ $key+1 }}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Nama Peralatan" />
+                                        <select name="nama_peralatan[]" id="peralatan-{{ $kode }}" class="form-control w-100 @error('nama_peralatan') is-invalid @enderror" onchange="fillSatuan('peralatan-{{ $kode }}','satuan_peralatan-{{ $kode }}')">
+                                            <option value="" data-id="0" data-harga="0" selected disabled>Pilih nama peralatan...</option>
+                                            @foreach ($peralatan as $item)
+                                                <option @if($itemPeralatan->peralatan_id == $item->id) selected @endif value="{{ $item->id }}" data-id="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_peralatan }}</option>
+                                            @endforeach
+                                        </select>
+                                        <x-partials.error-message name="nama_peralatan[]" class="d-block"/>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Volume" />
+                                        <div class="input-group">
+                                            <input type="hidden" name="satuan_peralatan[]" id="satuan_peralatan-{{ $kode }}" value="{{ $itemPeralatan->satuan }}">
+                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume_peralatan') is-invalid @enderror" id="volume_peralatan-{{ $kode }}" name="volume_peralatan[]" placeholder="Volume" value="{{ $itemPeralatan->volume }}" />
+                                            <span class="input-group-text" id="satuan_peralatan-{{ $kode }}HTML">{{ $itemPeralatan->satuan }}</span>
+                                        </div>
+                                        <x-partials.error-message name="volume_peralatan[]" class="d-block"/>
+                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-1 mb-3">
+                                        <x-partials.label title="Aksi" />
+                                        <button type="button" class="btn btn-danger d-block" data-id="{{ $kode }}"  onclick="deleteListPeralatan(this)"><i class="bx bx-x"></i></button>
+                                    </div>
+                                </div>
+                            @empty
+                                @php
+                                    $kode = bin2hex(random_bytes(10));
+                                @endphp
+                                <input type="hidden" name="kodeListPeralatan[]" value="{{ $kode }}">
+                                <div class="row" id="list-peralatan-{{ $kode }}">
+                                    <div class="col-12">
+                                        <div class="divider text-start">
+                                            <div class="divider-text" id="nomorPeralatan-{{ $kode }}">Material 1</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Nama peralatan" />
+                                        <select name="nama_peralatan[]" id="peralatan-{{ $kode }}" class="form-control w-100 @error('nama_peralatan') is-invalid @enderror" onchange="fillSatuan('peralatan-{{ $kode }}','satuan-{{ $kode }}')">
+                                            <option value="" data-id="0" data-harga="0" selected disabled>Pilih nama peralatan...</option>
+                                            @foreach ($peralatan as $item)
+                                                <option value="{{ $item->id }}" data-id="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_peralatan }}</option>
+                                            @endforeach
+                                        </select>
+                                        <x-partials.error-message name="nama_peralatan[]" class="d-block"/>
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                        <x-partials.label title="Volume" />
+                                        <div class="input-group">
+                                            <input type="hidden" name="satuan_peralatan[]" id="satuan_peralatan-{{ $kode }}">
+                                            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')" class="form-control @error('volume_peralatan') is-invalid @enderror" id="volume_peralatan-{{ $kode }}" name="volume_peralatan[]" placeholder="Volume"/>
+                                            <span class="input-group-text" id="satuan_peralatan-{{ $kode }}HTML">satuan*</span>
+                                        </div>
+                                        <x-partials.error-message name="volume_peralatan[]" class="d-block"/>
+                                        <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-1 mb-3">
+                                        <x-partials.label title="Aksi" />
+                                        <button type="button" class="btn btn-danger d-block" data-id="{{ $kode }}"  onclick="deleteListPeralatan(this)"><i class="bx bx-x"></i></button>
+                                    </div>
+                                </div>
+                            @endforelse
+                        @endif
+                    </div>
+                </div>
+                <div class="card-footer">
+                    @if ($detail->tgl_selesai_pekerjaan == null)
+                        <button type="button" class="btn btn-primary" id="btnAddPeralatan" onclick="addListPeralatan(this)"><i class="bx bx-plus"></i> Tambah Peralatan</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         <div class="col-12 order-2 order-md-1 mb-3">
             <div class="card">
                 <h5 class="card-header mb-3">Denah</h5>
@@ -652,15 +785,28 @@
         <script src="{{ asset('assets/vendor/libs/jquery-ui/jquery-ui.js') }}"></script>
 
         <script>
+
+            // Variable
             Dropzone.autoDiscover = false;
             var countPekerja = [];
             var countItemPekerjaan = [];
+            var countPeralatan = [];
             var count = [];
+
+            // Web Ready load image
             $(document).ready(function () {
                 load_images();
             });
         </script>
 
+        {{--
+            Load select2 sesuai dengan tabel detail yang ada di database
+            diambil dari foreach list pekerja yang di looping PHP diatas
+            CONTROLLER -> VIEW (LOOPING)
+            ---> GENERATE LOOPING, MASUKKAN KE INPUT KODE LIST SESUAI LIST
+            ---> AMBIL VALUE SESUAI BANYAKNYA DATA PADA INPUT LOOPING
+            ---> DEKLARASIKAN SELECT2 SESUAI ID DARI KODE LIST TERSEBUT
+        --}}
         <script>
             $(document).ready(function () {
                 // Pekerja
@@ -692,6 +838,7 @@
                 $.each(itemPekerjaan, function (index, value) {
                     countItemPekerjaan.push("#nomorItemPekerjaan-"+value);
                 });
+
                 $.each(countItemPekerjaan, function (index, value) {
                     $("#item_pekerjaan-" + value.replace('#nomorItemPekerjaan-','')).select2({
                         theme: "bootstrap-5",
@@ -709,6 +856,32 @@
                 });
                 $.each(countItemPekerjaan, function (index, value) {
                     $(value).html("Item Pekerjaan " + (index+1));
+                });
+
+                // Peralatan
+                var peralatan = $("input[name='kodeListPeralatan[]']").map(function(){return $(this).val();}).get();
+                $.each(peralatan, function (index, value) {
+                    countPeralatan.push("#nomorPeralatan-"+value);
+                });
+
+                $.each(countPeralatan, function (index, value) {
+                    $("#peralatan-" + value.replace('#nomorPeralatan-','')).select2({
+                        theme: "bootstrap-5",
+                        createTag: function (params) {
+                            return {
+                                id: params.term,
+                                text: params.term + $select.data('appendme'),
+                                harga: $select.data('harga'),
+                                satuan: $select.data('satuan'),
+                                newOption: true
+                            }
+                        },
+                        templateResult: formatPeralatanOptionTemplate,
+                    });
+                    $("#peralatan-" + value.replace('#nomorPeralatan-','')).trigger('change');
+                });
+                $.each(countItemPekerjaan, function (index, value) {
+                    $(value).html("Peralatan " + (index+1));
                 });
             });
         </script>
@@ -1192,6 +1365,86 @@
                     $(value).html("Item Pekerjaan " + (index+plus));
                 });
             }
+
+            function addListPeralatan(e) {
+                $.ajaxSetup({
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('ajax.getListPeralatanHtml') }}",
+                    dataType: "json",
+                    success: function (response) {
+                        if (countPeralatan.length <= 9) {
+                            $(response.list).appendTo("#peralatanList").hide().fadeIn(200);
+                            countPeralatan.push("#nomorPeralatan-" + response.kode);
+                            $.each(countPeralatan, function (index, value) {
+                                $(value).html("Peralatan " + (index + 1));
+                            });
+                            $("#peralatan-" + response.kode).select2({
+                                createTag: function (params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term + $select.data('appendme'),
+                                        harga: $select.data('harga'),
+                                        status: $select.data('status'),
+                                        newOption: true
+                                    }
+                                },
+                                templateResult: formatPeralatanOptionTemplate,
+                                theme: "bootstrap-5",
+                            });
+                        } else {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "center",
+                                icon: "danger",
+                                customClass: {
+                                    popup: "colored-toast",
+                                },
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+
+                            (async () => {
+                                await Toast.fire({
+                                    icon: "error",
+                                    title: "Batas maksimal penginputan perbaikan!",
+                                });
+                            })();
+                        }
+                    },
+                });
+            }
+
+            function deleteListPeralatan(e) {
+                $.each(countPeralatan, function (index, value) {
+                    if (countPeralatan.length != 1) {
+                        countPeralatan = jQuery.grep(countPeralatan, function (value) {
+                            return value != "#nomorPeralatan-" + e.dataset.id;
+                        });
+
+                        $("#list-peralatan-" + e.dataset.id).fadeOut(200, function(){
+                            $(this).remove();
+                        });
+                    }
+
+                    $('#peralatan-'+e.dataset.id).val('').trigger('change');
+                    $('#satuan_peralatan-'+e.dataset.id).val('');
+                    $('#volume_peralatan-'+e.dataset.id).val('');
+
+                    if (index == 0) {
+                        plus = 1;
+                    }else{
+                        plus = 0;
+                    }
+
+                    $(value).html("Peralatan " + (index+plus));
+                });
+            }
         </script>
         @endif
 
@@ -1225,7 +1478,6 @@
                     $.each(countPekerja, function (index, value) {
                         if($('#nama_pekerja-'+value.replace('#nomorPekerja-','')).val() != null){
                             if ($('#volume_pekerja-'+value.replace('#nomorPekerja-','')).val() == '') {
-                                // $('#nama_pekerja-'+value.replace('#nomorPekerja-','')).addClass('is-invalid');
                                 $('#volume_pekerja-'+value.replace('#nomorPekerja-','')).addClass('is-invalid');
                                 $(value).css('color','red');
                                 submit2 = false;
@@ -1243,7 +1495,6 @@
                     $.each(countItemPekerjaan, function (index, value) {
                         if($('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).val() != null){
                             if($('#volume_item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).val() == ''){
-                                // $('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).addClass('is-invalid');
                                 $('#volume_item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).addClass('is-invalid');
                                 $(value).css('color','red');
                                 submit3 = false;
@@ -1252,14 +1503,31 @@
                             }
                         }else{
                             $('#item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).removeClass('is-invalid');
-                            $('#volume_item_pekerjaan--'+value.replace('#nomorItemPekerjaan-','')).removeClass('is-invalid');
+                            $('#volume_item_pekerjaan-'+value.replace('#nomorItemPekerjaan-','')).removeClass('is-invalid');
+                            $(value).css('color','');
+                            submit3 = true;
+                        }
+                    });
+
+                    $.each(countPeralatan, function (index, value) {
+                        if($('#peralatan-'+value.replace('#nomorPeralatan-','')).val() != null){
+                            if($('#volume_peralatan-'+value.replace('#nomorPeralatan-','')).val() == ''){
+                                $('#volume_peralatan-'+value.replace('#nomorPeralatan-','')).addClass('is-invalid');
+                                $(value).css('color','red');
+                                submit3 = false;
+                            }else{
+                                submit3 = true;
+                            }
+                        }else{
+                            $('#pekerjaan-'+value.replace('#nomorPeralatan-','')).removeClass('is-invalid');
+                            $('#volume_peralatan-'+value.replace('#nomorPeralatan-','')).removeClass('is-invalid');
                             $(value).css('color','');
                             submit3 = true;
                         }
                     });
                 }
 
-                if (submit1 == true) {
+                if (submit1 == true && submit2 == true && submit3 == true) {
                     if ($('#cek_value').val() === "1") {
                         if (submit2 == true && submit3 == true) {
                             $('#formUpdate').submit();
@@ -1338,9 +1606,23 @@
                                     submit3 = true;
                                 }
                             });
+
+                            $.each(countPeralatan, function (index, value) {
+                                if($('#peralatan-'+value.replace('#nomorPeralatan-','')).val() == '' || $('#volume_peralatan-'+value.replace('#nomorPeralatan-','')).val() == ''){
+                                    $('#peralatan-'+value.replace('#nomorPeralatan-','')).addClass('is-invalid');
+                                    $('#volume_peralatan-'+value.replace('#nomorPeralatan-','')).addClass('is-invalid');
+                                    $(value).css('color','red');
+                                    submit3 = false;
+                                }else{
+                                    $('#peralatan-'+value.replace('#nomorPeralatan-','')).removeClass('is-invalid');
+                                    $('#volume_peralatan--'+value.replace('#nomorPeralatan-','')).removeClass('is-invalid');
+                                    $(value).css('color','');
+                                    submit3 = true;
+                                }
+                            });
                         }
 
-                        if (submit1 == true) {
+                        if (submit1 == true && submit2 == true && submit3 == true) {
                             if ($('#cek_value').val() === "1") {
                                 if (submit2 == true && submit3 == true) {
                                     $('#formUpdate').submit();
@@ -1358,7 +1640,6 @@
             });
 
             function fillSatuan(select, id){
-                console.log(id);
                 satuan = $('#'+select).find(':selected').data('satuan');
                 $('#'+id).val(satuan);
                 $('#'+id+'HTML').html(satuan);
@@ -1395,6 +1676,21 @@
                     '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
                     '<div>'+state.text+'</div>'+
                     '<div>Rp. '+formatRupiah(originalOption.data('harga'))+'</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
+            function formatPeralatanOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+state.text+'</u></div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' ('+originalOption.data('satuan')+')</div>'+
                     '<div></div>'
                 );
                 return $state;

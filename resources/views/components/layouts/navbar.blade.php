@@ -109,7 +109,7 @@
                         <form action="{{ route('logout') }}" method="POST" class="dropdown-item">
                             <i class="bx bx-power-off me-2"></i>
                                 @csrf
-                                <button type="submit" class="btn btn-link btn-logout" style="color: #697a8d; margin-left: -20px">Keluar</button>
+                                <button type="submit" class="btn btn-link btn-logout" style="color: #697a8d; margin-left: -20px; padding-right: 60%">Keluar</button>
                         </form>
                     </li>
                 </ul>

@@ -117,7 +117,7 @@ class IzinController extends Controller
         }
 
         // Fungsi jika tanggal sudah dipilih pada izin sebelumnya, atau terdapat tanggal yang sama
-        if ($this->cekTanggalSudahDipilihSebelumnya($request->name, $request->tgl_mulai_izin, $request->tgl_akhir_izin) == true) {
+        if ($this->cekTanggalSudahDipilihSebelumnya($request->name, $request->tgl_mulai_izin, $request->tgl_akhir_izin, $request->cekTanggalAwal, $request->cekTanggalAkhir) == true) {
             toast('Tanggal tersebut sudah terpilih sebelumnya!', 'warning');
             return Redirect::route('izin.index');
         }
@@ -226,7 +226,7 @@ class IzinController extends Controller
 
         if (!empty($file)) {
             // Masukkan ke folder user-images dengan nama random dan extensi saat upload
-            $file = Storage::disk('public')->put('dokumen-izin/' . Carbon::now()->format('Y-m-d'), $file);
+            $file = Storage::disk('public')->put('dokumen-izin/'.Carbon::now()->format('Y-m-d'), $file);
             return $file;
         }
     }
@@ -290,7 +290,7 @@ class IzinController extends Controller
         return false;
     }
 
-    private function cekTanggalSudahDipilihSebelumnya($userId, $tglMulai, $tglSelesai)
+    private function cekTanggalSudahDipilihSebelumnya($userId, $tglMulai, $tglSelesai, $tglAwalUpdate = null, $tglAkhirUpdate = null)
     {
         $izin = Izin::select('tgl_mulai_izin', 'tgl_akhir_izin')->where('user_id', $userId)->get();
 
@@ -306,10 +306,18 @@ class IzinController extends Controller
         sort($p);
 
         foreach ($izin as $i) {
-            $periodeIzin = CarbonPeriod::create(Carbon::parse($i->tgl_mulai_izin)->format('Y-m-d'), Carbon::parse($i->tgl_selesai_izin)->format('Y-m-d'));
+            $periodeIzin = CarbonPeriod::create(Carbon::parse($i->tgl_mulai_izin)->format('Y-m-d'), Carbon::parse($i->tgl_akhir_izin)->format('Y-m-d'));
 
             foreach ($periodeIzin as $ii) {
-                array_push($pi, $ii->format('Y-m-d'));
+                if ($tglAwalUpdate != null && $tglAkhirUpdate != null) {
+                    if (Carbon::parse($tglAwalUpdate) == Carbon::parse($ii->format('Y-m-d')) && Carbon::parse($tglAkhirUpdate) == Carbon::parse($ii->format('Y-m-d'))) {
+                        continue;
+                    } else {
+                        array_push($pi, $ii->format('Y-m-d'));
+                    }
+                } else {
+                    array_push($pi, $ii->format('Y-m-d'));
+                }
             }
         }
 

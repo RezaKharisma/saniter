@@ -3,26 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Retur;
+use App\Models\Pekerja;
 use Carbon\CarbonPeriod;
+use App\Models\Peralatan;
+use App\Models\NamaMaterial;
 use App\Models\StokMaterial;
 use Illuminate\Http\Request;
 use App\Models\DetailPekerja;
-use Ramsey\Uuid\Type\Decimal;
+use App\Models\ItemPekerjaan;
 use Illuminate\Support\Carbon;
+use App\Models\DetailPeralatan;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Api\NamaMaterial;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+use App\Models\KategoriPekerjaan;
 use App\Models\DetailItemPekerjaan;
 use App\Models\DetailJenisKerusakan;
-use App\Models\DetailTglKerja;
-use App\Models\ItemPekerjaan;
-use App\Models\KategoriPekerjaan;
-use App\Models\Pekerja;
 use App\Models\SubKategoriPekerjaan;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Api\NamaMaterial as NamaMaterialAPI;
 
 class StokMaterialController extends Controller
 {
@@ -86,11 +85,18 @@ class StokMaterialController extends Controller
         return view('material.stok-material.pengajuan.index', compact('stokMaterial'));
     }
 
+    public function createPengajuanQTech()
+    {
+        // Ambil API Q-tech
+        $material = new NamaMaterialAPI();
+        $namaMaterial = $material->getAllMaterial();
+        return view('material.stok-material.pengajuan.create-qtech', compact('namaMaterial'));
+    }
+
     public function createPengajuan()
     {
         // Ambil API Q-tech
-        $material = new NamaMaterial();
-        $namaMaterial = $material->getAllMaterial();
+        $namaMaterial = NamaMaterial::all();
         return view('material.stok-material.pengajuan.create', compact('namaMaterial'));
     }
 
@@ -108,12 +114,19 @@ class StokMaterialController extends Controller
         // Ambil retur sesuai dengan stok material
         $retur = Retur::where('stok_material_id', $stokMaterial->id)->first();
 
-        // Ambil API dari Q-tech
-        $material = new NamaMaterial();
-        $namaMaterial = $material->getNamaMaterialById($stokMaterial->material_id);
-        $namaMaterial['harga_beli'] = number_format(floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $namaMaterial['harga_beli'])), 0, ",", ".");
+        if ($stokMaterial->kategori == 'QTECH') {
+            // Ambil API dari Q-tech
+            $material = new NamaMaterialAPI();
+            $namaMaterial = $material->getNamaMaterialById($stokMaterial->material_id);
+            $namaMaterial['harga_beli'] = number_format(floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $stokMaterial['harga'])), 0, ",", ".");
+            return view('material.stok-material.pengajuan.detail-qtech', compact('namaMaterial', 'stokMaterial', 'retur', 'diterima'));
+        }
 
-        return view('material.stok-material.pengajuan.detail', compact('namaMaterial', 'stokMaterial', 'retur', 'diterima'));
+        if ($stokMaterial->kategori == 'SANITER') {
+            $namaMaterial = NamaMaterial::find($stokMaterial->material_id);
+            $namaMaterial['harga_beli'] = number_format(floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $stokMaterial['harga'])), 0, ",", ".");
+            return view('material.stok-material.pengajuan.detail', compact('namaMaterial', 'stokMaterial', 'retur', 'diterima'));
+        }
     }
 
     public function storePengajuan(Request $request)
@@ -134,10 +147,12 @@ class StokMaterialController extends Controller
 
         foreach ($request->material_id as $key => $value) {
             // Insert data
-            $stok = StokMaterial::create([
+            StokMaterial::create([
                 'material_id' => $value,
-                'kode_material' => $request->kode_material[$key],
+                'kode_material' => $this->getKodeMaterialSaniter($request->kode_material[$key]),
                 'nama_material' => $request->nama_material[$key],
+                'kategori' => $request->typeForm,
+                'satuan' => $request->satuan[$key] ?? '-',
                 'harga' => floatval(preg_replace('/[^\p{L}\p{N}\s]/u', '', $request->harga[$key])), // hilangkan karakter dan ubah menjadi float
                 'masuk' => $request->masuk[$key],
                 'stok_update' => 0,
@@ -459,7 +474,7 @@ class StokMaterialController extends Controller
 
                 // Jika validasi gagal
                 if ($validator->fails()) {
-                    Session::flash('statusValidasi', 'error');
+                    Session::flash('statusValidasiDIR', 'error');
                     toast('Mohon periksa form kembali!', 'error');
                     return Redirect::back()
                         ->withErrors($validator)
@@ -567,6 +582,12 @@ class StokMaterialController extends Controller
 
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('stok-material.pengajuan.index'); // Redirect kembali
+    }
+
+    private function getKodeMaterialSaniter($kodeMaterial)
+    {
+        $count = StokMaterial::where('kode_material', 'like', '%' . $kodeMaterial . '%')->count();
+        return $kodeMaterial . '-' . str_pad($count + 1, 3, '0', STR_PAD_LEFT);
     }
 
     public function prestasiPhisik()
@@ -683,27 +704,61 @@ class StokMaterialController extends Controller
             $dataKategori[$kategori->nama] = $dataSubKategori;
         }
 
-        $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_som', 'tanggal_diterima_som', 'diterima_dir', 'tanggal_diterima_dir')
-            ->where('diterima_som', 1)
-            ->where('diterima_pm', 1)
-            ->where('diterima_dir', 1)
-            ->where('status_validasi_dir', 'ACC')
-            ->whereNot('status_validasi_dir', 'Tolak')
-            ->orderBy('id', 'DESC')
-            ->get();
+        if ($request->sertakan_qtech == "on") {
+            $stokMaterial = StokMaterial::select('material_id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'masuk', 'diterima_pm', 'tanggal_diterima_pm', 'diterima_som', 'tanggal_diterima_som', 'diterima_dir', 'tanggal_diterima_dir')
+                ->where('kategori', 'QTECH')
+                ->where('diterima_som', 1)
+                ->where('diterima_pm', 1)
+                ->where('diterima_dir', 1)
+                ->where('status_validasi_dir', 'ACC')
+                ->whereNot('status_validasi_dir', 'Tolak')
+                ->orderBy('id', 'DESC')
+                ->get();
 
-        foreach ($stokMaterial as $stok) {
+            foreach ($stokMaterial as $stok) {
+                $total = 0;
+
+                $detailJenisKerusakan = DetailJenisKerusakan::select('detail_jenis_kerusakan.volume', 'detail_jenis_kerusakan.satuan', 'detail_jenis_kerusakan.harga', 'stok_material.nama_material')
+                    ->join('jenis_kerusakan', 'detail_jenis_kerusakan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                    ->join('stok_material', 'detail_jenis_kerusakan.kode_material', '=', 'stok_material.kode_material')
+                    ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
+                    ->where('detail_jenis_kerusakan.kode_material', $stok->kode_material)
+                    ->get();
+
+                foreach ($detailJenisKerusakan as $jenisKerusakan) {
+                    $total += floatval($total) + floatval($jenisKerusakan->volume);
+                }
+
+                $i['volume'] = '1,00';
+                $i['satuan'] = $stok->satuan;
+                $i['harga'] = number_format($stok->harga, 0, '', '');
+                $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
+                $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
+
+                $dataKategori['Perlengkapan Material Q-TECH']['Material'][$stok->nama_material] = $i;
+            }
+        }
+
+        $namaMaterial = NamaMaterial::all();
+
+        foreach ($namaMaterial as $stok) {
             $total = 0;
 
-            $detailJenisKerusakan = DetailJenisKerusakan::select('detail_jenis_kerusakan.volume', 'detail_jenis_kerusakan.satuan', 'detail_jenis_kerusakan.harga', 'stok_material.nama_material')
+            $detailJenisKerusakan = DetailJenisKerusakan::select('detail_jenis_kerusakan.volume', 'detail_jenis_kerusakan.satuan', 'detail_jenis_kerusakan.harga', 'detail_jenis_kerusakan.kode_material')
                 ->join('jenis_kerusakan', 'detail_jenis_kerusakan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
-                ->join('stok_material', 'detail_jenis_kerusakan.kode_material', '=', 'stok_material.kode_material')
                 ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
-                ->where('detail_jenis_kerusakan.kode_material', $stok->kode_material)
                 ->get();
 
             foreach ($detailJenisKerusakan as $jenisKerusakan) {
-                $total += floatval($total) + floatval($jenisKerusakan->volume);
+
+                $kode_baru = preg_replace('/-\d+$/', '', $jenisKerusakan->kode_material);
+
+                // array_push($kode_baru, $p);
+                // dd($kode_baru);
+
+                if ($kode_baru == $stok->kode_material) {
+                    $total += floatval($total) + floatval($jenisKerusakan->volume);
+                }
             }
 
             $i['volume'] = '1,00';
@@ -712,7 +767,32 @@ class StokMaterialController extends Controller
             $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
             $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
 
-            $dataKategori['Perlengkapan Material']['Material'][$stok->nama_material] = $i;
+            $dataKategori['Perlengkapan Material'][$stok->kategori_material][ucwords(strtolower($stok->nama_material))] = $i;
+        }
+
+        $peralatan = Peralatan::all();
+
+        foreach ($peralatan as $prltn) {
+            $total = 0;
+
+            $detailPeralatan = DetailPeralatan::select('detail_peralatan.volume', 'detail_peralatan.satuan', 'detail_peralatan.harga', 'peralatan.nama_peralatan')
+                ->join('jenis_kerusakan', 'detail_peralatan.jenis_kerusakan_id', '=', 'jenis_kerusakan.id')
+                ->join('peralatan', 'detail_peralatan.peralatan_id', '=', 'peralatan.id')
+                ->whereBetween('jenis_kerusakan.tgl_selesai_pekerjaan', [$awalMinggu, $akhirMinggu])
+                ->where('detail_peralatan.peralatan_id', $prltn->id)
+                ->get();
+
+            foreach ($detailPeralatan as $peralatan) {
+                $total += floatval($total) + floatval($peralatan->volume);
+            }
+
+            $i['volume'] = '1,00';
+            $i['satuan'] = $prltn->satuan;
+            $i['harga'] = number_format($prltn->harga, 0, '', '');
+            $i['totalMingguDipilih'] = str_replace(".", ",", floatval($total));
+            $i['totalHargaDipilih'] = floatval($i['totalMingguDipilih']) * $i['harga'];
+
+            $dataKategori['Peralatan']['Peralatan'][$prltn->nama_peralatan] = $i;
         }
 
         $pekerja = Pekerja::all();
@@ -739,8 +819,6 @@ class StokMaterialController extends Controller
 
             $dataKategori['Upah']['Upah'][$pkj->nama] = $i;
         }
-
-        // dd($dataKategori);
 
         $pdf = Pdf::loadView('components.print-layouts.material.prestasi-phisik', ['list' => $dataKategori, 'start' => $awalMinggu, 'end' => $akhirMinggu, 'mingguKe' => $request->mingguKe])->setPaper('a4');
         return $pdf->stream('prestasi-phisik(' . $awalMinggu . ' - ' . $akhirMinggu . '.pdf', array("Attachment" => true));

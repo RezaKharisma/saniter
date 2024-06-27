@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Pekerja;
 use App\Models\AreaList;
 use App\Models\TglKerja;
+use App\Models\Peralatan;
 use App\Models\StokMaterial;
 use Illuminate\Http\Request;
 use App\Models\DetailPekerja;
@@ -16,8 +17,10 @@ use App\Models\ItemPekerjaan;
 use App\Models\DetailTglKerja;
 use App\Models\HistoryPekerja;
 use App\Models\JenisKerusakan;
+use App\Models\DetailPeralatan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Api\NamaMaterial;
+use App\Models\HistoryPeralatan;
 use App\Models\DetailItemPekerjaan;
 use App\Models\HistoryStokMaterial;
 use App\Models\DetailJenisKerusakan;
@@ -66,7 +69,7 @@ class JenisKerusakanController extends Controller
             ->join('list_area', 'detail_tgl_kerja.list_area_id', '=', 'list_area.id')
             ->find($id);
 
-        $stokMaterial = StokMaterial::select('id', 'kode_material', 'nama_material', 'harga', 'stok_update')
+        $stokMaterial = StokMaterial::select('id', 'kode_material', 'nama_material', 'harga', 'stok_update', 'satuan')
             ->where('diterima_som', 1)
             ->where('diterima_pm', 1)
             ->where('diterima_dir', 1)
@@ -76,7 +79,9 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.create', compact('detailKerja', 'stokMaterial', 'teknisi', 'pekerja', 'itemPekerjaan'));
+        $peralatan = Peralatan::all();
+
+        return view('proyek.jenis-kerusakan.create', compact('detailKerja', 'stokMaterial', 'teknisi', 'pekerja', 'itemPekerjaan', 'peralatan'));
     }
 
     public function store(Request $request)
@@ -136,6 +141,22 @@ class JenisKerusakanController extends Controller
             }
         }
 
+        if ($request->nama_peralatan && $request->satuan_peralatan && $request->volume_peralatan) {
+            $validator3 = Validator::make($request->all(), [
+                'nama_peralatan' => 'required',
+                'satuan_peralatan' => '',
+                'volume_peralatan' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator3->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
         // Jika validasi gagal
         if ($validator->fails()) {
             toast('Mohon periksa form kembali!', 'error'); // Toast
@@ -153,7 +174,7 @@ class JenisKerusakanController extends Controller
             'tgl_selesai_pekerjaan' => null,
             'status_kerusakan' => $request->status_kerusakan,
             'dikerjakan_oleh' => $request->dikerjakan_oleh,
-            'created_by' => auth()->user()->name,
+            'created_by' => auth()->user()->id,
         ]);
 
         if ($request->nama_material != null) {
@@ -198,6 +219,20 @@ class JenisKerusakanController extends Controller
             }
         }
 
+        if ($request->nama_peralatan != null) {
+            foreach ($request->nama_peralatan as $key => $item) {
+                DetailPeralatan::create([
+                    'jenis_kerusakan_id' => $jenisKerusakan->id,
+                    'peralatan_id' => $item,
+                    'nama' => $request->perbaikan,
+                    'harga' => floatval($this->getHargaPeralatan($item)),
+                    'volume' => $request->volume_peralatan[$key] ?? '0',
+                    'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                    'total_harga' => floatval($this->getHargaPeralatan($item)) * floatval($request->volume_peralatan[$key]),
+                ]);
+            }
+        }
+
         toast('Data berhasil tersimpan!', 'success');
         return Redirect::route('jenis-kerusakan.detail', $jenisKerusakan->id);
     }
@@ -228,9 +263,13 @@ class JenisKerusakanController extends Controller
 
         $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $id)->get();
 
+        $detailPeralatan = DetailPeralatan::where('jenis_kerusakan_id', $id)->get();
+
         $pekerja = Pekerja::all();
 
         $itemPekerjaans = ItemPekerjaan::all();
+
+        $peralatan = Peralatan::all();
 
         $teknisi = User::select('users.id', 'users.name')->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.name', 'Teknisi')->get();
 
@@ -250,7 +289,8 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.detail', compact('detail', 'detailPekerja', 'detailItemPekerjaan', 'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans'));
+
+        return view('proyek.jenis-kerusakan.detail', compact('detail', 'detailPekerja', 'detailItemPekerjaan', 'detailMaterial', 'detailPeralatan', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans', 'peralatan'));
     }
 
     public function edit($id)
@@ -279,9 +319,13 @@ class JenisKerusakanController extends Controller
 
         $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $id)->get();
 
+        $detailPeralatan = DetailPeralatan::where('jenis_kerusakan_id', $id)->get();
+
         $pekerja = Pekerja::all();
 
         $itemPekerjaans = ItemPekerjaan::all();
+
+        $peralatan = Peralatan::all();
 
         $teknisi = User::select('users.id', 'users.name')->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.name', 'Teknisi')->get();
 
@@ -301,7 +345,7 @@ class JenisKerusakanController extends Controller
             ->groupBy('kode_material')
             ->get();
 
-        return view('proyek.jenis-kerusakan.edit', compact('detail', 'detailPekerja', 'detailItemPekerjaan',  'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans'));
+        return view('proyek.jenis-kerusakan.edit', compact('detail', 'detailPekerja', 'detailItemPekerjaan',  'detailMaterial', 'teknisi', 'stokMaterial', 'jenisKerusakan', 'pekerja', 'itemPekerjaans', 'detailPeralatan', 'peralatan'));
     }
 
     public function update(Request $request, $id)
@@ -350,6 +394,22 @@ class JenisKerusakanController extends Controller
                 'item_pekerjaan' => 'required',
                 'satuan_item_pekerjaan' => '',
                 'volume_item_pekerjaan' => 'required',
+            ]);
+
+            // Jika validasi gagal
+            if ($validator4->fails()) {
+                toast('Mohon periksa form kembali!', 'error'); // Toast
+                return Redirect::back()
+                    ->withErrors($validator)
+                    ->withInput(); // Return kembali membawa error dan old input
+            }
+        }
+
+        if ($request->nama_peralatan && $request->satuan_peralatan && $request->volume_peralatan) {
+            $validator4 = Validator::make($request->all(), [
+                'nama_peralatan' => 'required',
+                'satuan_peralatan' => '',
+                'volume_peralatan' => 'required',
             ]);
 
             // Jika validasi gagal
@@ -444,6 +504,23 @@ class JenisKerusakanController extends Controller
                 }
             } else {
                 DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+            }
+
+            if ($request->nama_peralatan != null) {
+                DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
+                foreach ($request->nama_peralatan as $key => $item) {
+                    DetailPeralatan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'peralatan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaPeralatan($item)),
+                        'volume' => $request->volume_peralatan[$key] ?? '0',
+                        'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaPeralatan($item)) * floatval($request->volume_peralatan[$key]),
+                    ]);
+                }
+            } else {
+                DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->delete();
             }
 
             $jenisKerusakan->update($data);
@@ -560,6 +637,42 @@ class JenisKerusakanController extends Controller
                 }
             }
 
+            if ($request->nama_peralatan != null) {
+                $getPekerja = DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPeralatan::where('detail_peralatan_id', $i->id)->delete();
+                    DetailPeralatan::find($i->id)->delete();
+                }
+
+                foreach ($request->nama_peralatan as $key => $item) {
+                    $detailPeralatan = DetailPeralatan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'peralatan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaPeralatan($item)),
+                        'volume' => $request->volume_peralatan[$key] ?? '0',
+                        'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaPeralatan($item)) * floatval($request->volume_peralatan[$key]),
+                    ]);
+
+                    HistoryPeralatan::create([
+                        'peralatan_id' => $item,
+                        'detail_peralatan_id' => $detailPeralatan->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_peralatan[$key] ?? '0',
+                        'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getPeralatan = DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPeralatan as $i) {
+                    HistoryPeralatan::where('detail_peralatan_id', $i->id)->delete();
+                    DetailPeralatan::find($i->id)->delete();
+                }
+            }
+
             $jenisKerusakan->update($data);
         } else {
             $jenisKerusakan->update([
@@ -671,6 +784,42 @@ class JenisKerusakanController extends Controller
                     DetailItemPekerjaan::find($i->id)->delete();
                 }
             }
+
+            if ($request->nama_peralatan != null) {
+                $getPekerja = DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPekerja as $i) {
+                    HistoryPeralatan::where('detail_peralatan_id', $i->id)->delete();
+                    DetailPeralatan::find($i->id)->delete();
+                }
+
+                foreach ($request->nama_peralatan as $key => $item) {
+                    $detailPeralatan = DetailPeralatan::create([
+                        'jenis_kerusakan_id' => $jenisKerusakan->id,
+                        'peralatan_id' => $item,
+                        'nama' => $request->perbaikan,
+                        'harga' => floatval($this->getHargaPeralatan($item)),
+                        'volume' => $request->volume_peralatan[$key] ?? '0',
+                        'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                        'total_harga' => floatval($this->getHargaPeralatan($item)) * floatval($request->volume_peralatan[$key]),
+                    ]);
+
+                    HistoryPeralatan::create([
+                        'peralatan_id' => $item,
+                        'detail_peralatan_id' => $detailPeralatan->id,
+                        'tanggal' => Carbon::now(),
+                        'volume' => $request->volume_peralatan[$key] ?? '0',
+                        'satuan' => $request->satuan_peralatan[$key] ?? '0',
+                    ]);
+                }
+            } else {
+                $getPeralatan = DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id)->get();
+
+                foreach ($getPeralatan as $i) {
+                    HistoryPeralatan::where('detail_peralatan_id', $i->id)->delete();
+                    DetailPeralatan::find($i->id)->delete();
+                }
+            }
         }
 
         toast('Data berhasil tersimpan!', 'success');
@@ -683,11 +832,13 @@ class JenisKerusakanController extends Controller
         $detailKerusakan = DetailJenisKerusakan::where('jenis_kerusakan_id', $jenisKerusakan->id);
         $detailPekerja = DetailPekerja::where('jenis_kerusakan_id', $jenisKerusakan->id);
         $detailItemPekerjaan = DetailItemPekerjaan::where('jenis_kerusakan_id', $jenisKerusakan->id);
+        $detailPeralatan = DetailPeralatan::where('jenis_kerusakan_id', $jenisKerusakan->id);
         Storage::disk('public')->delete($jenisKerusakan->foto);
         $jenisKerusakan->delete();
         $detailKerusakan->delete();
         $detailPekerja->delete();
         $detailItemPekerjaan->delete();
+        $detailPeralatan->delete();
         toast('Data berhasil dihapus!', 'success');
         return Redirect::route('jenis-kerusakan.index', $request->detail_tgl_kerusakan_id); // Redirect kembali
     }
@@ -735,6 +886,12 @@ class JenisKerusakanController extends Controller
     {
         $itemPekerjaan = ItemPekerjaan::find($idItemPekerjaan);
         return $itemPekerjaan->harga;
+    }
+
+    private function getHargaPeralatan($idPeralatan)
+    {
+        $peralatan = Peralatan::find($idPeralatan);
+        return $peralatan->harga;
     }
 
     // Fungsi simpan data ke folder

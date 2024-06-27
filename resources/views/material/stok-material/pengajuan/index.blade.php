@@ -3,10 +3,13 @@
 
     @can('stok material pengajuan_create')
     <ul class="nav nav-pills flex-md-row mb-3 justify-content-between">
+        <li class="nav-item mb-2 mb-sm-2 mb-md-0 me-2">
+            <a href="{{ route('stok-material.pengajuan.qtech.create') }}" class="nav-link btn btn-primary active"><i class="bx bx-plus"></i> Tambah Stok Material Q-Tech</a>
+        </li>
         <li class="nav-item mb-2 mb-sm-2 mb-md-0">
             <a href="{{ route('stok-material.pengajuan.create') }}" class="nav-link btn btn-primary active"><i class="bx bx-plus"></i> Tambah Stok Material</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item ms-auto">
             <a href="{{ route('stok-material.pengajuan.histori') }}" class="btn btn-secondary active">Histori Pengajuan</a>
         </li>
     </ul>
@@ -22,6 +25,7 @@
                         <tr>
                             <th>#</th>
                             <th>Kode Material</th>
+                            <th>Kategori</th>
                             <th>Nama Material</th>
                             <th>Stok Pengajuan</th>
                             <th>Status</th>
@@ -34,6 +38,7 @@
                         <tr>
                             <th>#</th>
                             <th>Kode Material</th>
+                            <th>Kategori</th>
                             <th>Nama Material</th>
                             <th>Stok Pengajuan</th>
                             <th>Status</th>
@@ -57,6 +62,7 @@
                     columns: [
                         {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false },
                         {data: 'kode_material', name: 'kode_material'},
+                        {data: 'kategori', name: 'kategori'},
                         {data: 'nama_material', name: 'nama_material'},
                         {data: 'masuk', name: 'masuk'},
                         {data: 'status', name: 'status'},
@@ -64,7 +70,7 @@
                         {data: 'action', name: 'action'},
                     ],
                     columnDefs: [
-                        {targets: [3,4,5], className: 'text-center'}
+                        {targets: [4,5], className: 'text-center'}
                     ]
                 })
 

@@ -32,18 +32,20 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                {{-- <th>Pekerja</th> --}}
                                 <th>Kategori Pekerjaan</th>
-                                <th>Aksi</th>
+                                @can('pekerja_update')
+                                    <th>Aksi</th>
+                                @endcan
                             </tr>
                         </thead>
 
                         <tfoot>
                             <tr>
                                 <th>No</th>
-                                {{-- <th>Pekerja</th> --}}
                                 <th>Kategori Pekerjaan</th>
-                                <th>Aksi</th>
+                                @can('pekerja_update')
+                                    <th>Aksi</th>
+                                @endcan
                             </tr>
                         </tfoot>
                     </table>

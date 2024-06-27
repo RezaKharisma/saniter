@@ -31,11 +31,9 @@
         @can('izin_create')
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                 <div class="d-flex flex-column justify-content-center">
-                    <div class="me-2">
-                        <a class="btn btn-primary" href="{{ route('izin.create') }}"><i class="bx bx-plus me-1"></i> Tambah Izin</a>
-                    </div>
+                    <a class="btn btn-primary" href="{{ route('izin.create') }}"><i class="bx bx-plus me-1"></i> Tambah Izin</a>
                 </div>
-                <div class="d-flex align-content-center flex-wrap gap-2 mt-3 mt-sm-3 mt-md-0">
+                <div class="d-flex align-content-center flex-wrap gap-2 mt-sm-3 mt-md-0">
                     <a class="btn btn-primary" href="javascript:void(0);"><i class="bx bx-task me-1"></i> Izin</a>
 
                     @can('all_izin')

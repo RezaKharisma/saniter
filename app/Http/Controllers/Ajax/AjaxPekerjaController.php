@@ -24,6 +24,7 @@ class AjaxPekerjaController extends Controller
                     return "Rp. " . number_format($row->upah, 0, '', '.') . " " . $row->satuan;
                 })
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete
+                    $btn = '';
                     if (auth()->user()->can('pekerja_update')) {
                         $btn = "<button class='btn btn-warning btn-sm' data-id='" . $row->id . "' onclick='editData(this)'><i class='bx bx-edit'></i></button></a>";
                     }
@@ -65,6 +66,7 @@ class AjaxPekerjaController extends Controller
                 //     return $row->namaPekerja;
                 // })
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete
+                    $btn = '';
                     if (auth()->user()->can('kategori pekerjaan_update')) {
                         $btn = "<button class='btn btn-warning btn-sm' data-id='" . $row->id . "' onclick='editData(this)'><i class='bx bx-edit'></i></button></a>";
                     }
@@ -106,6 +108,7 @@ class AjaxPekerjaController extends Controller
                     return $row->namaKategori;
                 })
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete
+                    $btn = '';
                     if (auth()->user()->can('sub kategori pekerjaan_update')) {
                         $btn = "<button class='btn btn-warning btn-sm' data-id='" . $row->subID . "' onclick='editData(this)'><i class='bx bx-edit'></i></button></a>";
                     }
@@ -152,6 +155,7 @@ class AjaxPekerjaController extends Controller
                     return "Rp. " . number_format($row->harga, 0, '', '.');
                 })
                 ->addColumn('action', function ($row) { // Tambah kolom action untuk button edit dan delete
+                    $btn = '';
                     if (auth()->user()->can('item pekerjaan_update')) {
                         $btn = "<button class='btn btn-info btn-sm' data-id='" . $row->itemID . "' onclick='editData(this)'><i class='bx bx-detail'></i></button></a>";
                     }

@@ -39,12 +39,14 @@
             <div>
                 {{-- Input Nama Shift --}}
                 <x-partials.label title="Shift" />
-                <select name="nama" class="form-control @error('nama') is-invalid @enderror" required>
+                <select name="nama" class="form-control @error('nama') is-invalid @enderror" id="nama_shift" required>
                     <option value="" selected disabled>Pilih Shift...</option>
                     <option value="Pagi" @if(old('nama') == "Pagi" || $shift->nama == "Pagi") selected @endif>Pagi</option>
                     <option value="Siang" @if(old('nama') == "Siang" || $shift->nama == "Siang") selected @endif>Siang</option>
                     <option value="Sore" @if(old('nama') == "Sore" || $shift->nama == "Sore") selected @endif>Sore</option>
                     <option value="Malam" @if(old('nama') == "Malam" || $shift->nama == "Malam") selected @endif>Malam</option>
+                    <option value="Office Hour" @if(old('nama') == "Office Hour") selected @endif>Office Hour</option>
+                    <option value="Malam Airside" @if(old('nama') == "Malam Airside") selected @endif>Malam Airside</option>
                 </select>
                 <x-partials.error-message name="nama" class="d-block"/>
             </div>
@@ -186,6 +188,10 @@
     <script>
         $(document).ready(function () {
             $("#regional_id").select2({
+                theme: "bootstrap-5",
+            });
+            
+            $("#nama_shift").select2({
                 theme: "bootstrap-5",
             });
 

@@ -122,7 +122,7 @@ class AjaxAbsenController extends Controller
                 ->addColumn('foto', function ($row) {
                     $fotoMasuk = "
                     <div class='col-auto p-0 me-1'><a href='" . asset('storage/' . $row->foto_masuk) . "' class='avatar flex-shrink-0' target='_blank'>
-                        <img src='" . asset('storage/' . $row->foto_masuk) . "' class='img-fluid' style='width: 100px;height: auto' />
+                        <img src='" . asset('storage/' . $row->foto_masuk) . "' class='img-fluid' style='width: 100px;height: auto;' />
                     </a></div>";
 
                     $foto = $row->foto_pulang != "Belum Dilakukan" ? $row->foto_pulang : "user-absen/default.jpg";

@@ -17,9 +17,9 @@
         </style>
     </x-slot>
 
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Tambah Stok Material</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Material / </span>Detail Stok Material</h4>
 
-    <a class="btn btn-secondary mb-3" href="{{ route('stok-material.pengajuan.histori') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
+    <a class="btn btn-secondary mb-3" href="{{ route('stok-material.pengajuan.index') }}"><i class="bx bx-left-arrow-alt me-1"></i> Kembali</a>
 
     <div class="row">
         <div class="col-md-12">
@@ -33,26 +33,26 @@
 
                     <div class="card-body">
 
+                        {{-- Kode Material --}}
+                        <div class="mb-3">
+                            <x-input-text title="Kode Material" name='kode_material' value="{{ $stokMaterial['kode_material'] }}" readonly />
+                        </div>
+
                         {{-- Nama Material --}}
                         <div class="col-12 col-sm-12 col-sm-12 mb-3">
                             <input type="hidden" name="material_id" value="{{ $namaMaterial['id'] }}">
-                            <x-input-text title="Nama Material" name='displayNamaMaterial' value="{{ $namaMaterial['kode_material'] }} | {{ $namaMaterial['nama_material'] }}" readonly/>
+                            <x-input-text title="Nama Material" name='displayNamaMaterial' value="{{ $namaMaterial['nama_material'] }}" readonly/>
                         </div>
 
                         <div class="row">
-                            {{-- Jenis Pekerjaan --}}
-                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                <x-input-text title="Jenis Pekerjaan" name='jenis_pekerjaan' id="jenis_pekerjaan" value="{{ $namaMaterial['jenis_pekerjaan'] }}" readonly />
+                            {{-- Kategori Material --}}
+                            <div class="col-12 col-sm-12 col-sm-12 mb-3">
+                                <x-input-text title="Kategori Material" name='kategori_material[]' id="kategori_material" value="{{ $namaMaterial['kategori_material'] }}" readonly />
                             </div>
 
-                            {{-- Jenis Material --}}
+                            {{-- Satuan Material --}}
                             <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                <x-input-text title="Jenis Material" name='jenis_material' id="jenis_material" value="{{ $namaMaterial['jenis_material'] }}" readonly />
-                            </div>
-
-                            {{-- Stok Logistik (qty) --}}
-                            <div class="col-12 col-sm-4 col-sm-6 mb-3">
-                                <x-input-text title="Stok Gudang Logistik" name='qty' id="qty" value="{{ $namaMaterial['qty'] }}" readonly />
+                                <x-input-text title="Satuan" name='satuan[]' id="satuan"  value="{{ $namaMaterial['satuan'] }}"  readonly />
                             </div>
 
                             {{-- Harga --}}
@@ -60,11 +60,6 @@
                                 <input type="hidden" name="harga" id="hargaSubmit" value="{{ $namaMaterial['harga_beli'] }}">
                                 <x-input-text title="Harga" name="display" id="harga" value="Rp. {{ $namaMaterial['harga_beli'] }}" readonly/>
                             </div>
-                        </div>
-
-                        {{-- Kode Material --}}
-                        <div class="mb-3">
-                            <x-input-text title="Kode Material" name='kode_material' value="{{ $stokMaterial['kode_material'] }}" readonly />
                         </div>
 
                         {{-- Stok Input --}}
@@ -594,82 +589,63 @@
             })
         </script>
 
-        @can('validasi_pm_stok_material')
+        <script>
+            $("#submitForm").on('click', function () {
+                var stokLogistik = parseInt($('#qty').val());
+                var stokMasuk = parseInt($("#stokMasuk").val());
+
+                cekInputSebagian();
+            });
+        </script>
+
+        @can('validasi_dir_stok_material')
             <script>
-                $("#submitForm").on('click', function () {
-                    var stokLogistik = parseInt($('#qty').val());
-                    var stokMasuk = parseInt($("#stokMasuk").val());
-
-                    if (stokMasuk > stokLogistik) {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'center',
-                            icon: 'danger',
-                            customClass: {
-                                popup: 'colored-toast',
-                            },
-                            showConfirmButton: false,
-                            timer: 1000,
-                        })
-
-                        ;(async () => {
-                        await Toast.fire({
-                            icon: 'error',
-                            title: 'Stok Gudang Logistik Tidak Mencukupi!',
-                        })})()
-                    }
-
-                    if(parseInt($('#jumlahSebagian').val()) > parseInt($('#stokMasuk').val())){
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'center',
-                            icon: 'danger',
-                            customClass: {
-                                popup: 'colored-toast',
-                            },
-                            showConfirmButton: false,
-                            timer: 1000,
-                        })
-
-                        ;(async () => {
-                        await Toast.fire({
-                            icon: 'error',
-                            title: 'Jumlah sebagian melebihi stok masuk!',
-                        })})()
-                    }else{
-                        $('#formSubmit').submit();
-                    }
-                });
-            </script>
-        @else
-            <script>
-                $("#submitForm").on('click', function () {
-                    var stokLogistik = parseInt($('#qty').val());
-                    var stokMasuk = parseInt($("#stokMasuk").val());
-
-                    if (stokMasuk > stokLogistik) {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'center',
-                            icon: 'danger',
-                            customClass: {
-                                popup: 'colored-toast',
-                            },
-                            showConfirmButton: false,
-                            timer: 1000,
-                        })
-
-                        ;(async () => {
-                        await Toast.fire({
-                            icon: 'error',
-                            title: 'Stok Gudang Logistik Tidak Mencukupi!',
-                        })})()
-                    }else{
-                        $('#formSubmit').submit();
-                    }
-                });
+                function cekInputSebagian() {
+                    $('#formSubmit').submit();
+                }
             </script>
         @endcan
+
+        @can('validasi_pm_stok_material')
+            <script>
+                function cekInputSebagian() {
+                    cekInput($('#jumlahSebagianPM').val());
+                }
+            </script>
+        @endcan
+
+        @can('validasi_som_stok_material')
+            <script>
+                function cekInputSebagian() {
+                    cekInput($('#jumlahSebagianSOM').val());
+                }
+            </script>
+        @endcan
+
+        <script>
+            function cekInput(sebagian) {
+                if(parseInt(sebagian) > parseInt($('#stokMasuk').val())){
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'center',
+                        icon: 'danger',
+                        customClass: {
+                            popup: 'colored-toast',
+                        },
+                        showConfirmButton: false,
+                        timer: 1000,
+                    })
+
+                    ;(async () => {
+                    await Toast.fire({
+                        icon: 'error',
+                        title: 'Jumlah sebagian melebihi stok masuk!',
+                    })})()
+                }else{
+                    $('#formSubmit').submit();
+                }
+            }
+        </script>
 
         @if (Session::has('jumlahSebagianSOM'))
         <script>
@@ -679,7 +655,7 @@
                 $('#jumlahSebagianSOM').removeClass('d-none');
                 $('#jumlahSebagianSOM').addClass('d-block');
             });
-            </script>
+        </script>
         @endif
 
         @if (Session::has('jumlahSebagianPM'))
@@ -707,6 +683,15 @@
             $(document).ready(function () {
                 $('#inputanStatusValidasiPM').removeClass('d-none');
                 $('#inputanStatusValidasiPM').addClass('d-block');
+            });
+            </script>
+        @endif
+
+        @if (Session::has('statusValidasiDIR'))
+        <script>
+            $(document).ready(function () {
+                $('#inputanStatusValidasiDIR').removeClass('d-none');
+                $('#inputanStatusValidasiDIR').addClass('d-block');
             });
             </script>
         @endif

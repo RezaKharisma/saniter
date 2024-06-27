@@ -382,6 +382,8 @@
                         height: height,
                         dest_width: width,
                         dest_height: height,
+                        crop_width: width,
+                        crop_height: height,
                     });
                 } else {
                     // Portrait
@@ -390,13 +392,13 @@
                         height: width,
                         dest_width: height,
                         dest_height: width,
+                        crop_width: height,
+                        crop_height: width,
                     });
                 }
 
                 // Set webcam untuk mengambil gambar absen
                 Webcam.set({
-                    crop_width: 500,
-                    crop_height: 500,
                     align: 'center',
                     image_format: 'jpeg',
                     jpeg_quality: 90,

@@ -85,19 +85,20 @@ class FortifyServiceProvider extends ServiceProvider
                         $role = Role::create(['name' => $item['role']]);
                     }
 
-                    $regional = Regional::where('nama', $item['regional'])->first();
-                    if($regional == null){
-                        $regional = Regional::create([
-                            'nama' => $item['regional'],
-                            'latitude' => 0,
-                            'longitude' => 0,
-                        ]);
-                    }
+                    // $regional = Regional::where('nama', $item['regional'])->first();
+                    // if($regional == null){
+                    //     $regional = Regional::create([
+                    //         'nama' => $item['regional'],
+                    //         'latitude' => 0,
+                    //         'longitude' => 0,
+                    //     ]);
+                    // }
 
                     $cekUser = User::where('email', $item['email'])->first();
                     if ($cekUser == null) {
                         $user = User::updateOrCreate([
-                            'regional_id' => $regional->id,
+                            // 'regional_id' => $regional->id,
+                            'regional_id' => 1,
                             'lokasi_id' => 1,
                             'role_id' => $role->id,
                             'name' => $item['name'],
@@ -126,6 +127,7 @@ class FortifyServiceProvider extends ServiceProvider
             }
 
             $user = User::where('email', $request->email)->first();
+            
             if ($user && Hash::check($request->password, $user->password)) {
                 if ($user->is_active == false) {
                     throw ValidationException::withMessages(['email' => 'Saat ini akun anda tidak aktif. Hubungi administrator situs untuk mengaktifkannya.']);

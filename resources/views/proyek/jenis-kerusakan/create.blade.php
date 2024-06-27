@@ -214,6 +214,47 @@
                 </div>
             </div>
 
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header">Peralatan</h5>
+                    <div class="card-body">
+                        <div id="peralatanList" class="">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider text-start">
+                                        <div class="divider-text">Peralatan 1</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Nama Peralatan" />
+                                    <select name="nama_peralatan[]" id="nama_peralatan" class="form-control w-100 @error('nama_peralatan') is-invalid @enderror" required onchange="fillSatuan('nama_peralatan','satuan_peralatan')">
+                                        <option value="" data-harga="0" selected disabled>Pilih nama peralatan...</option>
+                                        @foreach ($peralatan as $item)
+                                            <option value="{{ $item->id }}" data-id="{{ $item->id }}" data-harga="{{ $item->harga }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_peralatan }}</option>
+                                        @endforeach
+                                    </select>
+                                    <x-partials.error-message name="nama_peralatan[]" class="d-block"/>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-5 mb-3">
+                                    <x-partials.label title="Volume" />
+                                    <div class="input-group">
+                                        <input type="hidden" name="satuan_peralatan[]" id="satuan_peralatan">
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"  class="form-control @error('volume_peralatan') is-invalid @enderror" id="volume_peralatan" name="volume_peralatan[]" placeholder="Volume " required/>
+                                        <span class="input-group-text" id="satuan_peralatanHTML">satuan*</span>
+                                    </div>
+                                    <x-partials.error-message name="volume_peralatan[]" class="d-block"/>
+                                    <x-partials.input-desc text="Gunakan ' . ' (titik) untuk angka desimal" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="btnAddMaterial" onclick="addListPeralatan(this)"><i class="bx bx-plus"></i> Tambah Material</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-12">
                 <div class="card">
                     <h5 class="card-header">
@@ -267,6 +308,10 @@
 
         <script>
             var count = [];
+            var countPekerja = [];
+            var countItemPekerjaan = [];
+            var countPeralatan = [];
+
             var satuanPekerja = [];
             var satuanItemPekerjaan = [];
 
@@ -279,6 +324,7 @@
                             text: params.term + $select.data('appendme'),
                             kode_material: $select.data('kode_material'),
                             harga: $select.data('harga'),
+                            satuan: $select.data('satuan'),
                             newOption: true
                         }
                     },
@@ -296,6 +342,7 @@
                             id: params.term,
                             text: params.term + $select.data('appendme'),
                             upah: $select.data('upah'),
+                            satuan: $select.data('satuan'),
                             newOption: true
                         }
                     },
@@ -309,10 +356,24 @@
                             id: params.term,
                             text: params.term + $select.data('appendme'),
                             harga: $select.data('harga'),
+                            satuan: $select.data('satuan'),
                             newOption: true
                         }
                     },
                     templateResult: formatItemPekerjaanOptionTemplate,
+                });
+
+                $("#nama_peralatan").select2({
+                    theme: "bootstrap-5",
+                    createTag: function (params) {
+                        return {
+                            id: params.term,
+                            text: params.term + $select.data('appendme'),
+                            harga: $select.data('harga'),
+                            newOption: true
+                        }
+                    },
+                    templateResult: formatPeralatanOptionTemplate,
                 });
 
                 $("#status_kerusakan").select2({
@@ -335,6 +396,21 @@
                 });
             });
 
+            function formatPeralatanOptionTemplate(state) {
+
+                var originalOption = $(state.element);
+
+                if (!state.id) {
+                    return state.text;
+                }
+                var $state = $(
+                    '<div class="mb-0"><u>'+state.text+'</u></div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' ('+originalOption.data('satuan')+')</div>'+
+                    '<div></div>'
+                );
+                return $state;
+            }
+
             function formatPekerjaOptionTemplate(state) {
 
                 var originalOption = $(state.element);
@@ -344,7 +420,7 @@
                 }
                 var $state = $(
                     '<div class="mb-0"><u>'+state.text+'</u></div>'+
-                    '<div>Rp. '+formatRupiah(originalOption.data('upah'))+' (satuan)</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('upah'))+' ('+originalOption.data('satuan')+')</div>'+
                     '<div></div>'
                 );
                 return $state;
@@ -359,7 +435,7 @@
                 }
                 var $state = $(
                     '<div class="mb-0"><u>'+state.text+'</u></div>'+
-                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' (satuan)</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' ('+originalOption.data('satuan')+')</div>'+
                     '<div></div>'
                 );
                 return $state;
@@ -375,7 +451,7 @@
                 var $state = $(
                     '<div class="mb-0"><u>'+originalOption.data('kode_material')+'</u></div>'+
                     '<div>'+state.text+'</div>'+
-                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' (satuan)</div>'+
+                    '<div>Rp. '+formatRupiah(originalOption.data('harga'))+' ('+originalOption.data('satuan')+')</div>'+
                     '<div></div>'
                 );
                 return $state;
@@ -489,10 +565,10 @@
                     url: "{{ route('ajax.getListPekerjaHtml') }}",
                     dataType: "json",
                     success: function (response) {
-                        if (count.length <= 8) {
+                        if (countPekerja.length <= 8) {
                             $(response.list).appendTo("#pekerjaList").hide().fadeIn(200);
-                            count.push("#nomor-" + response.kode);
-                            $.each(count, function (index, value) {
+                            countPekerja.push("#nomor-" + response.kode);
+                            $.each(countPekerja, function (index, value) {
                                 $(value).html("Pekerja " + (index + 2));
                             });
                             $("#nama_pekerja-" + response.kode).select2({
@@ -531,7 +607,7 @@
             }
 
             function deleteListPekerja(e) {
-                count = jQuery.grep(count, function (value) {
+                countPekerja = jQuery.grep(countPekerja, function (value) {
                     return value != "#nomor-" + e.dataset.id;
                 });
 
@@ -539,7 +615,7 @@
                     $(this).remove();
                 });
 
-                $.each(count, function (index, value) {
+                $.each(countPekerja, function (index, value) {
                     $(value).html("Pekerja " + (index + 2));
                 });
             }
@@ -556,10 +632,10 @@
                     url: "{{ route('ajax.getListItemPekerjaanHtml') }}",
                     dataType: "json",
                     success: function (response) {
-                        if (count.length <= 8) {
+                        if (countItemPekerjaan.length <= 8) {
                             $(response.list).appendTo("#itemPekerjaanList").hide().fadeIn(200);
-                            count.push("#nomor-" + response.kode);
-                            $.each(count, function (index, value) {
+                            countItemPekerjaan.push("#nomor-" + response.kode);
+                            $.each(countItemPekerjaan, function (index, value) {
                                 $(value).html("Pekerja " + (index + 2));
                             });
                             $("#item_pekerjaan-" + response.kode).select2({
@@ -598,7 +674,7 @@
             }
 
             function deleteListItemPekerjaan(e) {
-                count = jQuery.grep(count, function (value) {
+                countItemPekerjaan = jQuery.grep(countItemPekerjaan, function (value) {
                     return value != "#nomor-" + e.dataset.id;
                 });
 
@@ -606,7 +682,75 @@
                     $(this).remove();
                 });
 
-                $.each(count, function (index, value) {
+                $.each(countItemPekerjaan, function (index, value) {
+                    $(value).html("Pekerja " + (index + 2));
+                });
+            }
+
+            function addListPeralatan(e) {
+                $.ajaxSetup({
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('ajax.getListPeralatanHtml') }}",
+                    dataType: "json",
+                    success: function (response) {
+                        if (countPeralatan.length <= 9) {
+                            $(response.list).appendTo("#peralatanList").hide().fadeIn(200);
+                            countPeralatan.push("#nomor-" + response.kode);
+                            $.each(countPeralatan, function (index, value) {
+                                $(value).html("Peralatan " + (index + 2));
+                            });
+                            $("#peralatan-" + response.kode).select2({
+                                createTag: function (params) {
+                                    return {
+                                        id: params.term,
+                                        text: params.term + $select.data('appendme'),
+                                        harga: $select.data('harga'),
+                                        status: $select.data('status'),
+                                        newOption: true
+                                    }
+                                },
+                                templateResult: formatPeralatanOptionTemplate,
+                                theme: "bootstrap-5",
+                            });
+                        } else {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "center",
+                                icon: "danger",
+                                customClass: {
+                                    popup: "colored-toast",
+                                },
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+
+                            (async () => {
+                                await Toast.fire({
+                                    icon: "error",
+                                    title: "Batas maksimal penginputan perbaikan!",
+                                });
+                            })();
+                        }
+                    },
+                });
+            }
+
+            function deleteListPeralatan(e) {
+                countPeralatan = jQuery.grep(countPeralatan, function (value) {
+                    return value != "#nomor-" + e.dataset.id;
+                });
+
+                $("#list-peralatan-" + e.dataset.id).fadeOut(200, function(){
+                    $(this).remove();
+                });
+
+                $.each(countPeralatan, function (index, value) {
                     $(value).html("Pekerja " + (index + 2));
                 });
             }

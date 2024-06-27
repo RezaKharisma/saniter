@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Ajax;
 
-use App\Http\Controllers\Controller;
-use App\Models\FotoKerusakan;
-use App\Models\ItemPekerjaan;
 use App\Models\Pekerja;
+use App\Models\Peralatan;
 use App\Models\StokMaterial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Models\FotoKerusakan;
+use App\Models\ItemPekerjaan;
+use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class AjaxJenisKerusakanController extends Controller
 {
@@ -54,6 +55,7 @@ class AjaxJenisKerusakanController extends Controller
             ]);
         }
     }
+
     public function getListItemPekerjaanHtml(Request $request)
     {
         if ($request->ajax()) {
@@ -62,6 +64,23 @@ class AjaxJenisKerusakanController extends Controller
             $kode = bin2hex(random_bytes(10));
 
             $list = view('components.list.list-item-pekerjaan', compact('itemPekerjaan', 'kode'))->render();
+
+            return response()->json([
+                'status' => 'success',
+                'list' => $list,
+                'kode' => $kode,
+            ]);
+        }
+    }
+
+    public function getListPeralatanHtml(Request $request)
+    {
+        if ($request->ajax()) {
+            $peralatan = Peralatan::all();
+
+            $kode = bin2hex(random_bytes(10));
+
+            $list = view('components.list.list-peralatan', compact('peralatan', 'kode'))->render();
 
             return response()->json([
                 'status' => 'success',

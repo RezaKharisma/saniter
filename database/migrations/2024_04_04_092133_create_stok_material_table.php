@@ -16,7 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('material_id');
             $table->string('kode_material');
             $table->string('nama_material');
+            $table->enum('kategori', ['QTECH', 'SANITER']);
             $table->double('harga', 25, 2);
+            $table->string('satuan')->default('-');
             $table->string('masuk');
             $table->string('sebagian_som')->nullable()->default(0);
             $table->string('sebagian_pm')->nullable()->default(0);

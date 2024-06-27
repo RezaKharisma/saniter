@@ -67,10 +67,10 @@
             </tr>
             <tr align="center">
                 <td style="padding: 10px" colspan="3">
-                    <img src="{{ public_path('assets\img\logo\angkasa-pura-text.png') }}" alt="" width="200px">
+                    <img src="https://testing.limtek.co.id/assets/img/logo/angkasa-pura-text.png" alt="" width="200px">
                 </td>
                 <td style="padding: 10px" colspan="2">
-                    <img src="{{ public_path('assets\img\logo\qinar-text.jpg') }}" alt="" width="200px">
+                    <img src="https://testing.limtek.co.id/assets/img/logo/qinar-text.jpg" alt="" width="200px">
                 </td>
             </tr>
             <tr align="center">
@@ -175,7 +175,7 @@
                         @endforeach
                     </ol>
                 </td>
-                <td style="padding: 10px;vertical-align: top" align="center">
+                <td style="padding: 10px;vertical-align: top" align="center" width="100px">
                     <ol style="margin-left:0px !important;padding-left: 0px !important;list-style-type: none">
                         @foreach ($itemKerusakan as $item)
                             <li style="margin-left:0px !important;padding-left: 0px !important;margin-bottom: 10px">
@@ -185,9 +185,9 @@
                                     @foreach ($item['detail_pekerja'] as $item_pekerja)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">
                                             @if ($item_pekerja != null)
-                                                {{ $item_pekerja['volume'] }} (satuan)
+                                                {{ $item_pekerja['volume'] }} ({{ $item_pekerja['satuan'] }})
                                             @else
-                                                asdasd
+                                                &nbsp;
                                             @endif
                                         </li>
                                     @endforeach
@@ -197,9 +197,9 @@
                                     @foreach ($item['detail_item_pekerjaan'] as $item_pekerjaan)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">
                                             @if ($item_pekerjaan != null)
-                                                {{ $item_pekerjaan['volume'] }} (satuan)
+                                                {{ $item_pekerjaan['volume'] }} ({{ $item_pekerjaan['satuan'] }})
                                             @else
-                                                asdasd
+                                                &nbsp;
                                             @endif
                                         </li>
                                     @endforeach
@@ -209,9 +209,9 @@
                                     @foreach ($item['detail_kerusakan'] as $item_kerusakan)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">
                                             @if ($item_kerusakan != null)
-                                                {{ $item_kerusakan['volume'] }} (satuan)
+                                                {{ $item_kerusakan['volume'] }} ({{ $item_kerusakan['satuan'] }})
                                             @else
-                                                asdasd
+                                                &nbsp;
                                             @endif
                                         </li>
                                     @endforeach
@@ -240,7 +240,7 @@
                                     @endif
 
                                     @if (isset($item['detail_kerusakan']))
-                                    @foreach ($item['detail_kerusakan'] as $ittem_kerusakan)
+                                    @foreach ($item['detail_kerusakan'] as $item_kerusakan)
                                         <li style="margin-left:0px !important;padding-left: 0px !important;">#&nbsp;</li>
                                     @endforeach
                                     @endif
